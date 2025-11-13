@@ -152,7 +152,7 @@ export class ServiceScanner {
                 case 'rpc':
                     const serviceMetadata = Reflect.getMetadata('rpc:service', ServiceClass);
                     methodMetadata = Reflect.getMetadata('rpc:methods', ServiceClass) || [];
-                    serviceName = serviceMetadata.name;
+                    serviceName = "demo_"+serviceMetadata.name;
                     break;
                 case 'controller':
                     const controllerMetadata = Reflect.getMetadata('controller:metadata', ServiceClass);

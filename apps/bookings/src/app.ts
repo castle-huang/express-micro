@@ -19,7 +19,7 @@ async function startServer() {
         for (let i = 0; i < 10; i++) {
             try {
                 // 假设有一个 UserService 服务
-                const userService: UserService = serviceRegistry.getService('user-api');
+                const userService: UserService = serviceRegistry.getService('demo_user-api');
                 // 调用服务方法（通过代理自动负载均衡）
                 const result = await userService.getUser();
                 console.log('User info:', result);

@@ -113,12 +113,10 @@ export class ServiceRegistry {
     /**
      * 从注册中心发现服务并创建代理对象
      * @param discoveredServices - 从注册中心发现的服务列表
-     * @param namespace - 命名空间
      * @returns Promise that resolves when all services are registered
      */
     async discoverAndRegisterFromRegistry(
         discoveredServices: Map<string, DiscoveredService[]>,
-        namespace: string
     ): Promise<void> {
         try {
             console.log('Discovering services from registry center...');
@@ -131,7 +129,7 @@ export class ServiceRegistry {
                     const methods = firstInstance.metadata?.methods || [];
 
                     // 为每个服务实例创建代理（这里只创建一个，实际可根据负载均衡策略选择）
-                    this.registerServiceFromRegistry(namespace, serviceName, methods, instances);
+                    this.registerServiceFromRegistry(serviceName, methods, instances);
                 }
             }
 
@@ -149,7 +147,6 @@ export class ServiceRegistry {
      * @param instances - 服务实例列表
      */
     private registerServiceFromRegistry(
-        namespace: string,
         serviceName: string,
         methods: string[],
         instances: DiscoveredService[]
@@ -159,10 +156,7 @@ export class ServiceRegistry {
 
         this.proxies.set(serviceName, proxy);
         this.serviceDefinitions.set(serviceName, {name: serviceName, methods});
-
-        const serviceToken = ServiceRegistry.getServiceToken(namespace, serviceName);
-        container.registerInstance(serviceToken, proxy);
-
+        container.registerInstance(serviceName, proxy);
         console.log(`Registered service proxy for ${serviceName} with ${instances.length} instances`);
     }
 

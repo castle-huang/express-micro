@@ -337,13 +337,15 @@ export class HttpTransport {
      * @returns Promise that resolves when server starts
      */
     async start(port: number = 3000, directories: string[] = ['src']): Promise<void> {
+        if (this.registryClient) {
+            await this.discoverServicesFromRegistry();
+        }
         // Scan services
         await this.scanner.scanServices(directories);
         // Setup middlewares
         this.setupMiddlewares();
         if (this.registryClient) {
             await this.registerWithRegistry(port);
-            await this.discoverServicesFromRegistry();
         }
         // Setup routes
         this.setupRoutes();
@@ -423,7 +425,7 @@ export class HttpTransport {
             this.discoveredServices = groupedServices;
 
             // 注册发现的服务到 ServiceRegistry
-            await this.serviceRegistry.discoverAndRegisterFromRegistry(groupedServices, 'registry');
+            await this.serviceRegistry.discoverAndRegisterFromRegistry(groupedServices);
 
             console.log(`Discovered and registered ${services.length} service instances from registry center`);
 

@@ -1,0 +1,21 @@
+{
+  "name": "@sojo-micro/rpc",
+  "version": "1.0.0",
+  "description": "Core RPC framework with DI container",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "glob": "^7.2.3",
+    "reflect-metadata": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/express": "^5.0.5"
+  }
+}

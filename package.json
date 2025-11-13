@@ -1,0 +1,28 @@
+{
+  "name": "sojo-micro",
+  "version": "1.0.0",
+  "description": "TypeScript RPC Framework with DI and Auto-discovery",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev": "npm run dev --workspaces",
+    "clean": "npm run clean --workspaces",
+    "install:all": "npm install && npm run build"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^20.19.5",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "glob": "^7.2.3",
+    "reflect-metadata": "^0.2.0"
+  }
+}

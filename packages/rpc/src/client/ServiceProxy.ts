@@ -25,6 +25,42 @@ export class ServiceProxy {
     private client: AxiosInstance;
     private serviceCache: Map<string, any> = new Map();
 
+    setBaseUrl(baseUrl: string): void {
+        this.client.defaults.baseURL = baseUrl;
+    }
+
+    /**
+     * 调用远程服务方法
+     * @param serviceName - 服务名称
+     * @param methodName - 方法名称
+     * @param args - 方法参数
+     * @returns Promise resolving to the method result
+     */
+    async call(serviceName: string, methodName: string, args: any[]): Promise<any> {
+        try {
+            const rpcRequest: RpcRequest = {
+                service: serviceName,
+                method: methodName,
+                args: args,
+                metadata: {
+                    requestId: `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    timestamp: Date.now()
+                }
+            };
+
+            const response = await this.client.post<RpcResponse>('/rpc', rpcRequest);
+
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                throw new Error(response.data.error?.message || 'RPC call failed');
+            }
+        } catch (error) {
+            console.error(`RPC call failed: ${serviceName}.${methodName}`, error);
+            throw error;
+        }
+    }
+
     /**
      * Creates a new ServiceProxy instance
      * @param config - Configuration object for the proxy
@@ -35,7 +71,7 @@ export class ServiceProxy {
             timeout: config.timeout || 30000,
             headers: {
                 'Content-Type': 'application/json',
-                'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
                 ...config.headers
             }
         });

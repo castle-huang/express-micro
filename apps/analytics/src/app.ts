@@ -4,9 +4,9 @@ import {HttpTransport, importAllServices} from "@sojo-micro/rpc";
 
 async function startServer() {
     await importAllServices();
-    const server = new HttpTransport();
-    const port = parseInt(process.env.PORT || '3000');
-    await server.start(port, ['src', 'apps/auth/src']);
+    const server = new HttpTransport("http://localhost:3000");
+    const port = parseInt(process.env.PORT || '3005');
+    await server.start(port, ['src', 'apps/analytics/src']);
 }
 
 startServer().catch(console.error);

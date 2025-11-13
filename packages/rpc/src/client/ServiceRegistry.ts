@@ -1,5 +1,6 @@
 import {ServiceProxy} from './ServiceProxy';
 import {container} from '../di/Container';
+import {DiscoveredService} from './RegistryClient';
 
 /**
  * Definition interface for a remote service
@@ -21,6 +22,7 @@ export interface ServiceDefinition {
 export class ServiceRegistry {
     private proxies: Map<string, any> = new Map();
     private serviceDefinitions: Map<string, ServiceDefinition> = new Map();
+    private currentInstanceIndex: Map<string, number> = new Map();
 
     /**
      * Creates a new ServiceRegistry instance
@@ -106,5 +108,122 @@ export class ServiceRegistry {
      */
     getAllServices(): ServiceDefinition[] {
         return Array.from(this.serviceDefinitions.values());
+    }
+
+    /**
+     * 从注册中心发现服务并创建代理对象
+     * @param discoveredServices - 从注册中心发现的服务列表
+     * @param namespace - 命名空间
+     * @returns Promise that resolves when all services are registered
+     */
+    async discoverAndRegisterFromRegistry(
+        discoveredServices: Map<string, DiscoveredService[]>,
+        namespace: string
+    ): Promise<void> {
+        try {
+            console.log('Discovering services from registry center...');
+
+            // 遍历所有发现的服务
+            for (const [serviceName, instances] of discoveredServices) {
+                if (instances.length > 0) {
+                    // 从第一个实例中获取方法信息（假设同一服务的所有实例方法相同）
+                    const firstInstance = instances[0];
+                    const methods = firstInstance.metadata?.methods || [];
+
+                    // 为每个服务实例创建代理（这里只创建一个，实际可根据负载均衡策略选择）
+                    this.registerServiceFromRegistry(namespace, serviceName, methods, instances);
+                }
+            }
+
+            console.log(`Registered ${discoveredServices.size} services from registry center`);
+        } catch (error) {
+            console.error('Service discovery from registry failed:', error);
+        }
+    }
+
+    /**
+     * 为从注册中心发现的服务创建代理对象
+     * @param namespace - 命名空间
+     * @param serviceName - 服务名称
+     * @param methods - 服务方法列表
+     * @param instances - 服务实例列表
+     */
+    private registerServiceFromRegistry(
+        namespace: string,
+        serviceName: string,
+        methods: string[],
+        instances: DiscoveredService[]
+    ): void {
+        // 创建服务代理，使用负载均衡策略
+        const proxy = this.createLoadBalancedProxy(serviceName, instances);
+
+        this.proxies.set(serviceName, proxy);
+        this.serviceDefinitions.set(serviceName, {name: serviceName, methods});
+
+        const serviceToken = ServiceRegistry.getServiceToken(namespace, serviceName);
+        container.registerInstance(serviceToken, proxy);
+
+        console.log(`Registered service proxy for ${serviceName} with ${instances.length} instances`);
+    }
+
+    /**
+     * 创建负载均衡代理
+     * @param serviceName - 服务名称
+     * @param instances - 服务实例列表
+     * @returns 代理对象
+     */
+    private createLoadBalancedProxy(serviceName: string, instances: DiscoveredService[]): any {
+        // 使用 ServiceProxy 创建代理，但需要动态设置 baseURL
+        return new Proxy({}, {
+            get: (target, prop, receiver) => {
+                if (typeof prop === 'string') {
+                    return async (...args: any[]) => {
+                        // 选择一个实例（这里使用简单的轮询策略）
+                        const instance = this.selectInstance(instances);
+                        if (!instance) {
+                            throw new Error(`No available instances for service ${serviceName}`);
+                        }
+                        // 动态设置 ServiceProxy 的 baseURL
+                        const baseUrl = `${instance.protocol}://${instance.address}:${instance.port}`;
+                        this.proxy.setBaseUrl(baseUrl);
+                        // 调用远程方法
+                        return this.proxy.call(serviceName, prop, args);
+                    };
+                }
+                return undefined;
+            }
+        });
+    }
+
+    /**
+     * 选择服务实例（轮询策略）
+     * @param instances - 服务实例列表
+     * @returns 选中的实例
+     */
+    private selectInstance(instances: DiscoveredService[]): DiscoveredService | null {
+        // 过滤出健康的服务实例
+        const healthyInstances = instances.filter(instance => instance.status === 'UP');
+
+        if (healthyInstances.length === 0) {
+            return null;
+        }
+
+        // 轮询策略实现
+        if (!this.currentInstanceIndex) {
+            this.currentInstanceIndex = new Map<string, number>();
+        }
+
+        const serviceName = healthyInstances[0].name;
+        let index = this.currentInstanceIndex.get(serviceName) || 0;
+
+        // 确保索引在有效范围内
+        if (index >= healthyInstances.length) {
+            index = 0;
+        }
+        const selectedInstance = healthyInstances[index];
+        // 更新索引为下一个实例
+        this.currentInstanceIndex.set(serviceName, (index + 1) % healthyInstances.length);
+
+        return selectedInstance;
     }
 }

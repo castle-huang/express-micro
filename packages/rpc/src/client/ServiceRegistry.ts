@@ -11,7 +11,7 @@ export interface ServiceDefinition {
 }
 
 /**
- * ServiceRegistry manages the registration and discovery of remote services
+ * RpcRegistry manages the registration and discovery of remote services
  *
  * This class provides:
  * - Automatic service discovery from remote endpoints
@@ -25,7 +25,7 @@ export class ServiceRegistry {
     private currentInstanceIndex: Map<string, number> = new Map();
 
     /**
-     * Creates a new ServiceRegistry instance
+     * Creates a new RpcRegistry instance
      * @param proxy - ServiceProxy instance for remote communication
      */
     constructor(private proxy: ServiceProxy) {
@@ -120,14 +120,12 @@ export class ServiceRegistry {
     ): Promise<void> {
         try {
             console.log('Discovering services from registry center...');
-
             // 遍历所有发现的服务
             for (const [serviceName, instances] of discoveredServices) {
                 if (instances.length > 0) {
                     // 从第一个实例中获取方法信息（假设同一服务的所有实例方法相同）
                     const firstInstance = instances[0];
                     const methods = firstInstance.metadata?.methods || [];
-
                     // 为每个服务实例创建代理（这里只创建一个，实际可根据负载均衡策略选择）
                     this.registerServiceFromRegistry(serviceName, methods, instances);
                 }
@@ -153,7 +151,6 @@ export class ServiceRegistry {
     ): void {
         // 创建服务代理，使用负载均衡策略
         const proxy = this.createLoadBalancedProxy(serviceName, instances);
-
         this.proxies.set(serviceName, proxy);
         this.serviceDefinitions.set(serviceName, {name: serviceName, methods});
         container.registerInstance(serviceName, proxy);

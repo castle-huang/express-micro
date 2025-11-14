@@ -28,6 +28,7 @@ export class DIContainer {
     private services: Map<any, ServiceRegistration> = new Map();
     private instances: Map<any, any> = new Map();
     private requestScopes: Map<string, Map<any, any>> = new Map();
+    private allClassRelationMap: Map<string, any> = new Map();
 
     /**
      * Registers a service with the container
@@ -79,9 +80,11 @@ export class DIContainer {
         }
 
         // 3. Resolve using custom container
-        const registration = this.services.get(token);
+        let registration = this.services.get(token);
         if (!registration) {
-            throw new Error(`Service not registered: ${token.name || token.toString()}. Available services: ${Array.from(this.services.keys()).map(k => k.name || k.toString()).join(', ')}`);
+            if (!registration) {
+                throw new Error(`Service not registered: ${token.name || token.toString()}. Available services: ${Array.from(this.services.keys()).map(k => k.name || k.toString()).join(', ')}`);
+            }
         }
         const instance = this.createInstance(registration, requestId);
 
@@ -178,6 +181,13 @@ export class DIContainer {
     remove(token: any): void {
         this.services.delete(token);
         this.instances.delete(token);
+    }
+
+    registerAllClass(target: any) {
+        if (this.allClassRelationMap.has(target.name)) {
+            throw new Error(`Class ${target.name} is already registered`);
+        }
+        return this.allClassRelationMap.set(target.name, target);
     }
 }
 

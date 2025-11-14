@@ -1,14 +1,24 @@
-//vercel
-import express, {Request, Response} from 'express';
-import {HttpTransport, importAllServices} from "@sojo-micro/rpc";
+import dotenv from 'dotenv';
+import express from 'express';
+import {HttpTransport} from "@sojo-micro/rpc";
+
+dotenv.config();
+
+const app = express()
+const server = new HttpTransport(app);
 
 async function startServer() {
-    await importAllServices();
-    const server = new HttpTransport();
-    const port = parseInt(process.env.PORT || '3004');
-    await server.start(port, ['src', 'apps/auth/src']);
+    await server.scanServices()
+    const port = parseInt(process.env.PORT || '3000');
+    await server.start(port);
 }
 
-startServer().catch(console.error);
-console.log('Server started');
+startServer()
+    .then(() => {
+        console.log('Server started successfully');
+    })
+    .catch((error) => {
+        console.error('Failed to start server:', error);
+    });
+export default app;
 

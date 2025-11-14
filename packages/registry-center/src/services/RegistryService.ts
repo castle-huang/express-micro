@@ -2,7 +2,7 @@ import {ServiceInstance, ServiceRegistration, ServiceDiscovery} from '../models/
 
 export class RegistryService {
     private services: Map<string, ServiceInstance> = new Map();
-    private heartbeatInterval: number = 30000; // 30 seconds
+    private heartbeatInterval: number = 10000; // 30 seconds
     private cleanupInterval: NodeJS.Timeout;
 
     constructor() {

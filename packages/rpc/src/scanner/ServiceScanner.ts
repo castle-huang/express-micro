@@ -27,9 +27,19 @@ export async function importAllServices() {
     const files = fs.readdirSync(serviceDir);
 
     for (const file of files) {
-        if (file.endsWith('.ts') || file.endsWith('.js')) {
-            await import(path.join(serviceDir, file));
+        if (file.endsWith(".d.ts")) {
+            continue;
         }
+        if (file.endsWith('.ts') || file.endsWith('.js')) {
+            const module = await import(path.join(serviceDir, file));
+
+            for (const [exportName, ExportClass] of Object.entries(module)) {
+                if (ExportClass) {
+                    console.log(ExportClass)
+                }
+            }
+        }
+
     }
 }
 
@@ -52,59 +62,64 @@ export class ServiceScanner {
      * @returns Promise resolving to array of scanned services
      */
     async scanServices(directories: string[] = ['src']): Promise<ScannedService[]> {
-        const scannedServices: ScannedService[] = [];
         const projectRoot = process.cwd();
+        let allFiles = [];
         for (const dir of directories) {
-            const relativeDir = dir.startsWith('./') ? dir.substring(2) : dir;
             // Check if directory exists
-            const fullDir = path.join(projectRoot, relativeDir);
-            if (!fs.existsSync(fullDir)) {
-                console.warn(`Directory does not exist: ${fullDir}`);
+            if (!fs.existsSync(dir)) {
+                console.warn(`Directory does not exist: ${dir}`);
                 continue;
             }
 
             const files = glob.sync(`${dir}/**/*.{ts,js}`, {
                 ignore: ['**/*.test.{ts,js}', '**/*.spec.{ts,js}', '**/*.d.ts', '**/app.{ts,js}']
             });
-            for (const file of files) {
-                const services = await this.scanFile(`${projectRoot}/${file}`);
-                scannedServices.push(...services);
+            allFiles.push(...files);
+        }
+        const allClassMap: Map<string, any> = new Map()
+        for (const file of allFiles) {
+            const classMap = await this.scanFileClass(`${projectRoot}/${file}`);
+            for (const [exportName, ExportClass] of classMap) {
+                allClassMap.set(exportName, ExportClass)
             }
         }
-
-        return scannedServices;
+        return await this.scanService(allClassMap);
     }
 
-    /**
-     * Scans a single file for exported services and registers them
-     * @param filePath - Absolute path to the file to scan
-     * @returns Promise resolving to array of scanned services from the file
-     */
-    private async scanFile(filePath: string): Promise<ScannedService[]> {
-        const services: ScannedService[] = [];
+
+    private async scanFileClass(filePath: string): Promise<Map<string, any>> {
+        const classMap: Map<string, any> = new Map()
 
         try {
             delete require.cache[require.resolve(filePath)];
             const module = require(filePath);
-
             for (const [exportName, ExportClass] of Object.entries(module)) {
                 if (typeof ExportClass === 'function') {
-                    // Check service type
-                    const serviceType = this.getServiceType(ExportClass);
-                    if (serviceType) {
-                        const service = await this.registerService(ExportClass, exportName, serviceType);
-                        if (service) {
-                            services.push(service);
-                            this.services.set(service.name, service);
-                        }
-                    }
+                    container.registerAllClass(ExportClass)
+                    classMap.set(exportName, ExportClass)
                 }
             }
         } catch (error) {
-            console.error(`Failed to scan file ${filePath}:`, error);
+            console.error(`Failed to scan file class ${filePath}:`, error);
             throw error;
         }
+        return classMap;
+    }
 
+    private async scanService(classMap: Map<string, any>): Promise<ScannedService[]> {
+        const services: ScannedService[] = [];
+        for (const [exportName, ExportClass] of classMap) {
+            if (typeof ExportClass === 'function') {
+                const serviceType = this.getServiceType(ExportClass);
+                if (serviceType) {
+                    const service = await this.registerService(ExportClass, exportName, serviceType);
+                    if (service) {
+                        services.push(service);
+                        this.services.set(service.name, service);
+                    }
+                }
+            }
+        }
         return services;
     }
 
@@ -113,7 +128,8 @@ export class ServiceScanner {
      * @param Class - Class constructor to check
      * @returns Service type or null if not a service
      */
-    private getServiceType(Class: any): 'rpc' | 'controller' | 'service' | 'component' | null {
+    private getServiceType(Class: any):
+        'rpc' | 'controller' | 'service' | 'component' | null {
         // Check for RPC service
         if (Reflect.hasMetadata('rpc:service', Class)) {
             return 'rpc';
@@ -140,11 +156,8 @@ export class ServiceScanner {
      * @param serviceType - Type of service being registered
      * @returns Promise resolving to scanned service metadata or null
      */
-    private async registerService(
-        ServiceClass: any,
-        exportName: string,
-        serviceType: 'rpc' | 'controller' | 'service' | 'component'
-    ): Promise<ScannedService | null> {
+    private async registerService(ServiceClass: any, exportName: string, serviceType: 'rpc' | 'controller' | 'service' | 'component'):
+        Promise<ScannedService | null> {
         try {
             let serviceName: string;
             let methodMetadata: any[] = [];
@@ -152,7 +165,7 @@ export class ServiceScanner {
                 case 'rpc':
                     const serviceMetadata = Reflect.getMetadata('rpc:service', ServiceClass);
                     methodMetadata = Reflect.getMetadata('rpc:methods', ServiceClass) || [];
-                    serviceName = "demo_"+serviceMetadata.name;
+                    serviceName = serviceMetadata.name;
                     break;
                 case 'controller':
                     const controllerMetadata = Reflect.getMetadata('controller:metadata', ServiceClass);
@@ -165,7 +178,7 @@ export class ServiceScanner {
                     methodMetadata = this.extractPublicMethods(ServiceClass);
             }
             // Use DI container to resolve instance
-            const instance = container.resolve(ServiceClass);
+            const instance = container.resolve(serviceName);
             return {
                 name: serviceName,
                 instance,
@@ -208,7 +221,8 @@ export class ServiceScanner {
      * @param name - Name of the service to retrieve
      * @returns Scanned service or undefined if not found
      */
-    getService(name: string): ScannedService | undefined {
+    getService(name: string):
+        ScannedService | undefined {
         return this.services.get(name);
     }
 
@@ -242,7 +256,8 @@ export class ServiceScanner {
      * @param methodName - Name of the method to find
      * @returns Method metadata or undefined if not found
      */
-    getMethod(serviceName: string, methodName: string): any {
+    getMethod(serviceName: string, methodName: string):
+        any {
         const service = this.services.get(serviceName);
         if (!service) return undefined;
 

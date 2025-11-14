@@ -1,5 +1,5 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import {ServiceScanner} from '../scanner/ServiceScanner';
+import {ServiceScanner, importAllServices} from '../scanner/ServiceScanner';
 import {RpcRequest, RpcResponse} from '../types/Types';
 import {RegistryClient, RegistryServiceInfo, DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
@@ -32,11 +32,11 @@ export class HttpTransport {
     private discoveredServices: Map<string, DiscoveredService[]> = new Map();
     private serviceRegistry: ServiceRegistry | null = null;
 
-    constructor(registryUrl?: string) {
-        this.app = express();
+    constructor(app: Application) {
+        this.app = app;
         this.scanner = new ServiceScanner();
-        if (registryUrl) {
-            this.registryClient = new RegistryClient(registryUrl);
+        if (process.env.REGISTRY_CENTER_URL) {
+            this.registryClient = new RegistryClient(process.env.REGISTRY_CENTER_URL);
             this.serviceRegistry = new ServiceRegistry(new ServiceProxy({baseURL: ''}));
         }
     }
@@ -332,11 +332,11 @@ export class HttpTransport {
 
     /**
      * Starts the HTTP server
-     * @param port - Port to listen on (default: 3000)
-     * @param directories - Directories to scan for services (default: ['src'])
+     * @param directories - Directories to scan for services
      * @returns Promise that resolves when server starts
      */
-    async start(port: number = 3000, directories: string[] = ['src']): Promise<void> {
+    async scanServices(directories: string[] = ["src"]): Promise<void> {
+        await importAllServices();
         if (this.registryClient) {
             await this.discoverServicesFromRegistry();
         }
@@ -344,11 +344,14 @@ export class HttpTransport {
         await this.scanner.scanServices(directories);
         // Setup middlewares
         this.setupMiddlewares();
-        if (this.registryClient) {
-            await this.registerWithRegistry(port);
-        }
         // Setup routes
         this.setupRoutes();
+        if (this.registryClient) {
+            await this.registerWithRegistry();
+        }
+    }
+
+    async start(port: number) {
         this.app.listen(port, () => {
             console.log(`Port: ${port}`);
             console.log(`Service discovery: http://localhost:${port}/rpc/services`);
@@ -364,24 +367,22 @@ export class HttpTransport {
     /**
      * 将扫描到的服务注册到注册中心
      */
-    private async registerWithRegistry(port: number): Promise<void> {
+    private async registerWithRegistry(): Promise<void> {
         try {
             // 获取扫描到的RPC服务
             const rpcServices = this.scanner.getRpcServices();
-
             if (rpcServices.length === 0) {
                 console.log('No RPC services found to register');
                 return;
             }
-
             // 注册每个RPC服务
             for (const service of rpcServices) {
                 const serviceInfo: RegistryServiceInfo = {
                     name: service.name,
-                    version: '1.0.0',
-                    address: 'localhost',
-                    port: port,
-                    protocol: 'http',
+                    version: process.env.MODULE_VERSION || '1.0.0',
+                    address: process.env.MODULE_ADDRESS || 'localhost',
+                    port: parseInt(process.env.MODULE_PORT || '3000'),
+                    protocol: process.env.MODULE_PROTOCOL || 'http',
                     metadata: {
                         methods: service.methods.map(m => m.name),
                         type: 'rpc'
@@ -424,7 +425,7 @@ export class HttpTransport {
 
             this.discoveredServices = groupedServices;
 
-            // 注册发现的服务到 ServiceRegistry
+            // 注册发现的服务到 RpcRegistry
             await this.serviceRegistry.discoverAndRegisterFromRegistry(groupedServices);
 
             console.log(`Discovered and registered ${services.length} service instances from registry center`);

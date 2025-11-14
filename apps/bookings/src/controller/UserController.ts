@@ -1,12 +1,13 @@
 import {Controller, GET, Inject} from "@sojo-micro/rpc";
+import {USER_API} from "../config/RpcRegistry";
 
-interface UserService {
-    getUser(): Promise<any>;
+export abstract class UserService {
+    abstract getUser(): Promise<any>;
 }
 
 @Controller({basePath: '/api/auth/user'})
 export class UserController {
-    constructor(@Inject('demo_user-api') private userApi: UserService) {
+    constructor(@Inject(USER_API) private userApi: UserService) {
     }
 
     @GET('/test')

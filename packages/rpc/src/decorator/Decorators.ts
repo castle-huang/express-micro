@@ -9,10 +9,11 @@ import {ServiceMetadata, ControllerMetadata, ComponentMetadata, RouteMethodMetad
  */
 export function RpcService(metadata?: { name?: string; version?: string; scope?: ServiceScope }): ClassDecorator {
     return (target: any) => {
-        const serviceName = metadata?.name || target.name;
+        let serviceName = metadata?.name || target.name;
+        serviceName = process.env.MODULE_NAME + "*" + serviceName;
         const scope = metadata?.scope || 'singleton';
         // Register with custom container
-        container.register(target, target, scope);
+        container.register(serviceName, target, scope);
         // Add RPC-specific metadata
         Reflect.defineMetadata('rpc:service', {
             name: serviceName,
@@ -37,7 +38,7 @@ export function Controller(options?: {
     return (target: any) => {
         const serviceName = options?.name || target.name;
         const scope = options?.scope || 'singleton';
-        container.register(target, target, scope);
+        container.register(serviceName, target, scope);
         // Add Controller-specific metadata
         const controllerMetadata: ControllerMetadata = {
             basePath: options?.basePath || '',
@@ -60,9 +61,12 @@ export function Service(options?: {
     scope?: ServiceScope
 }): ClassDecorator {
     return (target: any) => {
-        const serviceName = options?.name || target.name;
+        let serviceName = options?.name || target.name;
+        if (serviceName.endsWith("Impl")) {
+            serviceName = serviceName.substring(0, serviceName.length - 4);
+        }
         const scope = options?.scope || 'singleton';
-        container.register(target, target, scope);
+        container.register(serviceName, target, scope);
         // Add Service-specific metadata
         const serviceMetadata: ServiceMetadata = {
             name: serviceName,
@@ -86,7 +90,7 @@ export function Component(options?: {
     return (target: any) => {
         const serviceName = options?.name || target.name;
         const scope = options?.scope || 'singleton';
-        container.register(target, target, scope);
+        container.register(serviceName, target, scope);
         // Add Component-specific metadata
         const componentMetadata: ComponentMetadata = {
             name: serviceName,
@@ -164,7 +168,7 @@ export function Inject(token?: any): ParameterDecorator {
             injectionToken = token;
         } else if (paramTypes[parameterIndex]) {
             // Try to get from design type
-            injectionToken = paramTypes[parameterIndex];
+            injectionToken = paramTypes[parameterIndex].name;
         } else {
             // Fallback: construct token using parameter index and target class name
             console.warn(`Warning: Cannot determine injection token for ${target.name}[${parameterIndex}], using fallback`);

@@ -186,7 +186,7 @@ export class DIContainer {
 
     registerAllClass(target: any) {
         if (this.allClassRelationMap.has(target.name)) {
-            throw new Error(`Class ${target.name} is already registered`);
+            return;
         }
         return this.allClassRelationMap.set(target.name, target);
     }

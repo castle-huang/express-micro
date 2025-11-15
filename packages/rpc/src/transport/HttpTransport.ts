@@ -522,13 +522,15 @@ export class HttpTransport {
             const services = await this.registryClient.discoverServices();
             // 按服务名称分组
             const groupedServices = new Map<string, DiscoveredService[]>();
-            services.forEach(service => {
+            for (const service of services) {
+                if (service.id.startsWith(String(process.env.MODULE_NAME)) && service.metadata!.type == 'controller') {
+                    continue;
+                }
                 if (!groupedServices.has(service.name)) {
                     groupedServices.set(service.name, []);
                 }
                 groupedServices.get(service.name)!.push(service);
-            });
-
+            }
             this.discoveredServices = groupedServices;
 
             // 注册发现的服务到 RpcRegistry
@@ -550,12 +552,15 @@ export class HttpTransport {
             const services = await this.registryClient.discoverServices();
             // 按服务名称分组
             const groupedServices = new Map<string, DiscoveredService[]>();
-            services.forEach(service => {
+            for (const service of services) {
+                if (service.id.startsWith(String(process.env.MODULE_NAME)) && service.metadata!.type == 'controller') {
+                    continue;
+                }
                 if (!groupedServices.has(service.name)) {
                     groupedServices.set(service.name, []);
                 }
                 groupedServices.get(service.name)!.push(service);
-            });
+            }
 
             // 注册发现的服务到 RpcRegistry
             await this.serviceRegistry!.discoverAndUpdateRegisterFromRegistry(groupedServices, this.discoveredServices);

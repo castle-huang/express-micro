@@ -2,7 +2,7 @@ import {Controller, GET, Inject, PermitAll, Req} from "@sojo-micro/rpc";
 import {UserService} from "../service/UserService";
 import {AuthenticatedRequest, JWTUtils} from "@sojo-micro/rpc/dist/utils/JWTUtils";
 
-@Controller({basePath: '/api/auth/user'})
+@Controller({basePath: '/api/analytics/user'})
 export class UserController {
     constructor(@Inject() private userService: UserService) {
     }

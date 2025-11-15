@@ -23,7 +23,7 @@ export class UserController {
     async token() {
         const payload: AuthenticatedRequest = {
             user: {
-                id: BigInt(1),
+                id: "1",
             }
         } as AuthenticatedRequest;
         const token = JWTUtils.generateToken(payload);

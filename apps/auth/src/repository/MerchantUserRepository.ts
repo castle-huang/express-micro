@@ -13,7 +13,7 @@ export class MerchantUserRepository {
         return this.mapToMerchantUser(data);
     }
 
-    async findById(userId: bigint) : Promise<MerchantUser | null> {
+    async findById(userId: string) : Promise<MerchantUser | null> {
         const { data } = await supabase
             .from('merchant_user')
             .select('*')

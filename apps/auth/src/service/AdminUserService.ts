@@ -6,5 +6,5 @@ export abstract class AdminUserService {
 
     abstract login(req: LoginReq): Promise<LoginResp>;
 
-    abstract getProfiles(userId: bigint): Promise<ProfilesResp>
+    abstract getProfiles(userId: string): Promise<ProfilesResp>
 }

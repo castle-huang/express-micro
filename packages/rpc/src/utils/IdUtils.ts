@@ -27,4 +27,8 @@ export class SnowflakeUtil {
         const idBuffer = this.getInstance().next();
         return BigInt(biguint(idBuffer, 'dec'));
     }
+
+    public static generateBigString(): string {
+        return this.generateBigInt().toString();
+    }
 }

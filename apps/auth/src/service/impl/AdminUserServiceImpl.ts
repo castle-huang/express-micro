@@ -10,7 +10,7 @@ export class AdminUserServiceImpl implements AdminUserService {
 
     constructor(@Inject() private merchantUserRepository: MerchantUserRepository) {
     }
-    async getProfiles(userId: bigint): Promise<ProfilesResp> {
+    async getProfiles(userId: string): Promise<ProfilesResp> {
         const merchantUser = await this.merchantUserRepository.findById(userId);
         return {
             avatarUrl: merchantUser?.avatarUrl || '',
@@ -51,7 +51,7 @@ export class AdminUserServiceImpl implements AdminUserService {
         if (merchantUser) {
             throw new CommonError(AuthErrorEnum.USER_EXISTS, 'User already exists');
         }
-        const userId = SnowflakeUtil.generateBigInt();
+        const userId = SnowflakeUtil.generateBigString();
         const { data, error } = await supabase
             .from('merchant_user')
             .insert([

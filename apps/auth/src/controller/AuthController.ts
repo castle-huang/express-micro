@@ -28,11 +28,4 @@ export class AuthController {
         const result = await this.adminUserService.login(req);
         return ResponseUtil.success( result);
     }
-
-    @GET('/profiles')
-    @PermitAll()
-    async getProfiles(userId: bigint) {
-        const result = await this.adminUserService.getProfiles(userId);
-        return ResponseUtil.success( result);
-    }
 }

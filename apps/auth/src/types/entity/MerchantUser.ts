@@ -2,7 +2,7 @@ export interface MerchantUser {
     /**
      * 主键ID
      */
-    id?: bigint;
+    id?: string;
 
     /**
      * avatar URL

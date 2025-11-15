@@ -11,3 +11,4 @@ export * from './utils/BaseResponse';
 export * from './utils/ResponseUtil';
 export * from './utils/CommonError';
 export * from './utils/CommonErrorEnum';
+export * from './utils/IdUtils';

@@ -106,6 +106,41 @@ export class HttpTransport {
 
         // Build controller routes
         this.buildControllerRoutes();
+        // 全局异常捕获中间件
+        this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+            console.error('全局异常捕获:', {
+                message: error.message,
+                stack: error.stack,
+                path: req.path,
+                method: req.method,
+                ip: req.ip,
+                timestamp: new Date().toISOString()
+            });
+
+            // 根据错误类型返回适当的HTTP状态码
+            let statusCode = 500;
+            let message = '内部服务器错误';
+
+            if (error.name === 'ValidationError') {
+                statusCode = 400;
+                message = '请求数据验证失败';
+            } else if (error.name === 'UnauthorizedError') {
+                statusCode = 401;
+                message = '未授权访问';
+            } else if (error.name === 'NotFoundError') {
+                statusCode = 404;
+                message = '资源未找到';
+            }
+
+            res.status(statusCode).json({
+                success: false,
+                message: message,
+                ...(process.env.NODE_ENV === 'development' && {
+                    error: error.message,
+                    stack: error.stack
+                })
+            });
+        });
     }
 
     /**

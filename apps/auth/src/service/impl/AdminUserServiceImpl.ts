@@ -1,11 +1,9 @@
 import {AdminUserService} from '../AdminUserService';
 import {supabase} from "../../config/Supabase";
-import {AuthenticatedRequest, CommonError, Inject, JWTUtils, Service} from "@sojo-micro/rpc";
+import {AuthenticatedRequest, CommonError, Inject, JWTUtils, Service, SnowflakeUtil} from "@sojo-micro/rpc";
 import {MerchantUserRepository} from "../../repository/MerchantUserRepository";
 import {LoginReq, LoginResp, ProfilesResp, SignUpReq, SignUpResp} from "../../types/AuthType";
 import {AuthErrorEnum} from "../../types/AuthErrorEnum";
-import SnowflakeUtil from "@sojo-micro/rpc/dist/utils/IdUtils";
-
 
 @Service ()
 export class AdminUserServiceImpl implements AdminUserService {

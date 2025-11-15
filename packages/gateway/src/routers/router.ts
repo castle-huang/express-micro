@@ -138,7 +138,7 @@ export class RouterManager {
     private selectServiceInstance(serviceName: string): string {
         let discoveredServices = this.httpTransport.getDiscoveredServices();
         console.log("selectServiceInstance==>" + serviceName)
-        return "http://localhost:3001/api/analytics";
+        return this.serviceMap[serviceName] + "/api/" + serviceName;
     }
 
     /**

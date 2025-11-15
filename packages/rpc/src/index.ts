@@ -6,3 +6,8 @@ export * from './scanner/ServiceScanner';
 export * from './transport/HttpTransport';
 export * from './client/ServiceProxy';
 export * from './client/ServiceRegistry';
+export * from './utils/JWTUtils';
+export * from './utils/BaseResponse';
+export * from './utils/ResponseUtil';
+export * from './utils/CommonError';
+export * from './utils/CommonErrorEnum';

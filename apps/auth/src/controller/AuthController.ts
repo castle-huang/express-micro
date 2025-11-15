@@ -1,8 +1,6 @@
-import {Body, Controller, GET, Inject, POST} from "@sojo-micro/rpc";
+import {Body, Controller, GET, Inject, POST, ResponseUtil} from "@sojo-micro/rpc";
 import {AdminUserService} from "../service/AdminUserService";
 import {LoginReq, SignUpReq, SignUpResp} from "../types/AuthModel";
-import {ResponseUtil} from "../utils/ResponseUtil";
-
 
 @Controller({basePath: '/api/auth/user'})
 export class AuthController {

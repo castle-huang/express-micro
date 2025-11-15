@@ -6,6 +6,9 @@ import {ServiceRegistry} from '../client/ServiceRegistry';
 import {ServiceProxy} from "../client/ServiceProxy";
 import {container} from "../di/Container";
 import {AuthenticatedRequest, JWTUtils, UserPayload} from "../utils/JWTUtils";
+import {ResponseUtil} from "../utils/ResponseUtil";
+import {CommonError} from "../utils/CommonError";
+import {CommonErrorEnum, IErrorItem} from "../utils/CommonErrorEnum";
 
 /**
  * Interface for route information
@@ -110,38 +113,25 @@ export class HttpTransport {
         this.buildControllerRoutes();
         // 全局异常捕获中间件
         this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-            console.error('全局异常捕获:', {
-                message: error.message,
-                stack: error.stack,
-                path: req.path,
-                method: req.method,
-                ip: req.ip,
-                timestamp: new Date().toISOString()
-            });
-
-            // 根据错误类型返回适当的HTTP状态码
-            let statusCode = 500;
-            let message = '内部服务器错误';
-
-            if (error.name === 'ValidationError') {
-                statusCode = 400;
-                message = '请求数据验证失败';
-            } else if (error.name === 'UnauthorizedError') {
-                statusCode = 401;
-                message = '未授权访问';
-            } else if (error.name === 'NotFoundError') {
-                statusCode = 404;
-                message = '资源未找到';
+            if (process.env.NODE_ENV === 'development') {
+                console.error('Global Error catch:', {
+                    message: error.message,
+                    stack: error.stack,
+                    path: req.path,
+                    method: req.method,
+                    ip: req.ip,
+                    timestamp: new Date().toISOString()
+                });
             }
-
-            res.status(statusCode).json({
-                success: false,
-                message: message,
-                ...(process.env.NODE_ENV === 'development' && {
-                    error: error.message,
-                    stack: error.stack
-                })
-            });
+            if (error instanceof CommonError) {
+                if (typeof error.code === 'string') {
+                    res.json(ResponseUtil.commonError(error.code, error.message));
+                } else {
+                    res.json(ResponseUtil.commonError(error.code.code, error.code.msg));
+                }
+            } else {
+                res.json(ResponseUtil.error(CommonErrorEnum.SYSTEM_EXCEPTION));
+            }
         });
     }
 
@@ -199,17 +189,17 @@ export class HttpTransport {
             if (!(container.checkRoutesPermitAll(routesPermitAllToken) || container.checkRoutesPermitAll(routesPermitAllToken + "*" + req.method))) {
                 const authorization = req.headers['authorization'];
                 if (!authorization) {
-                    return next(new Error('Authorization header is required'));
+                    return next(new CommonError(CommonErrorEnum.MISSING_AUTHORIZATION_HEADER));
                 }
                 const token: string = authorization?.split(" ")[1] || ""
                 if (!token) {
-                    return next(new Error('Token is required'));
+                    return next(new CommonError(CommonErrorEnum.MISSING_TOKEN));
                 }
                 try {
                     const userPayload: AuthenticatedRequest = JWTUtils.verifyToken(token);
                     (req as AuthenticatedRequest).user = userPayload.user;
                 } catch (error) {
-                    return next(new Error('Invalid token'));
+                    return next(new CommonError(CommonErrorEnum.INVALID_TOKEN));
                 }
             }
             try {

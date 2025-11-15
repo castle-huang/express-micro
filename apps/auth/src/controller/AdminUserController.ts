@@ -1,4 +1,4 @@
-import {AuthenticatedRequest, Controller, GET, Inject, Param, Req, ResponseUtil} from "@sojo-micro/rpc";
+import {AuthenticatedRequest, Controller, Form, GET, Inject, Param, Query, Req, ResponseUtil} from "@sojo-micro/rpc";
 import {AdminUserService} from "../service/AdminUserService";
 
 
@@ -7,9 +7,9 @@ export class AdminUserController {
     constructor(@Inject() private adminUserService: AdminUserService) {
     }
 
-    @GET('/profiles/:userId')
-    async getProfiles(@Req() req: AuthenticatedRequest) {
-        const result = await this.adminUserService.getProfiles(req.user.id);
+    @GET('/profiles')
+    async getProfiles(@Req() authReq: AuthenticatedRequest) {
+        const result = await this.adminUserService.getProfiles(authReq.user.id);
         return ResponseUtil.success(result);
     }
 }

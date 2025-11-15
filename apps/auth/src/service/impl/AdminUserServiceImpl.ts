@@ -49,7 +49,7 @@ export class AdminUserServiceImpl implements AdminUserService {
         this.validateSignUpRequest(req.contactName, req.email, req.password);
         const merchantUser = await this.merchantUserRepository.findByEmail(req.email);
         if (merchantUser) {
-            throw new CommonError(AuthErrorEnum.USER_EXISTS, 'User already exists');
+            throw new CommonError(AuthErrorEnum.USER_EXISTS);
         }
         const userId = SnowflakeUtil.generateBigString();
         const { data, error } = await supabase

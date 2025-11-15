@@ -23,8 +23,6 @@ export interface DiscoveredService {
 
 export class RegistryClient {
     private client: AxiosInstance;
-    private serviceId: string | null = null;
-    private heartbeatInterval: NodeJS.Timeout | null = null;
 
     constructor(registryUrl: string) {
         this.client = axios.create({
@@ -42,14 +40,23 @@ export class RegistryClient {
     async registerService(serviceInfo: RegistryServiceInfo): Promise<boolean> {
         try {
             const response = await this.client.post('/api/registry/register', serviceInfo);
-            if (response.data.success) {
-                // 保存服务ID用于心跳
-                this.serviceId = `${serviceInfo.name}:${serviceInfo.version}:${serviceInfo.address}:${serviceInfo.port}`;
-                return true;
-            }
-            return false;
+            return !!response.data.success;
         } catch (error) {
             console.error('Failed to register service:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 发送心跳包
+     */
+    async sendHeartbeat(serviceInfo: RegistryServiceInfo): Promise<boolean> {
+        try {
+            const serviceId = `${serviceInfo.name}:${serviceInfo.version}:${serviceInfo.address}:${serviceInfo.port}`;
+            const response = await this.client.post(`/api/registry/heartbeat/${encodeURIComponent(serviceId)}`);
+            return !!response.data.success;
+        } catch (error) {
+            console.error('Failed to send heartbeat:', error);
             return false;
         }
     }
@@ -67,7 +74,6 @@ export class RegistryClient {
                 // 发现所有服务
                 response = await this.client.get('/api/registry/services');
             }
-
             if (response.data.success) {
                 return response.data.data;
             }
@@ -75,46 +81,6 @@ export class RegistryClient {
         } catch (error) {
             console.error('Failed to discover services:', error);
             return [];
-        }
-    }
-
-    /**
-     * 开始发送心跳包
-     */
-    startHeartbeat(interval: number = 10000): void {
-        if (!this.serviceId) {
-            console.warn('Service not registered, cannot start heartbeat');
-            return;
-        }
-
-        // 立即发送一次心跳
-        this.sendHeartbeat();
-
-        // 设置定期心跳
-        this.heartbeatInterval = setInterval(() => {
-            this.sendHeartbeat();
-        }, interval);
-    }
-
-    /**
-     * 发送心跳包
-     */
-    private async sendHeartbeat(): Promise<void> {
-        if (!this.serviceId) return;
-        try {
-            await this.client.post(`/api/registry/heartbeat/${encodeURIComponent(this.serviceId)}`);
-        } catch (error) {
-            console.error('Failed to send heartbeat:', error);
-        }
-    }
-
-    /**
-     * 停止心跳
-     */
-    stopHeartbeat(): void {
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-            this.heartbeatInterval = null;
         }
     }
 }

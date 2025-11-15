@@ -130,8 +130,30 @@ export class ServiceRegistry {
                     this.registerServiceFromRegistry(serviceName, methods, instances);
                 }
             }
-
             console.log(`Registered ${discoveredServices.size} services from registry center`);
+        } catch (error) {
+            console.error('Service discovery from registry failed:', error);
+        }
+    }
+
+    /**
+     * 从注册中心发现更新服务并创建代理对象
+     * @param discoveredServices - 从注册中心发现的服务列表
+     * @returns Promise that resolves when all services are registered
+     */
+    async discoverAndUpdateRegisterFromRegistry(discoveredServices: Map<string, DiscoveredService[]>, oldDiscoveredServices: Map<string, DiscoveredService[]>): Promise<void> {
+        try {
+            // 遍历所有发现的服务
+            for (const [serviceName, instances] of discoveredServices) {
+                if (instances.length > 0) {
+                    // 从第一个实例中获取方法信息（假设同一服务的所有实例方法相同）
+                    const firstInstance = instances[0];
+                    const methods = firstInstance.metadata?.methods || [];
+                    const oldInstances = oldDiscoveredServices.get(serviceName)!;
+                    // 为每个服务实例创建代理（这里只创建一个，实际可根据负载均衡策略选择）
+                    this.updateServiceFromRegistry(serviceName, methods, instances, oldInstances);
+                }
+            }
         } catch (error) {
             console.error('Service discovery from registry failed:', error);
         }
@@ -155,6 +177,109 @@ export class ServiceRegistry {
         this.serviceDefinitions.set(serviceName, {name: serviceName, methods});
         container.registerInstance(serviceName, proxy);
         console.log(`Registered service proxy for ${serviceName} with ${instances.length} instances`);
+    }
+
+    private updateServiceFromRegistry(
+        serviceName: string,
+        methods: string[],
+        instances: DiscoveredService[],
+        oldInstances: DiscoveredService[],
+    ): boolean {
+        const oldDefinition = this.serviceDefinitions.get(serviceName);
+        // 检查是否有实际变化
+        if (this.hasServiceChanged(oldDefinition, oldInstances, methods, instances)) {
+            const proxy = this.createLoadBalancedProxy(serviceName, instances);
+            this.proxies.set(serviceName, proxy);
+            this.serviceDefinitions.set(serviceName, {name: serviceName, methods});
+            container.registerInstance(serviceName, proxy);
+            console.log(`Updated service proxy for ${serviceName}: ${instances.length} instances, ${methods.length} methods`);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取当前服务的实例列表
+     */
+    private getCurrentServiceInstances(serviceName: string): DiscoveredService[] {
+        const proxy = this.proxies.get(serviceName);
+        if (!proxy || !proxy.getInstances) {
+            return [];
+        }
+        try {
+            return proxy.getInstances() || [];
+        } catch (error) {
+            console.warn(`Failed to get current instances for ${serviceName}:`, error);
+            return [];
+        }
+    }
+
+    /**
+     * 检查服务配置是否有变化
+     */
+    private hasServiceChanged(
+        existingDefinition: { name: string; methods: string[] } | undefined,
+        existingInstances: DiscoveredService[],
+        newMethods: string[],
+        newInstances: DiscoveredService[]
+    ): boolean {
+        // 1. 检查是否是全新的服务
+        if (!existingDefinition) {
+            return true;
+        }
+        // 2. 检查方法列表是否有变化
+        if (this.haveMethodsChanged(existingDefinition.methods, newMethods)) {
+            console.log(`Methods changed for ${existingDefinition.name}`);
+            return true;
+        }
+        // 3. 检查实例列表是否有变化
+        if (this.haveInstancesChanged(existingInstances, newInstances)) {
+            console.log(`Instances changed for ${existingDefinition.name}`);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 检查方法列表是否有变化
+     */
+    private haveMethodsChanged(oldMethods: string[], newMethods: string[]): boolean {
+        if (oldMethods.length !== newMethods.length) {
+            return true;
+        }
+        // 排序后比较，确保顺序不影响比较结果
+        const sortedOld = [...oldMethods].sort();
+        const sortedNew = [...newMethods].sort();
+        return !sortedOld.every((method, index) => method === sortedNew[index]);
+    }
+
+    /**
+     * 检查实例列表是否有变化
+     */
+    private haveInstancesChanged(oldInstances: DiscoveredService[], newInstances: DiscoveredService[]): boolean {
+        if (oldInstances.length !== newInstances.length) {
+            return true;
+        }
+        // 基于实例ID进行比较（假设实例有唯一标识符）
+        const oldInstanceIds = new Set(oldInstances.map(instance => this.getInstanceId(instance)));
+        const newInstanceIds = new Set(newInstances.map(instance => this.getInstanceId(instance)));
+        if (oldInstanceIds.size !== newInstanceIds.size) {
+            return true;
+        }
+        // 检查所有实例ID是否相同
+        for (const id of newInstanceIds) {
+            if (!oldInstanceIds.has(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取实例的唯一标识符
+     */
+    private getInstanceId(instance: DiscoveredService): string {
+        return instance.id;
     }
 
     /**

@@ -29,8 +29,9 @@ export class RegistryService {
             lastHeartbeat: new Date(),
             status: 'UP'
         };
-
-        this.services.set(serviceId, serviceInstance);
+        if (!this.services.has(serviceId)) {
+            this.services.set(serviceId, serviceInstance);
+        }
         console.log(`Service registered: ${serviceId}`);
 
         return serviceInstance;

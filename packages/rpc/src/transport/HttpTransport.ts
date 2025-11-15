@@ -1,5 +1,5 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import {ServiceScanner, importAllServices} from '../scanner/ServiceScanner';
+import {ServiceScanner, importAllServices, ScannedService} from '../scanner/ServiceScanner';
 import {RpcRequest, RpcResponse} from '../types/Types';
 import {RegistryClient, RegistryServiceInfo, DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
@@ -37,6 +37,10 @@ export class HttpTransport {
     private isRegistered: boolean = false;
     private discoveredServices: Map<string, DiscoveredService[]> = new Map();
     private serviceRegistry: ServiceRegistry | null = null;
+    private clientScannedServices: ScannedService[] = [];
+    private heartbeatInterval: NodeJS.Timeout | null = null;
+    private discoverServicesHeartbeatInterval: NodeJS.Timeout | null = null;
+    private startRegisterInterval: NodeJS.Timeout | null = null;
 
     constructor(app: Application) {
         this.app = app;
@@ -405,10 +409,26 @@ export class HttpTransport {
             console.log(`RPC endpoint: http://localhost:${port}/rpc`);
             console.log(`Health endpoint: http://localhost:${port}/health`);
             // 启动心跳（如果已注册）
-            if (this.isRegistered && this.registryClient) {
-                this.registryClient.startHeartbeat();
+            if (this.isRegistered && this.registryClient && this.clientScannedServices.length > 0) {
+                this.startHeartbeat();
+                this.startDiscoverServicesHeartbeat();
+                this.startRegister();
             }
         });
+    }
+
+    private transformServiceInfo(service: ScannedService): RegistryServiceInfo {
+        return {
+            name: service.name,
+            version: process.env.MODULE_VERSION || '1.0.0',
+            address: process.env.MODULE_ADDRESS || 'localhost',
+            port: parseInt(process.env.MODULE_PORT || '3000'),
+            protocol: process.env.MODULE_PROTOCOL || 'http',
+            metadata: {
+                methods: service.methods.map(m => m.name),
+                type: service.type
+            }
+        }
     }
 
     /**
@@ -418,34 +438,73 @@ export class HttpTransport {
         try {
             // 获取扫描到的RPC服务
             const rpcServices = this.scanner.getRpcServices();
-            if (rpcServices.length === 0) {
-                console.log('No RPC services found to register');
-                return;
-            }
-            // 注册每个RPC服务
-            for (const service of rpcServices) {
-                const serviceInfo: RegistryServiceInfo = {
-                    name: service.name,
-                    version: process.env.MODULE_VERSION || '1.0.0',
-                    address: process.env.MODULE_ADDRESS || 'localhost',
-                    port: parseInt(process.env.MODULE_PORT || '3000'),
-                    protocol: process.env.MODULE_PROTOCOL || 'http',
-                    metadata: {
-                        methods: service.methods.map(m => m.name),
-                        type: 'rpc'
-                    }
-                };
-
+            const controllers = this.scanner.getControllers();
+            this.clientScannedServices = [...rpcServices, ...controllers]
+            for (const service of this.clientScannedServices) {
+                const serviceInfo: RegistryServiceInfo = this.transformServiceInfo(service)
                 const registered = await this.registryClient!.registerService(serviceInfo);
                 if (registered) {
                     console.log(`Service ${service.name} registered successfully with registry center`);
-                    this.isRegistered = true;
                 } else {
                     console.error(`Failed to register service ${service.name} with registry center`);
                 }
             }
+            if (this.clientScannedServices.length > 0) {
+                this.isRegistered = true;
+            }
         } catch (error) {
             console.error('Error registering services with registry center:', error);
+        }
+    }
+
+    /**
+     * 开始注册
+     */
+    startRegister(interval: number = 60000): void {
+        // 设置定期注册兜底
+        this.startRegisterInterval = setInterval(() => {
+            this.registerWithRegistry().then(r => console.log('Heartbeat Register successful'));
+        }, interval);
+    }
+
+    /**
+     * 开始发送心跳包
+     */
+    startHeartbeat(interval: number = 10000): void {
+        // 立即发送一次心跳
+        this.sendHeartbeat().then(r => console.log('Heartbeat sent start'));
+        // 设置定期心跳
+        this.heartbeatInterval = setInterval(() => {
+            this.sendHeartbeat().then(r => console.log('Heartbeat sent successful'));
+        }, interval);
+    }
+
+    /**
+     * 发送服务发现心跳包
+     */
+    startDiscoverServicesHeartbeat(interval: number = 30000): void {
+        // 使用箭头函数保持 this 绑定
+        this.discoverServicesHeartbeatInterval = setInterval(async () => {
+            try {
+                await this.sentHeartbeatDiscoverServices();
+                console.log('Discover ServicesHeartbeat sent successfully');
+            } catch (error) {
+                console.error('Discover ServicesHeartbeat failed:', error);
+            }
+        }, interval);
+    }
+
+    /**
+     * 发送心跳包
+     */
+    private async sendHeartbeat(): Promise<void> {
+        for (let service of this.clientScannedServices) {
+            try {
+                let serviceInfo = this.transformServiceInfo(service);
+                await this.registryClient!.sendHeartbeat(serviceInfo);
+            } catch (error) {
+                console.error('Failed to send heartbeat:', error);
+            }
         }
     }
 
@@ -480,6 +539,31 @@ export class HttpTransport {
         } catch (error) {
             console.error('Error discovering services from registry center:', error);
         }
+    }
+
+    private async sentHeartbeatDiscoverServices() {
+        try {
+            if (!this.registryClient || !this.serviceRegistry) {
+                return;
+            }
+            // 发现所有服务
+            const services = await this.registryClient.discoverServices();
+            // 按服务名称分组
+            const groupedServices = new Map<string, DiscoveredService[]>();
+            services.forEach(service => {
+                if (!groupedServices.has(service.name)) {
+                    groupedServices.set(service.name, []);
+                }
+                groupedServices.get(service.name)!.push(service);
+            });
+
+            // 注册发现的服务到 RpcRegistry
+            await this.serviceRegistry!.discoverAndUpdateRegisterFromRegistry(groupedServices, this.discoveredServices);
+            this.discoveredServices = groupedServices;
+        } catch (error) {
+            console.error('Error sentHeartbeatDiscoverServices services from registry center:', error);
+        }
+
     }
 
     /**

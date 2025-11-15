@@ -36,8 +36,9 @@ export function Controller(options?: {
     scope?: ServiceScope
 }): ClassDecorator {
     return (target: any) => {
-        const serviceName = options?.name || target.name;
+        let serviceName = options?.name || target.name;
         const scope = options?.scope || 'singleton';
+        serviceName = process.env.MODULE_NAME + "*" + serviceName;
         container.register(serviceName, target, scope);
         // Add Controller-specific metadata
         const controllerMetadata: ControllerMetadata = {

@@ -2,12 +2,12 @@ export interface MerchantUser {
     /**
      * 主键ID
      */
-    id?: string;
+    id?: bigint;
 
     /**
-     * 矩阵URL
+     * avatar URL
      */
-    matrixUrl?: string;
+    avatarUrl?: string;
 
     /**
      * 邮箱地址

@@ -1,24 +1,26 @@
 import {AdminUserService} from '../AdminUserService';
 import {supabase} from "../../config/Supabase";
-import {CommonError, Inject, Service} from "@sojo-micro/rpc";
-import {AuthErrorEnum} from "../../types/AuthErrorEnum";
-import {LoginReq, LoginResp, ProfilesResp, SignUpReq, SignUpResp} from "../../types/AuthModel";
+import {AuthenticatedRequest, CommonError, Inject, JWTUtils, Service} from "@sojo-micro/rpc";
 import SnowflakeUtil from "../../utils/IdUtils";
-import {MerchantUserDao} from "../../dao/MerchantUserDao";
+import {MerchantUserRepository} from "../../repository/MerchantUserRepository";
+import {LoginReq, LoginResp, ProfilesResp, SignUpReq, SignUpResp} from "../../types/AuthType";
+import {AuthErrorEnum} from "../../types/AuthErrorEnum";
 
-@Service()
+
+@Service ()
 export class AdminUserServiceImpl implements AdminUserService {
 
-    constructor(@Inject() private merchantUserDao: MerchantUserDao) {
+    constructor(@Inject() private merchantUserRepository: MerchantUserRepository) {
     }
-
-    async getProfiles(token: string): Promise<ProfilesResp> {
-        token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IkJlbEh4N2tQWkRyaVNMclkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2F4ZnZsdmJ1anlvc29lbnB6amd0LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJhODQ4NGVlNi1lYmExLTRmYjYtYTNlOC1jYmI5N2IyM2QwMDUiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYzMjE2OTYwLCJpYXQiOjE3NjMxMzA1NjAsImVtYWlsIjoidGVzdDExMjdAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJjb250YWN0TmFtZSI6ImZmIiwiZW1haWwiOiJ0ZXN0MTEyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiJhODQ4NGVlNi1lYmExLTRmYjYtYTNlOC1jYmI5N2IyM2QwMDUifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MzEzMDU2MH1dLCJzZXNzaW9uX2lkIjoiZTc5ZjQyM2ItMDAzZS00YTViLTkwMzItMzhhNWI1ZDZmYzQ3IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.mu_NTYEANjHfXU3AM-Ler9mRqaIOEh9jTyKigPpDgoA";
-        const {data: {user}} = await supabase.auth.getUser(token);
+    async getProfiles(userId: bigint): Promise<ProfilesResp> {
+        const merchantUser = await this.merchantUserRepository.findById(userId);
         return {
-            avatarUrl: user?.user_metadata?.avatar_url || '',
-            fullName: user?.user_metadata?.full_name || '',
-            phone: user?.user_metadata?.phone || '',
+            avatarUrl: merchantUser?.avatarUrl || '',
+            fullName: merchantUser?.fullName || '',
+            phoneCode: merchantUser?.phoneCode || '',
+            phone: merchantUser?.phone || '',
+            fullPhone: merchantUser?.fullPhone || '',
+            email: merchantUser?.email || '',
         };
     }
 
@@ -26,41 +28,61 @@ export class AdminUserServiceImpl implements AdminUserService {
      * Login
      */
     async login(req: LoginReq): Promise<LoginResp> {
-        const merchantUser = await this.merchantUserDao.findByEmail(req.email);
+        this.validateLoginRequest(req.email, req.password);
+        const merchantUser = await this.merchantUserRepository.findByEmail(req.email);
         if (!merchantUser) {
             throw new CommonError(AuthErrorEnum.USER_NOT_EXISTS)
         }
+        const payload: AuthenticatedRequest = {
+            user: {
+                id: merchantUser.id,
+            }
+        } as AuthenticatedRequest;
+        const token = JWTUtils.generateToken(payload);
         return {
-            token: 'fff',
+            token: token,
         }
     }
 
     /**
      * Register
      */
-    async register(request: SignUpReq): Promise<SignUpResp> {
-        const {contactName, email, password} = request;
-        this.validateSignUpRequest(contactName, email, password);
-        let {data: merchant_user} = await supabase
-            .from('merchant_user')
-            .select('*').eq('email', email).single()
-        if (merchant_user) {
-            throw new CommonError(AuthErrorEnum.USER_EXISTS);
+    async register(req: SignUpReq): Promise<SignUpResp> {
+        this.validateSignUpRequest(req.contactName, req.email, req.password);
+        const merchantUser = await this.merchantUserRepository.findByEmail(req.email);
+        if (merchantUser) {
+            throw new CommonError(AuthErrorEnum.USER_EXISTS, 'User already exists');
         }
-        const {data, error} = await supabase
+        const userId = SnowflakeUtil.generateBigInt();
+        const { data, error } = await supabase
             .from('merchant_user')
             .insert([
                 {
-                    id: SnowflakeUtil.generateId(),
-                    full_name: contactName,
-                    email: email,
-                    password: password,
+                    id: userId,
+                    full_name: req.contactName,
+                    email: req.email,
+                    password: req.password,
                 },
             ]).select()
-
+        const payload: AuthenticatedRequest = {
+            user: {
+                id: userId,
+            }
+        } as AuthenticatedRequest;
+        const token = JWTUtils.generateToken(payload);
         return {
-            token: '1234'
+            token: token
         };
+    }
+
+    private validateLoginRequest(email: string, password: string) {
+        if (!email || !password) {
+            throw new CommonError(AuthErrorEnum.VALIDATION_FAILED, 'All fields are required: contactName, email, password');
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            throw new CommonError(AuthErrorEnum.VALIDATION_FAILED, 'Invalid email format');
+        }
     }
 
     private validateSignUpRequest(contactName: string, email: string, password: string) {

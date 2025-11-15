@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import {Request} from 'express';
 
 export interface UserPayload {
-    id: number;
+    id: bigint;
     iat?: number; // issued at
     exp?: number; // expiration time
 }

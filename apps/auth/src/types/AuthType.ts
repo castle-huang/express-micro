@@ -36,5 +36,8 @@ export interface LoginResp {
 export interface ProfilesResp {
     avatarUrl: string;
     fullName: string;
+    phoneCode: string;
     phone: string;
+    fullPhone: string;
+    email: string;
 }

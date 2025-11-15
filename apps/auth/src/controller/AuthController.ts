@@ -1,8 +1,9 @@
-import {Body, Controller, GET, Inject, POST, ResponseUtil} from "@sojo-micro/rpc";
+import {Body, Controller, GET, Inject, PermitAll, POST, ResponseUtil} from "@sojo-micro/rpc";
 import {AdminUserService} from "../service/AdminUserService";
-import {LoginReq, SignUpReq, SignUpResp} from "../types/AuthModel";
+import {LoginReq, SignUpReq} from "../types/AuthType";
 
-@Controller({basePath: '/api/auth/user'})
+
+@Controller({basePath: '/api/admin/auth'})
 export class AuthController {
     constructor(@Inject() private adminUserService: AdminUserService) {
     }
@@ -10,25 +11,28 @@ export class AuthController {
     async getUser() {
         return {
             id: 1,
-            name: 'John Doe'
+            name: 'hello'
         };
     }
 
     @POST('/register')
+    @PermitAll()
     async register(@Body() req: SignUpReq) {
         const result = await this.adminUserService.register(req);
         return ResponseUtil.success( result);
     }
 
     @POST('/login')
+    @PermitAll()
     async login(@Body() req: LoginReq) {
         const result = await this.adminUserService.login(req);
         return ResponseUtil.success( result);
     }
 
     @GET('/profiles')
-    async getProfiles(token: string) {
-        const result = await this.adminUserService.getProfiles(token);
+    @PermitAll()
+    async getProfiles(userId: bigint) {
+        const result = await this.adminUserService.getProfiles(userId);
         return ResponseUtil.success( result);
     }
 }

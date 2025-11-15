@@ -8,9 +8,11 @@ export enum ParameterType {
     RESPONSE = 'response',
     QUERY = 'query',
     BODY = 'body',
+    FORM = 'form',
     PARAM = 'param',
     HEADERS = 'headers',
     HEADER = 'header'
+
 }
 
 /**
@@ -87,6 +89,23 @@ export function Body(): ParameterDecorator {
         const paramMetadata: HttpParameterMetadata = {
             index: parameterIndex,
             type: ParameterType.BODY
+        };
+
+        const existingParameters = Reflect.getMetadata('controller:params', target.constructor, propertyKey as string) || [];
+        existingParameters.push(paramMetadata);
+        Reflect.defineMetadata('controller:params', existingParameters, target.constructor, propertyKey as string);
+    };
+}
+
+/**
+ * Decorator for injecting the request body
+ * @returns Parameter decorator function
+ */
+export function Form(): ParameterDecorator {
+    return (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) => {
+        const paramMetadata: HttpParameterMetadata = {
+            index: parameterIndex,
+            type: ParameterType.FORM
         };
 
         const existingParameters = Reflect.getMetadata('controller:params', target.constructor, propertyKey as string) || [];

@@ -9,6 +9,7 @@ import {AuthenticatedRequest, JWTUtils, UserPayload} from "../utils/JWTUtils";
 import {ResponseUtil} from "../utils/ResponseUtil";
 import {CommonError} from "../utils/CommonError";
 import {CommonErrorEnum, IErrorItem} from "../utils/CommonErrorEnum";
+import multer from 'multer';
 
 /**
  * Interface for route information
@@ -52,9 +53,9 @@ export class HttpTransport {
     private setupMiddlewares(): void {
         this.app.use(express.json({limit: '10mb'}));
         this.app.use(express.urlencoded({extended: true}));
-
+        const upload = multer();
         // Request logging
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
+        this.app.use(upload.none(), (req: Request, res: Response, next: NextFunction) => {
             console.log(`${req.method} ${req.path}`, {
                 ip: req.ip,
                 userAgent: req.get('User-Agent')
@@ -205,7 +206,6 @@ export class HttpTransport {
             try {
                 // Get method parameter metadata
                 const paramMetadata = Reflect.getMetadata('controller:params', controller.instance.constructor, methodName) || [];
-
                 // Sort parameters by index
                 paramMetadata.sort((a: any, b: any) => a.index - b.index);
                 // Prepare parameter values
@@ -228,6 +228,9 @@ export class HttpTransport {
                         case 'body':
                             args[param.index] = req.body;
                             break;
+                        case 'form':
+                            args[param.index] = req.body;
+                            break
                         case 'param':
                             if (param.name) {
                                 args[param.index] = req.params[param.name];

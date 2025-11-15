@@ -107,6 +107,23 @@ export function Component(options?: {
  * @param path - Route path
  * @returns Method decorator function
  */
+export function PermitAll(method?: string): MethodDecorator {
+    return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+        let token = target.constructor.name + "*" + propertyKey.toString();
+        if (method) {
+            token += "*" + method;
+        }
+        container.registerPermitAll(token);
+        return descriptor;
+    };
+}
+
+/**
+ * Generic HTTP method decorator for defining route handlers
+ * @param method - HTTP method (GET, POST, PUT, etc.)
+ * @param path - Route path
+ * @returns Method decorator function
+ */
 export function HttpMethod(method: string, path: string): MethodDecorator {
     return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
         const routeMetadata: RouteMethodMetadata = {

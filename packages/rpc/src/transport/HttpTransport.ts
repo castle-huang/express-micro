@@ -4,6 +4,8 @@ import {RpcRequest, RpcResponse} from '../types/Types';
 import {RegistryClient, RegistryServiceInfo, DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
 import {ServiceProxy} from "../client/ServiceProxy";
+import {container} from "../di/Container";
+import {AuthenticatedRequest, JWTUtils, UserPayload} from "../utils/JWTUtils";
 
 /**
  * Interface for route information
@@ -193,6 +195,23 @@ export class HttpTransport {
      */
     private createParameterBoundHandler(controller: any, methodName: string): express.RequestHandler {
         return async (req: Request, res: Response, next: express.NextFunction) => {
+            let routesPermitAllToken = controller.name + "*" + methodName;
+            if (!(container.checkRoutesPermitAll(routesPermitAllToken) || container.checkRoutesPermitAll(routesPermitAllToken + "*" + req.method))) {
+                const authorization = req.headers['authorization'];
+                if (!authorization) {
+                    return next(new Error('Authorization header is required'));
+                }
+                const token: string = authorization?.split(" ")[1] || ""
+                if (!token) {
+                    return next(new Error('Token is required'));
+                }
+                try {
+                    const userPayload: AuthenticatedRequest = JWTUtils.verifyToken(token);
+                    (req as AuthenticatedRequest).user = userPayload.user;
+                } catch (error) {
+                    return next(new Error('Invalid token'));
+                }
+            }
             try {
                 // Get method parameter metadata
                 const paramMetadata = Reflect.getMetadata('controller:params', controller.instance.constructor, methodName) || [];

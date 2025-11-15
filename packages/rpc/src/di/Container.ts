@@ -29,6 +29,7 @@ export class DIContainer {
     private instances: Map<any, any> = new Map();
     private requestScopes: Map<string, Map<any, any>> = new Map();
     private allClassRelationMap: Map<string, any> = new Map();
+    private routesPermitAllMap: Map<string, any> = new Map();
 
     /**
      * Registers a service with the container
@@ -188,6 +189,17 @@ export class DIContainer {
             throw new Error(`Class ${target.name} is already registered`);
         }
         return this.allClassRelationMap.set(target.name, target);
+    }
+
+    registerPermitAll(token: string) {
+        if (this.allClassRelationMap.has(token)) {
+            throw new Error(`routesPermit ${token} is already registered`);
+        }
+        this.routesPermitAllMap.set(token, true);
+    }
+
+    checkRoutesPermitAll(token: string) {
+        return this.routesPermitAllMap.get(token);
     }
 }
 

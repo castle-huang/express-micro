@@ -9,7 +9,7 @@ dotenv.config();
 const app = express()
 const server = new HttpTransport(app);
 
-async function importAllServices() {
+async function importAllServices(dir: string) {
     try {
         const serviceDir = path.join(__dirname, 'src');
         const files = fs.readdirSync(serviceDir);
@@ -26,7 +26,7 @@ async function importAllServices() {
 }
 
 async function startServer() {
-    await importAllServices()
+    await importAllServices(__dirname)
     console.log("__dirname==>" + __dirname)
     await server.scanServices(["src", "apps/analytics/src"])
     const port = parseInt(process.env.PORT || '3000');

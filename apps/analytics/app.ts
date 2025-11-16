@@ -13,12 +13,12 @@ const server = new HttpTransport(app);
 async function importAllServices() {
     try {
         const serviceDir = path.join(__dirname, 'src');
-        const files = fs.readdirSync(serviceDir);
-        for (const file of files) {
-            if (file.endsWith('.ts') || file.endsWith('.js')) {
-                // await import(path.join(serviceDir, file));
-            }
-        }
+        // const files = fs.readdirSync(serviceDir);
+        // for (const file of files) {
+        //     if (file.endsWith('.ts') || file.endsWith('.js')) {
+        //         // await import(path.join(serviceDir, file));
+        //     }
+        // }
     } catch (error) {
     }
 }

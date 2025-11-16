@@ -22,9 +22,9 @@ export interface ScannedService {
  * - Imported modules typically contain service classes marked with decorators
  */
 
-export async function importAllServices(scanDir: string) {
+export async function importAllServices() {
     try {
-        const serviceDir = path.join(scanDir, './');
+        const serviceDir = path.join(process.cwd(), './');
         const files = fs.readdirSync(serviceDir);
 
         for (const file of files) {

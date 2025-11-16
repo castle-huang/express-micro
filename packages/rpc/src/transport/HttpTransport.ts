@@ -387,6 +387,7 @@ export class HttpTransport {
      * @returns Promise that resolves when server starts
      */
     async scanServices(directories: string[] = ["src"]): Promise<void> {
+        await importAllServices();
         if (this.registryClient) {
             await this.discoverServicesFromRegistry();
         }

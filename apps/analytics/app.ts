@@ -12,11 +12,10 @@ const server = new HttpTransport(app);
 //vercel 扫包问题
 async function importAllServices() {
     try {
-        const serviceDir = path.join(__dirname, './');
+        const serviceDir = path.join(__dirname, './src');
         const files = fs.readdirSync(serviceDir);
         for (const file of files) {
             if (file.endsWith('.ts') || file.endsWith('.js')) {
-                // await import(path.join(serviceDir, file));
             }
         }
     } catch (error) {

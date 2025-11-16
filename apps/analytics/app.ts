@@ -9,9 +9,17 @@ dotenv.config();
 const app = express()
 const server = new HttpTransport(app);
 
+//vercel 扫包问题
+async function importAllServices() {
+    try {
+        const serviceDir = path.join(__dirname, './');
+        const files = fs.readdirSync(serviceDir);
+    } catch (error) {
+    }
+}
+
 async function startServer() {
-    const serviceDir = path.join(__dirname, './');
-    fs.readdirSync(serviceDir);
+    await importAllServices()
     await server.scanServices(["src", "apps/analytics/src"])
     const port = parseInt(process.env.PORT || '3000');
     await server.start(port);

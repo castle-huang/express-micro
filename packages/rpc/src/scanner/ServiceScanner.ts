@@ -13,31 +13,6 @@ export interface ScannedService {
     type: 'rpc' | 'controller' | 'service' | 'component';
 }
 
-
-/**
- * scan all files services
- * @remarks
- * - Uses synchronous file reading to get directory contents
- * - Uses `await import()` to ensure each module is properly loaded
- * - Imported modules typically contain service classes marked with decorators
- */
-
-export async function importAllServices(dir: string) {
-    try {
-        const serviceDir = path.join(__dirname, 'src');
-        const files = fs.readdirSync(serviceDir);
-
-        for (const file of files) {
-            if (file.endsWith('.ts') || file.endsWith('.js')) {
-                await import(path.join(serviceDir, file));
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-}
-
 /**
  * ServiceScanner scans directories for services, controllers, and components
  * and registers them with the dependency injection container

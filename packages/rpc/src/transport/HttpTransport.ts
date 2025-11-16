@@ -1,14 +1,14 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import {ServiceScanner, importAllServices, ScannedService} from '../scanner/ServiceScanner';
+import {ServiceScanner, ScannedService} from '../scanner/ServiceScanner';
 import {RpcRequest, RpcResponse} from '../types/Types';
 import {RegistryClient, RegistryServiceInfo, DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
 import {ServiceProxy} from "../client/ServiceProxy";
 import {container} from "../di/Container";
-import {AuthenticatedRequest, JWTUtils, UserPayload} from "../utils/JWTUtils";
+import {AuthenticatedRequest, JWTUtils} from "../utils/JWTUtils";
 import {ResponseUtil} from "../utils/ResponseUtil";
 import {CommonError} from "../utils/CommonError";
-import {CommonErrorEnum, IErrorItem} from "../utils/CommonErrorEnum";
+import {CommonErrorEnum} from "../utils/CommonErrorEnum";
 import multer from 'multer';
 
 /**

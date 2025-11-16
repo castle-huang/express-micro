@@ -1,7 +1,7 @@
 {
   "name": "@sojo-micro/registry-center",
   "version": "1.0.0",
-  "description": "Service registry center with heartbeat check",
+  "description": "register-center  with heartbeat check",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",

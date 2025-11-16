@@ -1,11 +1,24 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import {HttpTransport, importAllServices} from "@sojo-micro/rpc";
+import {HttpTransport} from "@sojo-micro/rpc";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
 const app = express()
 const server = new HttpTransport(app);
+
+async function importAllServices(dir: string) {
+    const serviceDir = path.join(dir, 'src');
+    const files = fs.readdirSync(serviceDir);
+
+    for (const file of files) {
+        if (file.endsWith('.ts') || file.endsWith('.js')) {
+            await import(path.join(serviceDir, file));
+        }
+    }
+}
 
 async function startServer() {
     await importAllServices(__dirname)

@@ -23,24 +23,29 @@ export interface ScannedService {
  */
 
 export async function importAllServices() {
-    const serviceDir = path.join(process.cwd(), './');
-    const files = fs.readdirSync(serviceDir);
+    try {
+        const serviceDir = path.join(process.cwd(), './');
+        const files = fs.readdirSync(serviceDir);
 
-    for (const file of files) {
-        if (file.endsWith(".d.ts")) {
-            continue;
-        }
-        if (file.endsWith('.ts') || file.endsWith('.js')) {
-            const module = await import(path.join(serviceDir, file));
+        for (const file of files) {
+            if (file.endsWith(".d.ts")) {
+                continue;
+            }
+            if (file.endsWith('.ts') || file.endsWith('.js')) {
+                const module = await import(path.join(serviceDir, file));
 
-            for (const [exportName, ExportClass] of Object.entries(module)) {
-                if (ExportClass) {
-                    console.log(ExportClass)
+                for (const [exportName, ExportClass] of Object.entries(module)) {
+                    if (ExportClass) {
+                        console.log(ExportClass)
+                    }
                 }
             }
-        }
 
+        }
+    } catch (error) {
+        console.log(error);
     }
+
 }
 
 /**

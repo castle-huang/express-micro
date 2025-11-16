@@ -16,7 +16,7 @@ async function importAllServices() {
         const files = fs.readdirSync(serviceDir);
         for (const file of files) {
             if (file.endsWith('.ts') || file.endsWith('.js')) {
-                await import(path.join(serviceDir, file));
+                // await import(path.join(serviceDir, file));
             }
         }
     } catch (error) {

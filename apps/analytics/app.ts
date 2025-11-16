@@ -8,7 +8,8 @@ const app = express()
 const server = new HttpTransport(app);
 
 async function startServer() {
-    await importAllServices()
+    // await importAllServices(__dirname)
+    console.log("__dirname==>" + __dirname)
     await server.scanServices(["src", "apps/analytics/src"])
     const port = parseInt(process.env.PORT || '3000');
     await server.start(port);

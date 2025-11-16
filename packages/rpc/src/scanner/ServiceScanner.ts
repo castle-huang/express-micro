@@ -22,25 +22,15 @@ export interface ScannedService {
  * - Imported modules typically contain service classes marked with decorators
  */
 
-export async function importAllServices() {
+export async function importAllServices(dir: string) {
     try {
-        const serviceDir = path.join(process.cwd(), './');
+        const serviceDir = path.join(__dirname, 'src');
         const files = fs.readdirSync(serviceDir);
 
         for (const file of files) {
-            if (file.endsWith(".d.ts")) {
-                continue;
-            }
             if (file.endsWith('.ts') || file.endsWith('.js')) {
-                const module = await import(path.join(serviceDir, file));
-
-                for (const [exportName, ExportClass] of Object.entries(module)) {
-                    if (ExportClass) {
-                        console.log(ExportClass)
-                    }
-                }
+                await import(path.join(serviceDir, file));
             }
-
         }
     } catch (error) {
         console.log(error);

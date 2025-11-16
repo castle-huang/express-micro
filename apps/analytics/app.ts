@@ -11,7 +11,7 @@ const server = new HttpTransport(app);
 
 async function importAllServices(dir: string) {
     try {
-        const serviceDir = path.join(dir, 'src');
+        const serviceDir = path.join(dir, './');
         const files = fs.readdirSync(serviceDir);
 
         for (const file of files) {

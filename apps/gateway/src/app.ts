@@ -11,7 +11,7 @@ const server = new HttpTransport(app);
 async function startServer() {
     await server.scanServices()
     const port = parseInt(process.env.PORT || '3000');
-    await new RouterManager(server);
+    new RouterManager(server);
     await server.start(port);
 }
 

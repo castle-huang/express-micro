@@ -1,7 +1,7 @@
-import {Application, Request, Response} from 'express';
+import {Application, NextFunction, Request, Response} from 'express';
 import {createProxyMiddleware, Options, RequestHandler} from 'http-proxy-middleware';
 import {routesConfig} from "../config/routesConfig";
-import {HttpTransport} from "@sojo-micro/rpc";
+import {CommonError, CommonErrorEnum, HttpTransport, ResponseUtil} from "@sojo-micro/rpc";
 import {DiscoveredService} from "@sojo-micro/rpc/dist/client/RegistryClient";
 
 // 类型定义
@@ -11,39 +11,66 @@ interface RouteConfig {
     target: string;
 }
 
-interface ServiceMap {
-    [key: string]: string;
-}
-
 export class RouterManager {
     private routes: RouteConfig[];
     private app: Application;
     private httpTransport: HttpTransport;
     private proxyMiddlewares: Map<string, RequestHandler>;
-    private serviceMap: ServiceMap;
+    private serviceMap: Map<string, string[]>;
+    private currentIndexes: Map<string, number>;
+    private updateServiceInstanceInterval: NodeJS.Timeout | null = null;
 
     constructor(httpTransport: HttpTransport) {
         this.app = httpTransport.getApp();
         this.httpTransport = httpTransport;
         this.routes = routesConfig.routers;
         this.proxyMiddlewares = new Map();
-        this.serviceMap = this.initializeServiceMap();
+        this.currentIndexes = new Map();
+        this.serviceMap = new Map();
+        this.startUpdateServiceInterval();
         this.validateRoutes();
         this.setupRoutes();
     }
 
     /**
-     * 初始化服务映射配置
+     * 更新服务实例任务列表
      */
-    private initializeServiceMap(): ServiceMap {
-        return {
-            analytics: process.env.ANALYTICS_SERVICE_URL || 'http://localhost:3001',
-            auth: process.env.AUTH_SERVICE_URL || 'http://localhost:3002',
-            booking: process.env.BOOKING_SERVICE_URL || 'http://localhost:3003',
-            business: process.env.BUSINESS_SERVICE_URL || 'http://localhost:3004',
-            payments: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3005',
-            report: process.env.REPORT_SERVICE_URL || 'http://localhost:3006'
-        };
+    private updateServiceTask(): void {
+        try {
+
+            for (const route of this.routes) {
+                const serverName = route.name;
+                const targetUrls = new Set<string>();
+                const discoveredServices = this.httpTransport.getDiscoveredServices();
+                for (const [discoverName, serviceInstances] of discoveredServices) {
+                    if (discoverName.split("*")[0] != serverName) {
+                        continue;
+                    }
+                    if (serviceInstances.length == 0) {
+                        continue;
+                    }
+                    for (const serviceInstance of serviceInstances) {
+                        if (serviceInstance.status == "UP" && serviceInstance.metadata?.type == "controller") {
+                            const targetUrl = serviceInstance.protocol + "://" + serviceInstance.address + ":" + serviceInstance.port;
+                            targetUrls.add(targetUrl);
+                        }
+                    }
+                }
+                this.serviceMap.set(serverName, Array.from(targetUrls));
+            }
+        } catch (error) {
+            console.error('Error updating service instances:', error);
+        }
+    }
+
+    /**
+     * 开始更新任务
+     */
+    startUpdateServiceInterval(interval: number = 3000): void {
+        this.updateServiceTask();
+        this.updateServiceInstanceInterval = setInterval(() => {
+            this.updateServiceTask();
+        }, interval);
     }
 
     /**
@@ -62,7 +89,7 @@ export class RouterManager {
             }
             prefixes.add(route.prefix);
 
-            if (!this.serviceMap[route.target]) {
+            if (!this.serviceMap.has(route.target)) {
                 console.warn(`No service URL configured for target: ${route.target}, using default`);
             }
         });
@@ -74,6 +101,27 @@ export class RouterManager {
     private setupRoutes(): void {
         this.routes.forEach(route => {
             this.registerRoute(route);
+        });
+        this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+            if (process.env.NODE_ENV === 'development') {
+                console.error('Global Error catch:', {
+                    message: error.message,
+                    stack: error.stack,
+                    path: req.path,
+                    method: req.method,
+                    ip: req.ip,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            if (error instanceof CommonError) {
+                if (typeof error.code === 'string') {
+                    res.json(ResponseUtil.commonError(error.code, error.message));
+                } else {
+                    res.json(ResponseUtil.commonError(error.code.code, error.code.msg));
+                }
+            } else {
+                res.json(ResponseUtil.error(CommonErrorEnum.SYSTEM_EXCEPTION));
+            }
         });
     }
 
@@ -87,7 +135,6 @@ export class RouterManager {
             const proxyMiddleware = this.createProxyMiddleware(routeConfig);
             this.proxyMiddlewares.set(prefix, proxyMiddleware);
             this.app.use(prefix, proxyMiddleware);
-
             console.log(`✅ Registered route: ${prefix.padEnd(20)} -> ${target.padEnd(12)} (${name})`);
         } catch (error) {
             console.error(`❌ Failed to register route ${prefix}:`, error);
@@ -101,7 +148,6 @@ export class RouterManager {
     private createProxyMiddleware(routeConfig: RouteConfig): RequestHandler {
         console.log("createProxyMiddleware")
         const {prefix, target} = routeConfig;
-        // @ts-ignore
         const options: Options = {
             target: '',
             changeOrigin: true,
@@ -111,8 +157,7 @@ export class RouterManager {
             pathRewrite: {
                 [`^${prefix}`]: '',
             },
-            // @ts-ignore
-            router: (req: Request): string => {
+            router: (req: any): string => {
                 return this.selectServiceInstance(target);
             },
             on: {
@@ -136,19 +181,22 @@ export class RouterManager {
      * 选择服务实例（轮询负载均衡）
      */
     private selectServiceInstance(serviceName: string): string {
-        let discoveredServices = this.httpTransport.getDiscoveredServices();
-        console.log("selectServiceInstance==>" + serviceName)
-        return this.serviceMap[serviceName] + "/api/" + serviceName;
-    }
-
-    /**
-     * 获取目标服务URL
-     */
-    private getTargetUrl(serviceName: string): string {
-        const url = this.serviceMap[serviceName];
-        if (!url) {
-            throw new Error(`No URL configured for service: ${serviceName}`);
+        let healthyInstances = this.serviceMap.get(serviceName);
+        if (!healthyInstances) {
+            throw new Error("不可使用");
         }
+        let index = this.currentIndexes.get(serviceName) || 0
+        // 确保索引在有效范围内
+        if (index >= healthyInstances.length) {
+            index = 0;
+        }
+        const selectedInstance = healthyInstances[index];
+        if (!selectedInstance) {
+            throw new Error("不可使用");
+        }
+        this.currentIndexes.set(serviceName, (index + 1) % healthyInstances.length);
+        const route = this.routes.find(r => r.name === serviceName);
+        const url = selectedInstance + route?.prefix;
         return url;
     }
 
@@ -206,21 +254,6 @@ export class RouterManager {
                 message: `Error communicating with service ${routeConfig.target}`
             });
         }
-    }
-
-    public getRoutes(): RouteConfig[] {
-        return [...this.routes];
-    }
-
-    public getRouteStats(): any {
-        return {
-            totalRoutes: this.routes.length,
-            routes: this.routes.map(route => ({
-                ...route,
-                configured: !!this.serviceMap[route.target],
-                targetUrl: this.serviceMap[route.target] || 'Not configured'
-            }))
-        };
     }
 }
 

@@ -409,7 +409,7 @@ export class HttpTransport {
             console.log(`RPC endpoint: http://localhost:${port}/rpc`);
             console.log(`Health endpoint: http://localhost:${port}/health`);
             // 启动心跳（如果已注册）
-            if (this.isRegistered && this.registryClient && this.clientScannedServices.length > 0) {
+            if (this.isRegistered && this.registryClient) {
                 this.startHeartbeat();
                 this.startDiscoverServicesHeartbeat();
                 this.startRegister();
@@ -449,9 +449,7 @@ export class HttpTransport {
                     console.error(`Failed to register service ${service.name} with registry center`);
                 }
             }
-            if (this.clientScannedServices.length > 0) {
-                this.isRegistered = true;
-            }
+            this.isRegistered = true;
         } catch (error) {
             console.error('Error registering services with registry center:', error);
         }
@@ -461,28 +459,32 @@ export class HttpTransport {
      * 开始注册
      */
     startRegister(interval: number = 60000): void {
-        // 设置定期注册兜底
-        this.startRegisterInterval = setInterval(() => {
-            this.registerWithRegistry().then(r => console.log('Heartbeat Register successful'));
-        }, interval);
+        if (this.clientScannedServices.length > 0) {
+            // 设置定期注册兜底
+            this.startRegisterInterval = setInterval(() => {
+                this.registerWithRegistry().then(r => console.log('Heartbeat Register successful'));
+            }, interval);
+        }
     }
 
     /**
      * 开始发送心跳包
      */
     startHeartbeat(interval: number = 10000): void {
-        // 立即发送一次心跳
-        this.sendHeartbeat().then(r => console.log('Heartbeat sent start'));
-        // 设置定期心跳
-        this.heartbeatInterval = setInterval(() => {
-            this.sendHeartbeat().then(r => console.log('Heartbeat sent successful'));
-        }, interval);
+        if (this.clientScannedServices.length > 0) {
+            // 立即发送一次心跳
+            this.sendHeartbeat().then(r => console.log('Heartbeat sent start'));
+            // 设置定期心跳
+            this.heartbeatInterval = setInterval(() => {
+                this.sendHeartbeat().then(r => console.log('Heartbeat sent successful'));
+            }, interval);
+        }
     }
 
     /**
      * 发送服务发现心跳包
      */
-    startDiscoverServicesHeartbeat(interval: number = 30000): void {
+    startDiscoverServicesHeartbeat(interval: number = 15000): void {
         // 使用箭头函数保持 this 绑定
         this.discoverServicesHeartbeatInterval = setInterval(async () => {
             try {

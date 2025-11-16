@@ -3,7 +3,7 @@ import {AdminUserService} from "../service/AdminUserService";
 import {LoginReq, SignUpReq} from "../types/AuthType";
 
 
-@Controller({basePath: '/api/admin/auth'})
+@Controller({basePath: '/api/auth/admin/auth'})
 export class AuthController {
     constructor(@Inject() private adminUserService: AdminUserService) {
     }

@@ -2,7 +2,7 @@ import {AuthenticatedRequest, Controller, Form, GET, Inject, Param, Query, Req, 
 import {AdminUserService} from "../service/AdminUserService";
 
 
-@Controller({basePath: '/api/admin/user'})
+@Controller({basePath: '/api/auth/admin/user'})
 export class AdminUserController {
     constructor(@Inject() private adminUserService: AdminUserService) {
     }

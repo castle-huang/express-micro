@@ -14,7 +14,7 @@
     "sourceMap": false
   },
   "include": [
-    "app.ts",
+    "src/app.ts",
     "src/**/*"
   ],
   "exclude": [

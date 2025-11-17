@@ -108,7 +108,7 @@ export function Component(options?: {
  */
 export function PermitAll(method?: string): MethodDecorator {
     return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
-        let token = process.env.MODULE_NAME + "*" + target.constructor.name + "*" + propertyKey.toString();
+        let token = target.constructor.name + "*" + propertyKey.toString();
         if (method) {
             token += "*" + method;
         }

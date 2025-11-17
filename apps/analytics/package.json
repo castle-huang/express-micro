@@ -6,7 +6,7 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only --watch src app.ts",
-    "pre-vercel-build": "npm run build --workspace=@sojo-micro/rpc",
+    "pre-vercel-build": "npm install && npm run build --workspace=@sojo-micro/rpc",
     "vercel-build": "npm run pre-vercel-build && tsc"
   },
   "dependencies": {

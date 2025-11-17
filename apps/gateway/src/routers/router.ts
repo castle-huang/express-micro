@@ -1,8 +1,6 @@
 import {Application, NextFunction, Request, Response} from 'express';
 import {createProxyMiddleware, Options, RequestHandler} from 'http-proxy-middleware';
-import {routesConfig} from "../config/routesConfig";
-import {CommonError, CommonErrorEnum, HttpTransport, ResponseUtil} from "@sojo-micro/rpc";
-import {DiscoveredService} from "@sojo-micro/rpc/dist/client/RegistryClient";
+import {CommonError, CommonErrorEnum, ResponseUtil, routesConfig} from "@sojo-micro/rpc";
 
 // 类型定义
 interface RouteConfig {
@@ -14,63 +12,14 @@ interface RouteConfig {
 export class RouterManager {
     private routes: RouteConfig[];
     private app: Application;
-    private httpTransport: HttpTransport;
     private proxyMiddlewares: Map<string, RequestHandler>;
-    private serviceMap: Map<string, string[]>;
-    private currentIndexes: Map<string, number>;
-    private updateServiceInstanceInterval: NodeJS.Timeout | null = null;
 
-    constructor(httpTransport: HttpTransport) {
-        this.app = httpTransport.getApp();
-        this.httpTransport = httpTransport;
+    constructor(app: Application) {
+        this.app = app;
         this.routes = routesConfig.routers;
         this.proxyMiddlewares = new Map();
-        this.currentIndexes = new Map();
-        this.serviceMap = new Map();
-        this.startUpdateServiceInterval();
         this.validateRoutes();
         this.setupRoutes();
-    }
-
-    /**
-     * 更新服务实例任务列表
-     */
-    private updateServiceTask(): void {
-        try {
-
-            for (const route of this.routes) {
-                const serverName = route.name;
-                const targetUrls = new Set<string>();
-                const discoveredServices = this.httpTransport.getDiscoveredServices();
-                for (const [discoverName, serviceInstances] of discoveredServices) {
-                    if (discoverName.split("*")[0] != serverName) {
-                        continue;
-                    }
-                    if (serviceInstances.length == 0) {
-                        continue;
-                    }
-                    for (const serviceInstance of serviceInstances) {
-                        if (serviceInstance.status == "UP" && serviceInstance.metadata?.type == "controller") {
-                            const targetUrl = serviceInstance.protocol + "://" + serviceInstance.address + ":" + serviceInstance.port;
-                            targetUrls.add(targetUrl);
-                        }
-                    }
-                }
-                this.serviceMap.set(serverName, Array.from(targetUrls));
-            }
-        } catch (error) {
-            console.error('Error updating service instances:', error);
-        }
-    }
-
-    /**
-     * 开始更新任务
-     */
-    startUpdateServiceInterval(interval: number = 3000): void {
-        this.updateServiceTask();
-        this.updateServiceInstanceInterval = setInterval(() => {
-            this.updateServiceTask();
-        }, interval);
     }
 
     /**
@@ -88,10 +37,6 @@ export class RouterManager {
                 throw new Error(`Duplicate route prefix: ${route.prefix}`);
             }
             prefixes.add(route.prefix);
-
-            if (!this.serviceMap.has(route.target)) {
-                console.warn(`No service URL configured for target: ${route.target}, using default`);
-            }
         });
     }
 
@@ -147,7 +92,7 @@ export class RouterManager {
      */
     private createProxyMiddleware(routeConfig: RouteConfig): RequestHandler {
         console.log("createProxyMiddleware")
-        const {prefix, target} = routeConfig;
+        const {prefix, name} = routeConfig;
         const options: Options = {
             target: '',
             changeOrigin: true,
@@ -158,7 +103,7 @@ export class RouterManager {
                 [`^${prefix}`]: '',
             },
             router: (req: any): string => {
-                return this.selectServiceInstance(target);
+                return this.selectServiceInstance(name);
             },
             on: {
                 proxyReq: (proxyReq: any, req: Request, res: Response) => {
@@ -178,26 +123,12 @@ export class RouterManager {
     }
 
     /**
-     * 选择服务实例（轮询负载均衡）
+     * 选择服务实例
      */
     private selectServiceInstance(serviceName: string): string {
-        let healthyInstances = this.serviceMap.get(serviceName);
-        if (!healthyInstances) {
-            throw new Error("不可使用");
-        }
-        let index = this.currentIndexes.get(serviceName) || 0
-        // 确保索引在有效范围内
-        if (index >= healthyInstances.length) {
-            index = 0;
-        }
-        const selectedInstance = healthyInstances[index];
-        if (!selectedInstance) {
-            throw new Error("不可使用");
-        }
-        this.currentIndexes.set(serviceName, (index + 1) % healthyInstances.length);
         const route = this.routes.find(r => r.name === serviceName);
-        const url = selectedInstance + route?.prefix;
-        return url;
+        const target = route?.target || '';
+        return target + route?.prefix;
     }
 
     /**

@@ -83,9 +83,7 @@ export class DIContainer {
         // 3. Resolve using custom container
         let registration = this.services.get(token);
         if (!registration) {
-            if (!registration) {
-                throw new Error(`Service not registered: ${token.name || token.toString()}. Available services: ${Array.from(this.services.keys()).map(k => k.name || k.toString()).join(', ')}`);
-            }
+            throw new Error(`Service not registered: ${token.name || token.toString()}. Available services: ${Array.from(this.services.keys()).map(k => k.name || k.toString()).join(', ')}`);
         }
         const instance = this.createInstance(registration, requestId);
 

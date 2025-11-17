@@ -9,8 +9,7 @@ import {ServiceMetadata, ControllerMetadata, ComponentMetadata, RouteMethodMetad
  */
 export function RpcService(metadata?: { name?: string; version?: string; scope?: ServiceScope }): ClassDecorator {
     return (target: any) => {
-        let serviceName = metadata?.name || target.name;
-        serviceName = process.env.MODULE_NAME + "*" + serviceName;
+        const serviceName = metadata?.name || target.name;
         const scope = metadata?.scope || 'singleton';
         // Register with custom container
         container.register(serviceName, target, scope);
@@ -38,7 +37,6 @@ export function Controller(options?: {
     return (target: any) => {
         let serviceName = options?.name || target.name;
         const scope = options?.scope || 'singleton';
-        serviceName = process.env.MODULE_NAME + "*" + serviceName;
         container.register(serviceName, target, scope);
         // Add Controller-specific metadata
         const controllerMetadata: ControllerMetadata = {

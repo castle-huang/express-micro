@@ -10,6 +10,7 @@ import {ResponseUtil} from "../utils/ResponseUtil";
 import {CommonError} from "../utils/CommonError";
 import {CommonErrorEnum} from "../utils/CommonErrorEnum";
 import multer from 'multer';
+import {IRpcRegistry, RpcServiceDefinition} from "../config/RpcConfig";
 
 /**
  * Interface for route information
@@ -33,22 +34,13 @@ interface RouteInfo {
 export class HttpTransport {
     private app: Application;
     private scanner: ServiceScanner;
-    private registryClient: RegistryClient | null = null;
-    private isRegistered: boolean = false;
     private discoveredServices: Map<string, DiscoveredService[]> = new Map();
     private serviceRegistry: ServiceRegistry | null = null;
-    private clientScannedServices: ScannedService[] = [];
-    private heartbeatInterval: NodeJS.Timeout | null = null;
-    private discoverServicesHeartbeatInterval: NodeJS.Timeout | null = null;
-    private startRegisterInterval: NodeJS.Timeout | null = null;
 
     constructor(app: Application) {
         this.app = app;
         this.scanner = new ServiceScanner();
-        if (process.env.REGISTRY_CENTER_URL) {
-            this.registryClient = new RegistryClient(process.env.REGISTRY_CENTER_URL);
-            this.serviceRegistry = new ServiceRegistry(new ServiceProxy({baseURL: ''}));
-        }
+        this.serviceRegistry = new ServiceRegistry(new ServiceProxy({baseURL: ''}));
     }
 
     /**
@@ -75,11 +67,6 @@ export class HttpTransport {
         // RPC call endpoint
         this.app.post('/rpc', async (req: Request, res: Response) => {
             await this.handleRpcCall(req, res);
-        });
-
-        // Service discovery endpoint
-        this.app.get('/rpc/services', (req: Request, res: Response) => {
-            this.handleServiceDiscovery(req, res);
         });
 
         // Health check endpoint
@@ -387,32 +374,26 @@ export class HttpTransport {
      * @returns Promise that resolves when server starts
      */
     async scanServices(directories: string[] = ["src"]): Promise<void> {
-        if (this.registryClient) {
-            await this.discoverServicesFromRegistry();
-        }
         // Scan services
         await this.scanner.scanServices(directories);
         // Setup middlewares
         this.setupMiddlewares();
         // Setup routes
         this.setupRoutes();
-        if (this.registryClient) {
-            await this.registerWithRegistry();
+    }
+
+    discoverRpcService(rpcRegistryRecord: IRpcRegistry) {
+        for (let key in rpcRegistryRecord) {
+            const rpcServiceDefinition = rpcRegistryRecord[key];
+            this.serviceRegistry?.registerRpcService(rpcServiceDefinition);
         }
     }
 
     async start(port: number) {
         this.app.listen(port, () => {
             console.log(`Port: ${port}`);
-            console.log(`Service discovery: http://localhost:${port}/rpc/services`);
             console.log(`RPC endpoint: http://localhost:${port}/rpc`);
             console.log(`Health endpoint: http://localhost:${port}/health`);
-            // 启动心跳（如果已注册）
-            if (this.isRegistered && this.registryClient) {
-                this.startHeartbeat();
-                this.startDiscoverServicesHeartbeat();
-                this.startRegister();
-            }
         });
     }
 
@@ -428,148 +409,6 @@ export class HttpTransport {
                 type: service.type
             }
         }
-    }
-
-    /**
-     * 将扫描到的服务注册到注册中心
-     */
-    private async registerWithRegistry(): Promise<void> {
-        try {
-            // 获取扫描到的RPC服务
-            const rpcServices = this.scanner.getRpcServices();
-            const controllers = this.scanner.getControllers();
-            this.clientScannedServices = [...rpcServices, ...controllers]
-            for (const service of this.clientScannedServices) {
-                const serviceInfo: RegistryServiceInfo = this.transformServiceInfo(service)
-                const registered = await this.registryClient!.registerService(serviceInfo);
-                if (registered) {
-                    console.log(`Service ${service.name} registered successfully with registry center`);
-                } else {
-                    console.error(`Failed to register service ${service.name} with registry center`);
-                }
-            }
-            this.isRegistered = true;
-        } catch (error) {
-            console.error('Error registering services with registry center:', error);
-        }
-    }
-
-    /**
-     * 开始注册
-     */
-    startRegister(interval: number = 60000): void {
-        if (this.clientScannedServices.length > 0) {
-            // 设置定期注册兜底
-            this.startRegisterInterval = setInterval(() => {
-                this.registerWithRegistry().then(r => console.log('Heartbeat Register successful'));
-            }, interval);
-        }
-    }
-
-    /**
-     * 开始发送心跳包
-     */
-    startHeartbeat(interval: number = 10000): void {
-        if (this.clientScannedServices.length > 0) {
-            // 立即发送一次心跳
-            this.sendHeartbeat().then(r => console.log('Heartbeat sent start'));
-            // 设置定期心跳
-            this.heartbeatInterval = setInterval(() => {
-                this.sendHeartbeat().then(r => console.log('Heartbeat sent successful'));
-            }, interval);
-        }
-    }
-
-    /**
-     * 发送服务发现心跳包
-     */
-    startDiscoverServicesHeartbeat(interval: number = 15000): void {
-        // 使用箭头函数保持 this 绑定
-        this.discoverServicesHeartbeatInterval = setInterval(async () => {
-            try {
-                await this.sentHeartbeatDiscoverServices();
-                console.log('Discover ServicesHeartbeat sent successfully');
-            } catch (error) {
-                console.error('Discover ServicesHeartbeat failed:', error);
-            }
-        }, interval);
-    }
-
-    /**
-     * 发送心跳包
-     */
-    private async sendHeartbeat(): Promise<void> {
-        for (let service of this.clientScannedServices) {
-            try {
-                let serviceInfo = this.transformServiceInfo(service);
-                await this.registryClient!.sendHeartbeat(serviceInfo);
-            } catch (error) {
-                console.error('Failed to send heartbeat:', error);
-            }
-        }
-    }
-
-    /**
-     * 从注册中心发现服务并创建代理
-     */
-    private async discoverServicesFromRegistry(): Promise<void> {
-        try {
-            console.log('Discovering services from registry center...');
-
-            if (!this.registryClient || !this.serviceRegistry) {
-                return;
-            }
-            // 发现所有服务
-            const services = await this.registryClient.discoverServices();
-            // 按服务名称分组
-            const groupedServices = new Map<string, DiscoveredService[]>();
-            for (const service of services) {
-                if (service.id.startsWith(String(process.env.MODULE_NAME)) && service.metadata!.type == 'controller') {
-                    continue;
-                }
-                if (!groupedServices.has(service.name)) {
-                    groupedServices.set(service.name, []);
-                }
-                groupedServices.get(service.name)!.push(service);
-            }
-            this.discoveredServices = groupedServices;
-
-            // 注册发现的服务到 RpcRegistry
-            await this.serviceRegistry.discoverAndRegisterFromRegistry(groupedServices);
-
-            console.log(`Discovered and registered ${services.length} service instances from registry center`);
-
-        } catch (error) {
-            console.error('Error discovering services from registry center:', error);
-        }
-    }
-
-    private async sentHeartbeatDiscoverServices() {
-        try {
-            if (!this.registryClient || !this.serviceRegistry) {
-                return;
-            }
-            // 发现所有服务
-            const services = await this.registryClient.discoverServices();
-            // 按服务名称分组
-            const groupedServices = new Map<string, DiscoveredService[]>();
-            for (const service of services) {
-                if (service.id.startsWith(String(process.env.MODULE_NAME)) && service.metadata!.type == 'controller') {
-                    continue;
-                }
-                if (!groupedServices.has(service.name)) {
-                    groupedServices.set(service.name, []);
-                }
-                groupedServices.get(service.name)!.push(service);
-            }
-
-            // 注册发现的服务到 RpcRegistry
-            await this.serviceRegistry!.discoverAndUpdateRegisterFromRegistry(groupedServices, this.discoveredServices);
-            this.discoveredServices = groupedServices;
-        } catch (error) {
-            console.error('Error sentHeartbeatDiscoverServices services from registry center:', error);
-        }
-
     }
 
     /**

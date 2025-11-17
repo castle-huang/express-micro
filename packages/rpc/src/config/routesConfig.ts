@@ -3,32 +3,32 @@ export const routesConfig = {
         {
             name: 'analytics',
             prefix: '/api/analytics',
-            target: 'analytics'
+            target: process.env.ANALYTICS_TARGET || 'http://localhost:3001'
         },
         {
             name: 'auth',
             prefix: '/api/auth/',
-            target: 'auth'
+            target: process.env.AUTH_TARGET || 'http://localhost:3002'
         },
         {
             name: 'booking',
             prefix: '/api/booking/',
-            target: 'booking'
+            target: process.env.BOOKING_TARGET || 'http://localhost:3003'
         },
         {
             name: 'business',
             prefix: '/api/business/',
-            target: 'business'
+            target: process.env.BUSINESS_TARGET || 'http://localhost:3004'
         },
         {
             name: 'payments',
             prefix: '/api/payments',
-            target: 'payments'
+            target: process.env.PAYMENTS_TARGET || 'http://localhost:3005'
         },
         {
             name: 'report',
             prefix: '/api/report',
-            target: 'report'
+            target: process.env.REPORT_TARGET || 'http://localhost:3006'
         }
     ]
 };

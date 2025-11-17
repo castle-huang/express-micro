@@ -1,7 +1,7 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import {ServiceScanner, ScannedService} from '../scanner/ServiceScanner';
+import {ServiceScanner} from '../scanner/ServiceScanner';
 import {RpcRequest, RpcResponse} from '../types/Types';
-import {RegistryClient, RegistryServiceInfo, DiscoveredService} from '../client/RegistryClient';
+import {DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
 import {ServiceProxy} from "../client/ServiceProxy";
 import {container} from "../di/Container";
@@ -10,7 +10,7 @@ import {ResponseUtil} from "../utils/ResponseUtil";
 import {CommonError} from "../utils/CommonError";
 import {CommonErrorEnum} from "../utils/CommonErrorEnum";
 import multer from 'multer';
-import {IRpcRegistry, RpcServiceDefinition} from "../config/RpcConfig";
+import {IRpcRegistry} from "../config/RpcConfig";
 
 /**
  * Interface for route information
@@ -344,31 +344,6 @@ export class HttpTransport {
     }
 
     /**
-     * Handles service discovery requests
-     * @param req - Express request object
-     * @param res - Express response object
-     */
-    private handleServiceDiscovery(req: Request, res: Response): void {
-        const services = this.scanner.getRpcServices().map(service => ({
-            name: service.name,
-            methods: service.methods.map(m => ({
-                name: m.name,
-                originalName: m.originalName
-            }))
-        }));
-
-        res.json({
-            success: true,
-            data: {
-                services,
-                totalServices: services.length,
-                totalMethods: services.reduce((sum, service) => sum + service.methods.length, 0),
-                timestamp: new Date().toISOString()
-            }
-        });
-    }
-
-    /**
      * Starts the HTTP server
      * @param directories - Directories to scan for services
      * @returns Promise that resolves when server starts
@@ -395,41 +370,6 @@ export class HttpTransport {
             console.log(`RPC endpoint: http://localhost:${port}/rpc`);
             console.log(`Health endpoint: http://localhost:${port}/health`);
         });
-    }
-
-    private transformServiceInfo(service: ScannedService): RegistryServiceInfo {
-        return {
-            name: service.name,
-            version: process.env.MODULE_VERSION || '1.0.0',
-            address: process.env.MODULE_ADDRESS || 'localhost',
-            port: parseInt(process.env.MODULE_PORT || '3000'),
-            protocol: process.env.MODULE_PROTOCOL || 'http',
-            metadata: {
-                methods: service.methods.map(m => m.name),
-                type: service.type
-            }
-        }
-    }
-
-    /**
-     * 获取已发现的服务
-     */
-    getDiscoveredServices(): Map<string, DiscoveredService[]> {
-        return this.discoveredServices;
-    }
-
-    /**
-     * 获取特定服务的实例
-     */
-    getDiscoveredServiceInstances(serviceName: string): DiscoveredService[] {
-        return this.discoveredServices.get(serviceName) || [];
-    }
-
-    /**
-     * 获取服务注册表
-     */
-    getServiceRegistry(): ServiceRegistry | null {
-        return this.serviceRegistry;
     }
 
     /**

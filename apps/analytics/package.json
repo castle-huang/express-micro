@@ -6,8 +6,8 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only --watch src app.ts",
-    "pre-vercel-build": "cd ../../ && npm install && cd packages/rpc && npm run build",
-    "vercel-build": "npm run pre-vercel-build && npm run build"
+    "pre-vercel-build": "cd ../../ && npm install && npm run build",
+    "vercel-build": "npm run pre-vercel-build"
   },
   "dependencies": {
     "@sojo-micro/rpc": "^1.0.0",

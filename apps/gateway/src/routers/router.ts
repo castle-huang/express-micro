@@ -103,7 +103,7 @@ export class RouterManager {
                 [`^${prefix}`]: '',
             },
             router: (req: any): string => {
-                return this.selectServiceInstance(name).replace("\\\"", "");
+                return this.selectServiceInstance(name);
             },
             on: {
                 proxyReq: (proxyReq: any, req: Request, res: Response) => {

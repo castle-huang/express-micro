@@ -5,7 +5,7 @@ export abstract class UserService {
     abstract getUser(): Promise<any>;
 }
 
-@Controller({basePath: '/api/auth/user'})
+@Controller({basePath: '/api/bookings/user'})
 export class UserController {
     constructor(@Inject(USER_API) private userApi: UserService) {
     }

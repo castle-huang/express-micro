@@ -178,7 +178,7 @@ export class HttpTransport {
     private createParameterBoundHandler(controller: any, methodName: string): express.RequestHandler {
         return async (req: Request, res: Response, next: express.NextFunction) => {
             let routesPermitAllToken = controller.name + "*" + methodName;
-            if (!(container.checkRoutesPermitAll(routesPermitAllToken) || container.checkRoutesPermitAll(routesPermitAllToken + "*" + req.method))) {
+            if (!(container.checkRoutesPermitAll(routesPermitAllToken))) {
                 const authorization = req.headers['authorization'];
                 if (!authorization) {
                     return next(new CommonError(CommonErrorEnum.MISSING_AUTHORIZATION_HEADER));
@@ -288,11 +288,6 @@ export class HttpTransport {
                     throw new Error('Unauthorized access');
                 }
             }
-
-            console.log(`RPC Call: ${rpcRequest.service}.${rpcRequest.method}`, {
-                requestId: rpcRequest.metadata?.requestId || requestId
-            });
-
             // Begin request scope (commented out)
             // container.beginRequestScope(requestId);
 

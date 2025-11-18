@@ -38,8 +38,9 @@ export class ServiceProxy {
      */
     async call(serviceName: string, methodName: string, args: any[]): Promise<any> {
         try {
+            const name = serviceName.split("*")[1] + "*rpc"
             const rpcRequest: RpcRequest = {
-                service: serviceName,
+                service: name,
                 method: methodName,
                 args: args,
                 metadata: {

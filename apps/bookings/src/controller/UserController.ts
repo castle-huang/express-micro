@@ -1,4 +1,4 @@
-import {Controller, GET, Inject} from "@sojo-micro/rpc";
+import {Controller, GET, Inject, PermitAll} from "@sojo-micro/rpc";
 import {USER_API} from "../config/RpcRegistry";
 
 export abstract class UserService {
@@ -11,6 +11,7 @@ export class UserController {
     }
 
     @GET('/test')
+    @PermitAll()
     async getUser() {
         const info = await this.userApi.getUser()
         return {

@@ -9,7 +9,8 @@ import {ServiceMetadata, ControllerMetadata, ComponentMetadata, RouteMethodMetad
  */
 export function RpcService(metadata?: { name?: string; version?: string; scope?: ServiceScope }): ClassDecorator {
     return (target: any) => {
-        const serviceName = metadata?.name || target.name;
+        let serviceName = metadata?.name || target.name;
+        serviceName += "*rpc";
         const scope = metadata?.scope || 'singleton';
         // Register with custom container
         container.register(serviceName, target, scope);
@@ -106,12 +107,9 @@ export function Component(options?: {
  * @param path - Route path
  * @returns Method decorator function
  */
-export function PermitAll(method?: string): MethodDecorator {
+export function PermitAll(): MethodDecorator {
     return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
         let token = target.constructor.name + "*" + propertyKey.toString();
-        if (method) {
-            token += "*" + method;
-        }
         container.registerPermitAll(token);
         return descriptor;
     };

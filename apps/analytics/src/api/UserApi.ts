@@ -1,4 +1,3 @@
-// @ts-ignore
 import {RpcMethod, RpcService} from "@sojo-micro/rpc";
 
 @RpcService({name: "user-api"})

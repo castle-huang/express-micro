@@ -1,5 +1,7 @@
 import axios, {AxiosInstance} from 'axios';
 import {RpcRequest, RpcResponse} from '../types/Types';
+import {CommonError} from "../utils/CommonError";
+import {CommonErrorEnum} from "../utils/CommonErrorEnum";
 
 /**
  * Configuration interface for ServiceProxy
@@ -54,7 +56,7 @@ export class ServiceProxy {
             if (response.data.success) {
                 return response.data.data;
             } else {
-                throw new Error(response.data.error?.message || 'RPC call failed');
+                throw new CommonError(response.data.error?.code || CommonErrorEnum.SYSTEM_EXCEPTION.code, response.data.error?.message || CommonErrorEnum.SYSTEM_EXCEPTION.msg);
             }
         } catch (error) {
             console.error(`RPC call failed: ${serviceName}.${methodName}`, error);

@@ -295,8 +295,8 @@ export class HttpTransport {
             const response: RpcResponse = {
                 success: false,
                 error: {
-                    message: error.message,
-                    code: 'INTERNAL_ERROR',
+                    message: error.msg || error.message,
+                    code: error.code || CommonErrorEnum.SYSTEM_EXCEPTION.code,
                     stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
                 },
                 metadata: {
@@ -306,7 +306,7 @@ export class HttpTransport {
                 }
             };
 
-            res.status(500).json(response);
+            res.json(response);
         } finally {
             // End request scope (commented out)
             // container.endRequestScope(requestId);

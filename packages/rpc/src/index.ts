@@ -14,3 +14,4 @@ export * from './utils/CommonErrorEnum';
 export * from './utils/IdUtils';
 export * from './config/routesConfig';
 export * from './config/RpcConfig';
+export * from './utils/CaseConverter';

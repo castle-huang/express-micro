@@ -1,7 +1,6 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
 import {ServiceScanner} from '../scanner/ServiceScanner';
 import {RpcRequest, RpcResponse} from '../types/Types';
-import {DiscoveredService} from '../client/RegistryClient';
 import {ServiceRegistry} from '../client/ServiceRegistry';
 import {ServiceProxy} from "../client/ServiceProxy";
 import {container} from "../di/Container";
@@ -34,7 +33,6 @@ interface RouteInfo {
 export class HttpTransport {
     private app: Application;
     private scanner: ServiceScanner;
-    private discoveredServices: Map<string, DiscoveredService[]> = new Map();
     private serviceRegistry: ServiceRegistry | null = null;
 
     constructor(app: Application) {
@@ -71,39 +69,15 @@ export class HttpTransport {
 
         // Health check endpoint
         this.app.get('/health', (req: Request, res: Response) => {
-            const cwd = process.cwd();
-            const fs = require('fs');
-            const path = require('path');
-
-            // 递归获取目录下所有文件
-            function getAllFiles(dirPath: string, arrayOfFiles: string[] = []): string[] {
-                const files = fs.readdirSync(dirPath);
-
-                files.forEach((file: string) => {
-                    const filePath = path.join(dirPath, file);
-                    if (fs.statSync(filePath).isDirectory()) {
-                        arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
-                    } else {
-                        arrayOfFiles.push(filePath);
-                    }
-                });
-
-                return arrayOfFiles;
-            }
-
-            const allFiles = getAllFiles(cwd);
-
             res.json({
                 status: 'healthy',
-                timestamp: new Date().toISOString(),
-                cwd,
-                files: allFiles
+                timestamp: new Date().toISOString()
             });
         });
 
         // Build controller routes
         this.buildControllerRoutes();
-        // 全局异常捕获中间件
+        // Global exception catching middleware
         this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
             if (process.env.NODE_ENV === 'development') {
                 console.error('Global Error catch:', {
@@ -281,7 +255,7 @@ export class HttpTransport {
         try {
             const rpcRequest: RpcRequest = req.body;
             // Verify RPC call TOKEN
-            const expectedToken = process.env.RPC_TOKEN+"";
+            const expectedToken = process.env.RPC_TOKEN + "";
             if (expectedToken) {
                 const providedToken = req.headers['x-rpc-token'];
                 if (!providedToken || providedToken !== expectedToken) {
@@ -363,8 +337,6 @@ export class HttpTransport {
     async start(port: number) {
         this.app.listen(port, () => {
             console.log(`Port: ${port}`);
-            console.log(`RPC endpoint: http://localhost:${port}/rpc`);
-            console.log(`Health endpoint: http://localhost:${port}/health`);
         });
     }
 

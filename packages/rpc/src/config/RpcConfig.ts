@@ -1,9 +1,9 @@
 export interface RpcServiceDefinition {
-    /** 模块名称 */
+    /** Module name */
     readonly module: string;
-    /** 服务名称 */
+    /** Service name */
     readonly name: string;
-    /** 版本号 */
+    /** Version number */
     readonly version: string;
 }
 

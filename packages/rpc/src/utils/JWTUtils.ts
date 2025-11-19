@@ -37,7 +37,6 @@ export class JWTUtils {
     static verifyToken(token: string): AuthenticatedRequest {
         const secret = this.getSecret();
 
-
         const decoded = jwt.verify(token, secret, {
             issuer: process.env.JWT_ISSUER || 'express-micro',
         }) as jwt.JwtPayload & AuthenticatedRequest;
@@ -72,7 +71,7 @@ export class JWTUtils {
         }
     }
 
-    // 新增：检查 token 是否即将过期
+    // New: Check if token is about to expire
     static isTokenExpiringSoon(token: string, thresholdMinutes: number = 30): boolean {
         const payload = this.decodeToken(token);
         const user = payload?.user;
@@ -82,7 +81,7 @@ export class JWTUtils {
         return user.exp - now <= threshold;
     }
 
-    // 新增：刷新 token
+    // New: Refresh token
     static refreshToken(token: string): string {
         const payload = this.verifyToken(token);
         return this.generateToken(payload);

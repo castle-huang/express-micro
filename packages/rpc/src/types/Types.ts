@@ -1,4 +1,4 @@
-import {container, ServiceScope} from '../di/Container';
+import {ServiceScope} from '../di/Container';
 
 export interface RpcRequest {
     service: string;
@@ -26,7 +26,7 @@ export interface RpcResponse {
     };
 }
 
-// 存储 Controller 的元数据
+// Store Controller metadata
 export interface ControllerMetadata {
     basePath?: string;
     name?: string;
@@ -34,21 +34,21 @@ export interface ControllerMetadata {
     scope: ServiceScope;
 }
 
-// 存储 Service 的元数据
+// Store Service metadata
 export interface ServiceMetadata {
     name?: string;
     version?: string;
     scope: ServiceScope;
 }
 
-// 存储 Component 的元数据
+// Store Component metadata
 export interface ComponentMetadata {
     name?: string;
     version?: string;
     scope: ServiceScope;
 }
 
-// 存储路由方法的元数据
+// Store route method metadata
 export interface RouteMethodMetadata {
     method: string;
     path: string;

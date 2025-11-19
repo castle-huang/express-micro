@@ -11,8 +11,8 @@ export const routesConfig = {
             target: process.env.AUTH_TARGET || 'http://localhost:3002'
         },
         {
-            name: 'booking',
-            prefix: '/api/booking/',
+            name: 'bookings',
+            prefix: '/api/bookings/',
             target: process.env.BOOKING_TARGET || 'http://localhost:3003'
         },
         {

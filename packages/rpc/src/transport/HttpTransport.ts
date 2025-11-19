@@ -281,7 +281,7 @@ export class HttpTransport {
         try {
             const rpcRequest: RpcRequest = req.body;
             // Verify RPC call TOKEN
-            const expectedToken = process.env.RPC_TOKEN;
+            const expectedToken = process.env.RPC_TOKEN+"";
             if (expectedToken) {
                 const providedToken = req.headers['x-rpc-token'];
                 if (!providedToken || providedToken !== expectedToken) {
@@ -317,6 +317,7 @@ export class HttpTransport {
             res.json(response);
 
         } catch (error: any) {
+            console.log(error)
             const response: RpcResponse = {
                 success: false,
                 error: {

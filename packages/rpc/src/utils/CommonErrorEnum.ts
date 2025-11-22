@@ -16,4 +16,16 @@ export class CommonErrorEnum {
         code: '1003',
         msg: 'Invalid token'
     };
+    static PARAMETER_ERROR: IErrorItem = {
+        code: '1004',
+        msg: 'Parameter check failed'
+    };
+    static DATA_NOT_FOUND: IErrorItem = {
+        code: '1005',
+        msg: 'Data does not exist'
+    };
+    static PERMISSION_DENIED: IErrorItem = {
+        code: '1006',
+        msg: 'Permission denied'
+    };
 }

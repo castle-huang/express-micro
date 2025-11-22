@@ -2,7 +2,16 @@ import dotenv from 'dotenv';
 import express from 'express';
 import {HttpTransport} from "@sojo-micro/rpc";
 import RouterManager from "./src/routers/router";
+import path from "path";
+import {register} from "tsconfig-paths";
 
+const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+register({
+    baseUrl: path.dirname(tsConfigPath),
+    paths: {
+        "@/*": ["./src/*"]
+    }
+});
 dotenv.config();
 
 const app = express()

@@ -3,66 +3,77 @@ import {
     Body,
     Controller,
     DELETE,
-    GET,
     Inject,
+    JWTUtils,
     PermitAll,
     POST,
     PUT,
     Req,
     ResponseUtil
 } from "@sojo-micro/rpc";
-import {BusinessService} from "../service/BusinessService";
-import {BusinessAddReq, BusinessListReq, BusinessListResp, BusinessUpdateReq} from "../types/BusinessType";
+import {supabase} from "@/config/Supabase";
+import {BusinessService} from "@/service/BusinessService";
+import {
+    BusinessAddReq,
+    BusinessDeleteReq,
+    BusinessListReq,
+    BusinessListResp,
+    BusinessUpdateReq
+} from "@/types/BusinessType";
 
-@Controller({basePath: '/api/admin/business'})
+@Controller({basePath: '/api/biz/business'})
 export class BusinessController {
     constructor(@Inject() private businessService: BusinessService) {
     }
-    @GET('/test')
-    async getUser() {
-        return {
-            id: 1,
-            name: 'John Doe'
-        };
-    }
 
-    /**
-     * Add new business
-     */
-    @POST('')
-    @PermitAll()
-    async add(@Req() authReq: AuthenticatedRequest,
+    @POST("add")
+    async add(@Req() auth: AuthenticatedRequest,
               @Body() req: BusinessAddReq) {
-        // TODO
-        return ResponseUtil.success( );
+        const bizReq = {
+            ...req,
+            merchantId: auth.user.merchantId,
+        };
+        await this.businessService.addBusiness(bizReq, auth.user.id);
+        return ResponseUtil.success();
     }
 
     /**
      * Update business
      */
-    @PUT('')
-    @PermitAll()
-    async update(@Body() req: BusinessUpdateReq) {
-        // TODO
-        return ResponseUtil.success( );
+    @PUT("update")
+    async update(@Req() auth: AuthenticatedRequest, @Body() req: BusinessUpdateReq) {
+        const bizReq = {
+            ...req,
+            merchantId: auth.user.merchantId,
+        };
+        await this.businessService.updateBusiness(bizReq, auth.user.id);
+        return ResponseUtil.success();
     }
 
+
     /**
-     * Business list
+     * BizBusiness list
      */
-    @PermitAll()
-    async list(@Req() authReq: AuthenticatedRequest, @Body() req: BusinessListReq, resp: BusinessListResp) {
-        // TODO
-        return ResponseUtil.success( );
+    @POST('list')
+    async list(@Req() auth: AuthenticatedRequest, @Body() req: BusinessListReq) {
+        const bizReq = {
+            ...req,
+            merchantId: auth.user.merchantId,
+        };
+        const result = await this.businessService.getList(bizReq, auth.user.id);
+        return ResponseUtil.success(result);
     }
 
     /**
      * Delete business
      */
-    @DELETE('')
-    @PermitAll()
-    async delete(@Body() req: BusinessUpdateReq) {
-        // TODO
-        return ResponseUtil.success( );
+    @POST("delete")
+    async delete(@Req() auth: AuthenticatedRequest, @Body() req: BusinessDeleteReq) {
+        const bizReq = {
+            ...req,
+            merchantId: auth.user.merchantId,
+        };
+        await this.businessService.deleteBusiness(bizReq, auth.user.id);
+        return ResponseUtil.success();
     }
 }

@@ -1,8 +1,8 @@
 /**
  * Register request model
  */
-export interface SignUpReq {
-    contactName: string;
+export interface RegisterReq {
+    fullName: string;
     email: string;
     password: string;
 }
@@ -39,5 +39,17 @@ export interface ProfilesResp {
     phoneCode: string;
     phone: string;
     fullPhone: string;
+    email: string;
+}
+
+/**
+ * Update merchant user request model
+ */
+export interface UpdateMerchantUserReq {
+    id: string,
+    avatarUrl: string;
+    fullName: string;
+    phoneCode: string;
+    phone: string;
     email: string;
 }

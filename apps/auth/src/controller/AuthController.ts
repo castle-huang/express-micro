@@ -1,27 +1,26 @@
-import {Body, Controller, GET, Inject, PermitAll, POST, ResponseUtil} from "@sojo-micro/rpc";
-import {AdminUserService} from "../service/AdminUserService";
-import {LoginReq, SignUpReq} from "../types/AuthType";
+import {Body, Controller, Inject, PermitAll, POST, ResponseUtil} from "@sojo-micro/rpc";
+import {MerchantUserService} from "@/service/MerchantUserService";
+import {LoginReq, RegisterReq} from "@/types/AuthType";
 
 
-@Controller({basePath: '/api/auth/admin/auth'})
+@Controller({basePath: '/api/auth/merchant'})
 export class AuthController {
-    constructor(@Inject() private adminUserService: AdminUserService) {
-    }
-    @GET('/test')
-    async getUser() {
-        return {
-            id: 1,
-            name: 'hello'
-        };
+    constructor(@Inject() private adminUserService: MerchantUserService) {
     }
 
+    /**
+     * Register
+     */
     @POST('/register')
     @PermitAll()
-    async register(@Body() req: SignUpReq) {
+    async register(@Body() req: RegisterReq) {
         const result = await this.adminUserService.register(req);
         return ResponseUtil.success( result);
     }
 
+    /**
+     * Login
+     */
     @POST('/login')
     @PermitAll()
     async login(@Body() req: LoginReq) {

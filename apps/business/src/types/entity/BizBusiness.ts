@@ -1,61 +1,61 @@
-export interface Business {
+export interface BizBusiness {
     /**
-     * 主键ID
+     * Primary key ID
      */
     id?: string;
 
     /**
-     * 商户拥有者ID
+     * Merchant ID
      */
-    owner_id?: string;
+    merchantId?: string;
 
     /**
-     * 名称
+     * Name
      */
     name?: string;
 
     /**
-     * logo url
+     * Logo URL
      */
     logoUrl?: string;
 
     /**
-     * website
+     * Website
      */
     website?: string;
 
     /**
-     * location
+     * Location
      */
     location?: string;
 
     /**
-     * room number
+     * Room number
      */
     rooms?: number;
 
     /**
-     * chair number
+     * Chair number
      */
     chairs?: number;
 
     /**
-     * 描述
+     * Description
      */
     description?: string;
 
     /**
-     * 业务时间
+     * Business hours
      */
     businessHours?: string;
 
     /**
-     * 更新时间
+     * Update time
      */
-    updateTime?: Date;
+    updateTime?: number;
 
     /**
-     * 创建时间
+     * Create time
      */
-    createTime?: Date;
+    createTime?: number;
 }

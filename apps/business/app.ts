@@ -3,9 +3,18 @@ import express from 'express';
 import {HttpTransport} from "@sojo-micro/rpc";
 import path from "path";
 import fs from "fs";
+import {register} from 'tsconfig-paths';
+import {RpcRegistry} from './src/config/RpcRegistry'
 
 dotenv.config();
 
+const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+register({
+    baseUrl: path.dirname(tsConfigPath),
+    paths: {
+        "@/*": ["./src/*"]
+    }
+});
 const app = express()
 const server = new HttpTransport(app);
 
@@ -24,6 +33,7 @@ async function importAllServices() {
 
 async function startServer() {
     await importAllServices()
+    server.discoverRpcService(RpcRegistry);
     await server.scanServices(["src", "apps/business/src"])
     const port = parseInt(process.env.PORT || '3000');
     await server.start(port);

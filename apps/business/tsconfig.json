@@ -11,10 +11,16 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": false,
-    "sourceMap": false
+    "sourceMap": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    }
   },
   "include": [
-    "app.ts",
+    "src/app.ts",
     "src/**/*"
   ],
   "exclude": [

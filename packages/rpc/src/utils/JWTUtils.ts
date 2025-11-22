@@ -3,6 +3,7 @@ import {Request} from 'express';
 
 export interface UserPayload {
     id: string;
+    merchantId: string;
     iat?: number; // issued at
     exp?: number; // expiration time
 }

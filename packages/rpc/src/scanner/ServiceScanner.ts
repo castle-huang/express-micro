@@ -61,22 +61,8 @@ export class ServiceScanner {
         const classMap: Map<string, any> = new Map()
 
         try {
-            const tsConfig = require(path.join(process.cwd(), 'tsconfig.json'));
-            const paths: Record<string, string[]> = tsConfig.compilerOptions?.paths || {};
-            const resolvePathAlias = (modulePath: string): string => {
-                for (const [alias, mappings] of Object.entries(paths)) {
-                    const aliasPattern = alias.replace('/*', '');
-                    if (modulePath.startsWith(aliasPattern)) {
-                        const basePath = (mappings[0] as string).replace('/*', '');
-                        const relativePath = modulePath.replace(aliasPattern, '');
-                        return path.join(process.cwd(), basePath, relativePath);
-                    }
-                }
-                return modulePath;
-            };
-            const resolvedPath = resolvePathAlias(filePath);
-            delete require.cache[require.resolve(resolvedPath)];
-            const module = require(resolvedPath);
+            delete require.cache[require.resolve(filePath)];
+            const module = require(filePath);
             for (const [exportName, ExportClass] of Object.entries(module)) {
                 if (typeof ExportClass === 'function') {
                     container.registerAllClass(ExportClass)

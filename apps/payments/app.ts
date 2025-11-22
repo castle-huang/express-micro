@@ -7,7 +7,11 @@ import {register} from "tsconfig-paths";
 
 dotenv.config();
 
-const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+let tsConfigPath = process.cwd();
+if (!tsConfigPath.includes("apps")) {
+    tsConfigPath = path.resolve(tsConfigPath, 'apps/payments');
+}
+tsConfigPath = path.resolve(tsConfigPath, 'tsconfig.json');
 register({
     baseUrl: path.dirname(tsConfigPath),
     paths: {

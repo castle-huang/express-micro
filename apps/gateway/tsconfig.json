@@ -15,7 +15,6 @@
   },
   "include": [
     "app.ts",
-    "tsconfig.json",
     "src/**/*"
   ],
   "exclude": [

@@ -13,7 +13,6 @@ if (!tsConfigPath.includes("apps")) {
     tsConfigPath = path.resolve(tsConfigPath, 'apps/business');
 }
 tsConfigPath = path.resolve(tsConfigPath, 'tsconfig.json');
-
 register({
     baseUrl: path.dirname(tsConfigPath),
     paths: {

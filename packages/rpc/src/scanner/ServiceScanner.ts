@@ -76,7 +76,6 @@ export class ServiceScanner {
         return classMap;
     }
 
-
     private async scanService(classMap: Map<string, any>): Promise<ScannedService[]> {
         const services: ScannedService[] = [];
         for (const [exportName, ExportClass] of classMap) {

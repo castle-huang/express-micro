@@ -5,7 +5,11 @@ import RouterManager from "./src/routers/router";
 import path from "path";
 import {register} from "tsconfig-paths";
 
-const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+let tsConfigPath = process.cwd();
+if (!tsConfigPath.includes("apps")) {
+    tsConfigPath = path.resolve(tsConfigPath, 'apps/gateway');
+}
+tsConfigPath = path.resolve(tsConfigPath, 'tsconfig.json');
 register({
     baseUrl: path.dirname(tsConfigPath),
     paths: {

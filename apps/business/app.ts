@@ -8,7 +8,12 @@ import {RpcRegistry} from './src/config/RpcRegistry'
 
 dotenv.config();
 
-const tsConfigPath = path.resolve(process.cwd(), 'apps/auth/tsconfig.json');
+let tsConfigPath = process.cwd();
+if (!tsConfigPath.includes("apps")) {
+    tsConfigPath = path.resolve(tsConfigPath, 'apps/business');
+}
+tsConfigPath = path.resolve(tsConfigPath, 'tsconfig.json');
+
 register({
     baseUrl: path.dirname(tsConfigPath),
     paths: {

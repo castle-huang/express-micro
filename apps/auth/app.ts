@@ -42,6 +42,8 @@ app.get('/health1', (req: Request, res: Response) => {
 
     res.json({
         status: 'healthy',
+        tsConfigPath: tsConfigPath,
+        baseUrl: path.dirname(tsConfigPath),
         timestamp: new Date().toISOString(),
         cwd,
         files: allFiles

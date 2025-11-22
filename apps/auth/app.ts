@@ -3,17 +3,17 @@ import express from 'express';
 import {HttpTransport} from "@sojo-micro/rpc";
 import path from "path";
 import fs from "fs";
-import {register} from 'tsconfig-paths';
+// import {register} from 'tsconfig-paths';
 
 dotenv.config();
 
-const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
-register({
-    baseUrl: path.dirname(tsConfigPath),
-    paths: {
-        "@/*": ["./src/*"]
-    }
-});
+// const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+// register({
+//     baseUrl: path.dirname(tsConfigPath),
+//     paths: {
+//         "@/*": ["./src/*"]
+//     }
+// });
 const app = express()
 const server = new HttpTransport(app);
 

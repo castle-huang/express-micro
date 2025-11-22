@@ -1,15 +1,18 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import {HttpTransport} from "@sojo-micro/rpc";
-import moduleAlias from 'module-alias';
 import path from "path";
 import fs from "fs";
+import {register} from 'tsconfig-paths';
 
 dotenv.config();
 
-
-moduleAlias.addAliases({
-    '@/': __dirname + '/src/'
+const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+register({
+    baseUrl: path.dirname(tsConfigPath),
+    paths: {
+        "@/*": ["./src/*"]
+    }
 });
 const app = express()
 const server = new HttpTransport(app);

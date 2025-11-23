@@ -1,0 +1,650 @@
+{
+	"info": {
+		"_postman_id": "7aef6080-d345-4351-a4e1-5c1f65913653",
+		"name": "Merchant_API",
+		"description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50230206",
+		"_collection_link": "https://richard0909-9206779.postman.co/workspace/sojo's-Workspace~cdf04766-54c9-479f-829f-0e947745f48b/collection/50230206-7aef6080-d345-4351-a4e1-5c1f65913653?action=share&source=collection_link&creator=50230206"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"ff\",\n    \"email\": \"aa2@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"register"
+							]
+						},
+						"description": "# Merchant Registration\n\n## Purpose\n\nThis endpoint allows new merchants to register an account in the system. It creates a new merchant profile with the provided contact information and credentials.\n\n## Request Details\n\n- **Method:** `POST`\n    \n- **Endpoint:** `{{baseUrl}}/api/auth/merchant/register`\n    \n\n## Request Body\n\nThe request requires a JSON payload with the following fields:\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `contactName` | string | Yes | The name of the merchant contact person |\n| `email` | string | Yes | The merchant's email address (used for login) |\n| `password` | string | Yes | The merchant's password for account access |\n\n### Example Request Body\n\n``` json\n{\n  \"contactName\": \"John Doe\",\n  \"email\": \"merchant@example.com\",\n  \"password\": \"securePassword123\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON response with the following structure:\n\n``` json\n{\n  \"code\": \"string\",\n  \"msg\": \"string\",\n  \"data\": {}\n}\n\n ```\n\n## Response Codes\n\n### Success Responses\n\n- **200 OK** - Registration request processed successfully\n    \n- **201 Created** - Merchant account created successfully\n    \n\n### Error Responses\n\n- **400 Bad Request** - Invalid request payload or missing required fields\n    \n- **409 Conflict** - Email already registered in the system\n    \n- **500 Internal Server Error** - Server-side error during registration\n    \n\n## Response Messages\n\n- `\"User not exists\"` (code: 1000100) - Indicates the user was not found in the system (may occur during validation)\n    \n\n## Notes\n\n- Ensure the email format is valid before submitting\n    \n- Password should meet any security requirements enforced by the system\n    \n- The `data` object in the response may contain additional merchant information upon successful registration"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"aa1@qq.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"login"
+							]
+						},
+						"description": "# Merchant Login Authentication\n\nThis endpoint authenticates a merchant user and returns an access token for subsequent API requests.\n\n## Request Details\n\n**Method:** `POST`  \n**URL:** `{{baseUrl}}/api/auth/merchant/login`\n\n## Request Body\n\nThe request requires a JSON payload with the following parameters:\n\n| Parameter | Type | Required | Description |\n| --- | --- | --- | --- |\n| `email` | string | Yes | The merchant's registered email address |\n| `password` | string | Yes | The merchant's account password |\n\n### Example Request Body\n\n``` json\n{\n  \"email\": \"aa1@qq.com\",\n  \"password\": \"123456\"\n}\n\n ```\n\n## Response Format\n\n### Success Response (200 OK)\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ...\"\n  }\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data.token` | string | JWT authentication token to be used in subsequent requests |\n\n## Usage\n\n1. Send a POST request with valid merchant credentials\n    \n2. Store the returned token from the response\n    \n3. Include the token in the Authorization header for authenticated requests\n    \n\n**Note:** The token should be kept secure and used for authenticating subsequent API calls to protected merchant endpoints."
+					},
+					"response": []
+				},
+				{
+					"name": "Update merchant user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"avatarUrl\": \"avatar\",\r\n  \"fullName\": \"bb\",\r\n  \"phoneCode\": \"+11\",\r\n  \"phone\": \"1234\",\r\n  \"email\": \"bb@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Query merchant user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Biz",
+			"item": [
+				{
+					"name": "Appointment",
+					"item": [
+						{
+							"name": "Add new appointment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"test11\",\r\n  \"staffId\": \"staff_67890\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/appointment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"appointment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query Appointment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"bus_12345\",\r\n  \"staffId\": \"staff_67890\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"appointmentStartTime\": 1719820800000,\r\n  \"appointmentEndTime\": 1719824400000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/appointment/search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"appointment",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Staff",
+					"item": [
+						{
+							"name": "Add new staff",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"test\",\r\n  \"name\": \"tet\",\r\n  \"email\": \"bb@gmail.com\",\r\n  \"phoneCode\": \"11\",\r\n  \"phone\": \"1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/staff/add",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"staff",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Staff",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"id\": \"1\",\r\n  \"businessId\": \"test\",\r\n  \"name\": \"tet2\",\r\n  \"email\": \"bb@gmail.com\",\r\n  \"phoneCode\": \"11\",\r\n  \"phone\": \"1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/staff/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"staff",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query staff list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"test\",\r\n  \"name\": \"tet\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/staff/list",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"staff",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Business",
+					"item": [
+						{
+							"name": "Add new business",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"示例商家\",\r\n  \"logoUrl\": \"https://example.com/logo.png\",\r\n  \"website\": \"https://example.com\",\r\n  \"location\": \"北京市朝阳区xxx街道\",\r\n  \"rooms\": 5,\r\n  \"chairs\": 50,\r\n  \"description\": \"这是一个商家描述\",\r\n  \"businessHours\": {\r\n    \"monday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"tuesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"wednesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"all_day\"\r\n      }\r\n    ],\r\n    \"thursday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      }\r\n    ],\r\n    \"friday\": [\r\n      {\r\n        \"start_time\": \"14:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"saturday\": [],\r\n    \"sunday\": []\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/business/add",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"business",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update business",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"id\": \"1\",\r\n  \"name\": \"示例商家\",\r\n  \"logoUrl\": \"https://example.com/logo.png\",\r\n  \"website\": \"https://example.com\",\r\n  \"location\": \"北京市朝阳区xxx街道\",\r\n  \"rooms\": 5,\r\n  \"chairs\": 50,\r\n  \"description\": \"这是一个商家描述\",\r\n  \"businessHours\": {\r\n    \"monday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"tuesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"wednesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"all_day\"\r\n      }\r\n    ],\r\n    \"thursday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      }\r\n    ],\r\n    \"friday\": [\r\n      {\r\n        \"start_time\": \"14:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"saturday\": [],\r\n    \"sunday\": []\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/business/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"business",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query business list",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/business/list",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"business",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete business",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"7398186777426661376\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/business/delete",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"business",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Service",
+					"item": [
+						{
+							"name": "Add new service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"1\",\r\n  \"name\": \"hair srvice\",\r\n  \"serviceTypeId\": \"haircut_001\",\r\n  \"duration\": 30,\r\n  \"price\": 50,\r\n  \"currency\": \"CNY\",\r\n  \"chairs\": 1,\r\n  \"rooms\": 0,\r\n  \"description\": \"desc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/add",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"id\": \"7398200308268142592\",\r\n  \"businessId\": \"1\",\r\n  \"name\": \"hair srvice2\",\r\n  \"serviceTypeId\": \"haircut_001\",\r\n  \"duration\": 30,\r\n  \"price\": 50,\r\n  \"currency\": \"CNY\",\r\n  \"chairs\": 1,\r\n  \"rooms\": 0,\r\n  \"description\": \"desc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"hair srvice\",\r\n  \"pageNo\": 1,\r\n  \"pageSize\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query service type list",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/type/list",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"type",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Report",
+			"item": [
+				{
+					"name": "Query dashboard data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/report/dashboard",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"report",
+								"dashboard"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

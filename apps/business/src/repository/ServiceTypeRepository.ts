@@ -8,7 +8,7 @@ export class ServiceTypeRepository {
         let {data, error} = await supabase
             .from('biz_service_type')
             .select('*');
-        if (!error) {
+        if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
         return data?.map(record => snakeToCamel(record)) || []

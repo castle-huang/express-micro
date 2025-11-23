@@ -1,4 +1,4 @@
-import {CommonError, CommonErrorEnum, Service, snakeToCamel} from "@sojo-micro/rpc";
+import {camelToSnake, CommonError, CommonErrorEnum, Service, snakeToCamel} from "@sojo-micro/rpc";
 import {supabase} from "@/config/Supabase";
 import {BizService} from "@/types/entity/BizService";
 import {ServiceSearchReq} from "@/types/ServiceType";
@@ -20,7 +20,7 @@ export class ServiceRepository {
     async insert(bizService: BizService) {
         const {error} = await supabase
             .from('biz_service')
-            .insert(bizService);
+            .insert(camelToSnake(bizService));
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

@@ -22,7 +22,7 @@ export class ServiceController {
     }
 
     @POST("/add")
-    async addService(req: ServiceAddReq, @Req() auth: AuthenticatedRequest) {
+    async addService(@Body() req: ServiceAddReq, @Req() auth: AuthenticatedRequest) {
         await this.serviceService.addService(req, auth.user.id);
         return ResponseUtil.success();
     }

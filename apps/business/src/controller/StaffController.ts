@@ -15,7 +15,7 @@ export class StaffController {
     constructor(@Inject() private staffService: StaffService) {
     }
 
-    @POST('add')
+    @POST('/add')
     async add(@Req() auth: AuthenticatedRequest, @Body() req: StaffAddReq) {
         const staffReq = {
             ...req,
@@ -28,7 +28,7 @@ export class StaffController {
     /**
      * Update staff
      */
-    @POST('update')
+    @POST('/update')
     async update(@Req() auth: AuthenticatedRequest, @Body() req: StaffUpdateReq) {
         const staffReq = {
             ...req,
@@ -43,7 +43,7 @@ export class StaffController {
     /**
      * Staff list
      */
-    @POST('list')
+    @POST('/list')
     async list(@Req() auth: AuthenticatedRequest, @Body() req: StaffListReq) {
         const newReq = {
             ...req,

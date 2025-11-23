@@ -2,7 +2,7 @@ import {
     AuthenticatedRequest,
     Body,
     Controller,
-    DELETE,
+    DELETE, GET,
     Inject,
     JWTUtils,
     PermitAll,
@@ -26,7 +26,7 @@ export class BusinessController {
     constructor(@Inject() private businessService: BusinessService) {
     }
 
-    @POST("add")
+    @POST("/add")
     async add(@Req() auth: AuthenticatedRequest,
               @Body() req: BusinessAddReq) {
         const bizReq = {
@@ -40,7 +40,7 @@ export class BusinessController {
     /**
      * Update business
      */
-    @PUT("update")
+    @POST("/update")
     async update(@Req() auth: AuthenticatedRequest, @Body() req: BusinessUpdateReq) {
         const bizReq = {
             ...req,
@@ -54,7 +54,7 @@ export class BusinessController {
     /**
      * BizBusiness list
      */
-    @POST('list')
+    @GET('/list')
     async list(@Req() auth: AuthenticatedRequest, @Body() req: BusinessListReq) {
         const bizReq = {
             ...req,
@@ -67,7 +67,7 @@ export class BusinessController {
     /**
      * Delete business
      */
-    @POST("delete")
+    @POST("/delete")
     async delete(@Req() auth: AuthenticatedRequest, @Body() req: BusinessDeleteReq) {
         const bizReq = {
             ...req,

@@ -17,7 +17,9 @@ export interface StaffUpdateReq {
     id: string,
     businessId: string,
     name: string,
-    email: string
+    email: string,
+    phoneCode?: string,
+    phone?: string,
 }
 
 /**

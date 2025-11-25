@@ -21,6 +21,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.939.0",
     "@supabase/supabase-js": "^2.81.1",
     "axios": "^1.13.2",
     "biguint-format": "^1.0.2",

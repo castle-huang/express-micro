@@ -49,7 +49,7 @@ export class HttpTransport {
         this.app.use(express.urlencoded({extended: true}));
         const upload = multer();
         // Request logging
-        this.app.use(upload.none(), (req: Request, res: Response, next: NextFunction) => {
+        this.app.use(upload.single('file'), (req: Request, res: Response, next: NextFunction) => {
             console.log(`${req.method} ${req.path}`, {
                 ip: req.ip,
                 userAgent: req.get('User-Agent')
@@ -196,6 +196,9 @@ export class HttpTransport {
                         case 'form':
                             args[param.index] = req.body;
                             break
+                        case 'file':
+                            args[param.index] = req.file;
+                            break;
                         case 'param':
                             if (param.name) {
                                 args[param.index] = req.params[param.name];

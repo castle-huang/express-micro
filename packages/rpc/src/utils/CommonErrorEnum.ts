@@ -28,4 +28,8 @@ export class CommonErrorEnum {
         code: '1006',
         msg: 'Permission denied'
     };
+    static UPLOAD_FAILED: IErrorItem = {
+        code: '1007',
+        msg: 'upload failed'
+    };
 }

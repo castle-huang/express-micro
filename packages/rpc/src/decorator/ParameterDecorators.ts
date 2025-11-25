@@ -9,6 +9,7 @@ export enum ParameterType {
     QUERY = 'query',
     BODY = 'body',
     FORM = 'form',
+    FILE = 'file',
     PARAM = 'param',
     HEADERS = 'headers',
     HEADER = 'header'
@@ -106,6 +107,23 @@ export function Form(): ParameterDecorator {
         const paramMetadata: HttpParameterMetadata = {
             index: parameterIndex,
             type: ParameterType.FORM
+        };
+
+        const existingParameters = Reflect.getMetadata('controller:params', target.constructor, propertyKey as string) || [];
+        existingParameters.push(paramMetadata);
+        Reflect.defineMetadata('controller:params', existingParameters, target.constructor, propertyKey as string);
+    };
+}
+
+/**
+ * Decorator for injecting the request file
+ * @returns Parameter decorator function
+ */
+export function File(): ParameterDecorator {
+    return (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) => {
+        const paramMetadata: HttpParameterMetadata = {
+            index: parameterIndex,
+            type: ParameterType.FILE
         };
 
         const existingParameters = Reflect.getMetadata('controller:params', target.constructor, propertyKey as string) || [];

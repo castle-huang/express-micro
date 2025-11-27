@@ -1,21 +1,23 @@
-import {CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
+import {CommonError, CommonErrorEnum, Inject, Service, snakeToCamel, SnowflakeUtil} from "@sojo-micro/rpc";
 import {ServiceService} from "@/service/ServiceService";
 import {ServiceTypeRepository} from "@/repository/ServiceTypeRepository";
 import {
     ServiceAddReq,
     ServiceSearchReq,
     ServiceSearchItemResp,
-    ServiceTypeItemResp
+    ServiceTypeItemResp, ServicePageReq, ServicePageResp
 } from "@/types/ServiceType";
 import {ServiceRepository} from "@/repository/ServiceRepository";
 import {BizService} from "@/types/entity/BizService";
 import {MERCHANT_USER_API} from "@/config/RpcRegistry";
 import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
+import {BusinessRepository} from "@/repository/BusinessRepository";
 
 @Service()
 export class ServiceServiceImpl implements ServiceService {
     constructor(@Inject() private serviceTypeRepository: ServiceTypeRepository,
                 @Inject() private serviceRepository: ServiceRepository,
+                @Inject() private businessRepository: BusinessRepository,
                 @Inject(MERCHANT_USER_API) private merchantUserRpcService: MerchantUserRpcService) {
     }
 
@@ -55,26 +57,40 @@ export class ServiceServiceImpl implements ServiceService {
         await this.serviceRepository.insert(bizService);
     }
 
-    async getList(req: ServiceSearchReq, userId: string): Promise<ServiceSearchItemResp[]> {
+    async getList(req: ServiceSearchReq, userId: string): Promise<ServicePageResp> {
         //check merchantId
         const merchantId = await this.merchantUserRpcService.getMerchantIdByUserId(userId);
         if (!merchantId) {
             throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
         }
+        const total = await this.serviceRepository.countForList(req, merchantId);
         const data: BizService[] = await this.serviceRepository.getList(req, merchantId);
-        return data.map(service => {
-            return {
-                id: service.id,
-                name: service.name,
-                duration: service.duration,
-                price: service.price,
-                currency: service.currency,
-                chairs: service.chairs,
-                rooms: service.rooms,
-                description: service.description,
-                isActive: service.isActive
-            }
-        })
+        return {
+            list: data.map(service => {
+                return snakeToCamel( service)
+            }),
+            total: total
+        }
     }
 
+    async page(req: ServicePageReq): Promise<ServicePageResp> {
+        if (!req.businessId) {
+            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
+        }
+        const business = await this.businessRepository.getOneById(req.businessId);
+        if (!business) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        const total = await this.serviceRepository.count(req);
+        const data: BizService[] = await this.serviceRepository.page(req);
+        return {
+            list: data.map(service => {
+                return {
+                    ...snakeToCamel(service),
+                    imgUrl: business.logoUrl
+                }
+            }),
+            total: total
+        }
+    }
 }

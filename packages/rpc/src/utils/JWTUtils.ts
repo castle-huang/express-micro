@@ -8,8 +8,18 @@ export interface UserPayload {
     exp?: number; // expiration time
 }
 
+export interface CustomerUserPayload {
+    id: string;
+    iat?: number; // issued at
+    exp?: number; // expiration time
+}
+
 export interface AuthenticatedRequest extends Request {
     user: UserPayload;
+}
+
+export interface CustomerAuthenticatedRequest extends Request {
+    user: CustomerUserPayload;
 }
 
 export class JWTUtils {

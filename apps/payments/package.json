@@ -12,7 +12,8 @@
   "dependencies": {
     "@sojo-micro/rpc": "^1.0.0",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "stripe": "^20.0.0"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",

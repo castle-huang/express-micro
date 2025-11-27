@@ -68,7 +68,7 @@ export interface BusinessListReq {
 /**
  * Business List response model
  */
-export interface BusinessListResp {
+export interface BusinessResp {
     id?: string,
     name?: string,
     logoUrl?: string,
@@ -78,4 +78,28 @@ export interface BusinessListResp {
     chairs?: number,
     description?: string,
     businessHours?: businessHourData
+}
+
+/**
+ *  Business Page request model
+ */
+export interface BusinessPageReq {
+    name: string;
+    pageNo?: number;
+    pageSize?: number;
+}
+
+/**
+ * Business List response model
+ */
+export interface BusinessPageResp {
+    list: BusinessResp[];
+    total: number;
+}
+
+/**
+ * Business Get request model
+ */
+export interface BusinessGetReq {
+    id: string;
 }

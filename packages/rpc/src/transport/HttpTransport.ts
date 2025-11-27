@@ -9,6 +9,7 @@ import {ResponseUtil} from "../utils/ResponseUtil";
 import {CommonError} from "../utils/CommonError";
 import {CommonErrorEnum} from "../utils/CommonErrorEnum";
 import multer from 'multer';
+import cors from 'cors';
 import {IRpcRegistry} from "../config/RpcConfig";
 
 /**
@@ -45,6 +46,7 @@ export class HttpTransport {
      * Sets up middleware for the Express application
      */
     private setupMiddlewares(): void {
+        this.app.use(cors());
         this.app.use(express.json({limit: '10mb'}));
         this.app.use(express.urlencoded({extended: true}));
         const upload = multer();

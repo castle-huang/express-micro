@@ -1,7 +1,9 @@
-import {CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
+import {CommonError, CommonErrorEnum, Inject, Service, snakeToCamel, SnowflakeUtil} from "@sojo-micro/rpc";
 import {BusinessService} from "@/service/BusinessService";
 import {
-    BusinessAddReq, BusinessDeleteReq, BusinessListReq, BusinessListResp,
+    BusinessAddReq, BusinessDeleteReq, BusinessListReq, BusinessResp,
+    BusinessPageReq,
+    BusinessPageResp,
     BusinessUpdateReq
 } from "@/types/BusinessType";
 import {BusinessRepository} from "@/repository/BusinessRepository";
@@ -24,7 +26,7 @@ export class BusinessServiceImpl implements BusinessService {
         const insertData: BizBusiness = {
             id: SnowflakeUtil.generateId(),
             ...req,
-            businessHours: req.businessHours ? JSON.stringify(req.businessHours) : "",
+            businessHours: req.businessHours,
             createTime: now,
             updateTime: now,
         };
@@ -41,7 +43,7 @@ export class BusinessServiceImpl implements BusinessService {
         const updateData: BizBusiness = {
             ...record,
             ...req,
-            businessHours: req.businessHours ? JSON.stringify(req.businessHours) : "",
+            businessHours: req.businessHours,
             updateTime: now,
         };
         await this.businessRepository.update(updateData);
@@ -59,7 +61,7 @@ export class BusinessServiceImpl implements BusinessService {
         await this.businessRepository.deleteById(req.id);
     }
 
-    async getList(req: BusinessListReq, userId: string): Promise<BusinessListResp[]> {
+    async getList(req: BusinessListReq, userId: string): Promise<BusinessResp[]> {
         const merchantId = await this.merchantUserRpcService.getMerchantIdByUserId(userId);
         if (req.merchantId != merchantId) {
             throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
@@ -75,8 +77,37 @@ export class BusinessServiceImpl implements BusinessService {
                 rooms: item.rooms,
                 chairs: item.chairs,
                 description: item.description,
-                businessHours: item.businessHours ? JSON.parse(item.businessHours) : {},
+                businessHours: item.businessHours ? JSON.parse(JSON.stringify(item.businessHours)) : {},
             }
         })
+    }
+
+    async getPage(req: BusinessPageReq): Promise<BusinessPageResp> {
+        const total = await this.businessRepository.count(req);
+        const list = await this.businessRepository.page(req);
+        return {
+            list: list.map(item => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    logoUrl: item.logoUrl,
+                    website: item.website,
+                    location: item.location,
+                    rooms: item.rooms,
+                    chairs: item.chairs,
+                    description: item.description,
+                    businessHours: item.businessHours ? JSON.parse(JSON.stringify(item.businessHours)) : {},
+                }
+            }),
+            total: total
+        }
+    }
+
+    async getById(id: string): Promise<BusinessResp> {
+        let record = await this.businessRepository.getOneById(id);
+        if (!record) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        return snakeToCamel( record);
     }
 }

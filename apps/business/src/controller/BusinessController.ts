@@ -17,7 +17,7 @@ import {
     BusinessAddReq,
     BusinessDeleteReq,
     BusinessListReq,
-    BusinessListResp,
+    BusinessResp, BusinessPageReq,
     BusinessUpdateReq
 } from "@/types/BusinessType";
 

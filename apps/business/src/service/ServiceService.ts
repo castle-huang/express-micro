@@ -1,4 +1,10 @@
-import {ServiceAddReq, ServiceSearchItemResp, ServiceSearchReq, ServiceTypeItemResp} from "@/types/ServiceType";
+import {
+    ServiceAddReq,
+    ServicePageReq, ServicePageResp,
+    ServiceSearchItemResp,
+    ServiceSearchReq,
+    ServiceTypeItemResp
+} from "@/types/ServiceType";
 
 export abstract class ServiceService {
 
@@ -6,5 +12,7 @@ export abstract class ServiceService {
 
     abstract addService(req: ServiceAddReq, userId: string): Promise<void>;
 
-    abstract getList(req: ServiceSearchReq, userId: string): Promise<ServiceSearchItemResp[]>;
+    abstract getList(req: ServiceSearchReq, userId: string): Promise<ServicePageResp>;
+
+    abstract page(req: ServicePageReq): Promise<ServicePageResp>
 }

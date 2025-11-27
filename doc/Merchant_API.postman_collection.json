@@ -357,7 +357,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"name\": \"示例商家\",\r\n  \"logoUrl\": \"https://example.com/logo.png\",\r\n  \"website\": \"https://example.com\",\r\n  \"location\": \"北京市朝阳区xxx街道\",\r\n  \"rooms\": 5,\r\n  \"chairs\": 50,\r\n  \"description\": \"这是一个商家描述\",\r\n  \"businessHours\": {\r\n    \"monday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"tuesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"wednesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"all_day\"\r\n      }\r\n    ],\r\n    \"thursday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      }\r\n    ],\r\n    \"friday\": [\r\n      {\r\n        \"start_time\": \"14:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"saturday\": [],\r\n    \"sunday\": []\r\n  }\r\n}",
+									"raw": "{\r\n    \"name\": \"test merchant\",\r\n    \"logoUrl\": \"https://example.com/logo.png\",\r\n    \"website\": \"https://example.com\",\r\n    \"location\": \"city\",\r\n    \"rooms\": 5,\r\n    \"chairs\": 50,\r\n    \"description\": \"desc\",\r\n    \"businessHours\": {\r\n        \"monday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            },\r\n            {\r\n                \"start_time\": \"06:00 pm\",\r\n                \"end_time\": \"10:00 pm\"\r\n            }\r\n        ],\r\n        \"tuesday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            },\r\n            {\r\n                \"start_time\": \"06:00 pm\",\r\n                \"end_time\": \"10:00 pm\"\r\n            }\r\n        ],\r\n        \"wednesday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"thursday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"friday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"saturday\": [],\r\n        \"sunday\": []\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -392,7 +392,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"id\": \"1\",\r\n  \"name\": \"示例商家\",\r\n  \"logoUrl\": \"https://example.com/logo.png\",\r\n  \"website\": \"https://example.com\",\r\n  \"location\": \"北京市朝阳区xxx街道\",\r\n  \"rooms\": 5,\r\n  \"chairs\": 50,\r\n  \"description\": \"这是一个商家描述\",\r\n  \"businessHours\": {\r\n    \"monday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"tuesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      },\r\n      {\r\n        \"start_time\": \"13:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"wednesday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"all_day\"\r\n      }\r\n    ],\r\n    \"thursday\": [\r\n      {\r\n        \"start_time\": \"09:00\",\r\n        \"end_time\": \"12:00\",\r\n        \"period\": \"am\"\r\n      }\r\n    ],\r\n    \"friday\": [\r\n      {\r\n        \"start_time\": \"14:00\",\r\n        \"end_time\": \"18:00\",\r\n        \"period\": \"pm\"\r\n      }\r\n    ],\r\n    \"saturday\": [],\r\n    \"sunday\": []\r\n  }\r\n}",
+									"raw": "{\r\n    \"id\": \"123124\",\r\n    \"name\": \"test merchant\",\r\n    \"logoUrl\": \"https://example.com/logo.png\",\r\n    \"website\": \"https://example.com\",\r\n    \"location\": \"city\",\r\n    \"rooms\": 5,\r\n    \"chairs\": 50,\r\n    \"description\": \"desc\",\r\n    \"businessHours\": {\r\n        \"monday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            },\r\n            {\r\n                \"start_time\": \"06:00 pm\",\r\n                \"end_time\": \"10:00 pm\"\r\n            }\r\n        ],\r\n        \"tuesday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            },\r\n            {\r\n                \"start_time\": \"06:00 pm\",\r\n                \"end_time\": \"10:00 pm\"\r\n            }\r\n        ],\r\n        \"wednesday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"thursday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"friday\": [\r\n            {\r\n                \"start_time\": \"09:00 am\",\r\n                \"end_time\": \"12:00 pm\"\r\n            }\r\n        ],\r\n        \"saturday\": [],\r\n        \"sunday\": []\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -607,6 +607,46 @@
 										"service",
 										"type",
 										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Common",
+					"item": [
+						{
+							"name": "Upload file",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file2",
+											"type": "file",
+											"src": "/C:/Users/26633/Pictures/Saved Pictures/1.jpeg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/upload",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"upload"
 									]
 								}
 							},

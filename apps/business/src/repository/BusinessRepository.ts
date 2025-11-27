@@ -1,6 +1,9 @@
 import {CommonError, snakeToCamel, Service, CommonErrorEnum, camelToSnake} from "@sojo-micro/rpc";
 import {BizBusiness} from "@/types/entity/BizBusiness";
 import {supabase} from "@/config/Supabase";
+import {OrderSearchReq} from "@/types/OrderType";
+import {BizOrder} from "@/types/entity/BizOrder";
+import {BusinessPageReq} from "@/types/BusinessType";
 
 @Service()
 export class BusinessRepository {
@@ -57,5 +60,37 @@ export class BusinessRepository {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
         return data.map(item => snakeToCamel(item));
+    }
+
+    async count(req: BusinessPageReq): Promise<number> {
+        let query = supabase
+            .from('biz_business')
+            .select('*', {count: 'exact'})
+            .eq('deleted', false);
+        if (req.name) {
+            query = query.ilike('name', req.name);
+        }
+        const {count, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return count?? 0;
+    }
+
+    async page(req: BusinessPageReq): Promise<BizBusiness[]> {
+        let {name, pageNo = 1, pageSize = 20} = req;
+        let query = supabase
+            .from('biz_business')
+            .select('*')
+            .eq('deleted', false);
+        if (name) {
+            query = query.ilike('name', name);
+        }
+        query = query.range((pageNo - 1) * pageSize, (pageNo * pageSize) - 1);
+        const {data, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data?.map(record => snakeToCamel(record))
     }
 }

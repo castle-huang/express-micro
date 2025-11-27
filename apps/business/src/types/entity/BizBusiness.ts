@@ -47,7 +47,7 @@ export interface BizBusiness {
     /**
      * Business hours
      */
-    businessHours?: string;
+    businessHours?: any;
 
     /**
      * Update time

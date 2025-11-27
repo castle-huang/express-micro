@@ -77,6 +77,42 @@ All endpoints return JSON responses with the following structure:
 }
 ```
 
+# Common APIs
+
+---
+
+## 1 Upload file
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/upload`
+
+### Request Body
+
+**Content-Type:** `multipart/form-data`
+
+| Parameter | Type | Required | Description         |
+| --------- | ---- | -------- | ------------------- |
+| `file`    | file | Yes      | File to be uploaded |
+
+### Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": "https://example.com/uploads/file_123456.jpg"
+}
+```
+
+#### Response Parameters
+
+| Parameter | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| `data`    | string | URL of the uploaded file |
+
 # 1 Authentication APIs
 
 ---
@@ -287,72 +323,65 @@ Response Parameters
 
 The `businessHours` object contains properties for each day of the week (monday, tuesday, wednesday, thursday, friday, saturday, sunday). Each day is an array of time period objects with the following structure:
 
-| Parameter    | Type   | Required | Description                  |
-| ------------ | ------ | -------- | ---------------------------- |
-| `start_time` | string | Yes      | Start time in "HH:MM" format |
-| `end_time`   | string | Yes      | End time in "HH:MM" format   |
-| `period`     | string | Yes      | Time period type: "am", "pm" |
+| Parameter    | Type   | Required | Description                     |
+| ------------ | ------ | -------- | ------------------------------- |
+| `start_time` | string | Yes      | Start time in "HH:MM am" format |
+| `end_time`   | string | Yes      | End time in "HH:MM pm" format   |
 
 #### Example Request Body
 
 ```json
 {
-    "merchantId": "merchant_001",
-    "name": "示例商家",
+    "name": "test merchant",
     "logoUrl": "https://example.com/logo.png",
     "website": "https://example.com",
-    "location": "北京市朝阳区xxx街道",
+    "location": "city",
     "rooms": 5,
     "chairs": 50,
-    "description": "这是一个商家描述",
+    "description": "desc",
     "businessHours": {
         "monday": [
             {
-                "start_time": "09:00",
-                "end_time": "12:00",
-                "period": "am"
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
             },
             {
-                "start_time": "13:00",
-                "end_time": "18:00",
-                "period": "pm"
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
             }
         ],
         "tuesday": [
             {
-                "start_time": "09:00",
-                "end_time": "12:00",
-                "period": "am"
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
             },
             {
-                "start_time": "13:00",
-                "end_time": "18:00",
-                "period": "pm"
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
             }
         ],
         "wednesday": [
             {
-                "start_time": "09:00",
-                "end_time": "18:00",
-                "period": "all_day"
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
             }
         ],
         "thursday": [
             {
-                "start_time": "09:00",
-                "end_time": "12:00",
-                "period": "am"
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
             }
         ],
         "friday": [
             {
-                "start_time": "14:00",
-                "end_time": "18:00",
-                "period": "pm"
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
             }
         ],
-        "saturday": [
-
+        "saturday": [],
+        "sunday": []
+    }
+}
         ],
         "sunday": [
 
@@ -397,73 +426,65 @@ The `businessHours` object contains properties for each day of the week (monda
 
 The `businessHours` object contains properties for each day of the week (monday, tuesday, wednesday, thursday, friday, saturday, sunday). Each day is an array of time period objects with the following structure:
 
-| Parameter    | Type   | Required | Description                  |
-| ------------ | ------ | -------- | ---------------------------- |
-| `start_time` | string | Yes      | Start time in "HH:MM" format |
-| `end_time`   | string | Yes      | End time in "HH:MM" format   |
-| `period`     | string | Yes      | Time period type: "am", "pm" |
+| Parameter    | Type   | Required | Description                     |
+| ------------ | ------ | -------- | ------------------------------- |
+| `start_time` | string | Yes      | Start time in "HH:MM am" format |
+| `end_time`   | string | Yes      | End time in "HH:MM pm" format   |
 
 #### Example Request Body
 
 ```json
 {
- "id": "1",
- "name": "示例商家",
- "logoUrl": "https://example.com/logo.png",
- "website": "https://example.com",
- "location": "北京市朝阳区xxx街道",
- "rooms": 5,
- "chairs": 50,
- "description": "这是一个商家描述",
- "businessHours": {
- "monday": [
- {
- "start_time": "09:00",
- "end_time": "12:00",
- "period": "am"
- },
- {
- "start_time": "13:00",
- "end_time": "18:00",
- "period": "pm"
- }
- ],
- "tuesday": [
- {
- "start_time": "09:00",
- "end_time": "12:00",
- "period": "am"
- },
- {
- "start_time": "13:00",
- "end_time": "18:00",
- "period": "pm"
- }
- ],
- "wednesday": [
- {
- "start_time": "09:00",
- "end_time": "18:00",
- "period": "all_day"
- }
- ],
- "thursday": [
- {
- "start_time": "09:00",
- "end_time": "12:00",
- "period": "am"
- }
- ],
- "friday": [
- {
- "start_time": "14:00",
- "end_time": "18:00",
- "period": "pm"
- }
- ],
- "saturday": [],
- "sunday": []
- }
+    "merchantId": "7889454",
+    "name": "test merchant",
+    "logoUrl": "https://example.com/logo.png",
+    "website": "https://example.com",
+    "location": "city",
+    "rooms": 5,
+    "chairs": 50,
+    "description": "desc",
+    "businessHours": {
+        "monday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            },
+            {
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
+            }
+        ],
+        "tuesday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            },
+            {
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
+            }
+        ],
+        "wednesday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "thursday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "friday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "saturday": [],
+        "sunday": []
+    }
 }
 ```
 
@@ -519,73 +540,56 @@ The `businessHours` object contains properties for each day of the week (monda
 
 ```json
 {
-    "code": "0",
-    "msg": "Success",
-    "data": [
-        {
-            "id": "1",
-            "name": "示例商家",
-            "logoUrl": "https://example.com/logo.png",
-            "website": "https://example.com",
-            "location": "北京市朝阳区xxx街道",
-            "rooms": 5,
-            "chairs": 50,
-            "description": "这是一个商家描述",
-            "businessHours": {
-                "monday": [
-                    {
-                        "start_time": "09:00",
-                        "end_time": "12:00",
-                        "period": "am"
-                    },
-                    {
-                        "start_time": "13:00",
-                        "end_time": "18:00",
-                        "period": "pm"
-                    }
-                ],
-                "tuesday": [
-                    {
-                        "start_time": "09:00",
-                        "end_time": "12:00",
-                        "period": "am"
-                    },
-                    {
-                        "start_time": "13:00",
-                        "end_time": "18:00",
-                        "period": "pm"
-                    }
-                ],
-                "wednesday": [
-                    {
-                        "start_time": "09:00",
-                        "end_time": "18:00",
-                        "period": "all_day"
-                    }
-                ],
-                "thursday": [
-                    {
-                        "start_time": "09:00",
-                        "end_time": "12:00",
-                        "period": "am"
-                    }
-                ],
-                "friday": [
-                    {
-                        "start_time": "14:00",
-                        "end_time": "18:00",
-                        "period": "pm"
-                    }
-                ],
-                "saturday": [
-
-                ],
-                "sunday": [
-
-                ]
+    "merchantId": "78994546",
+    "name": "test merchant",
+    "logoUrl": "https://example.com/logo.png",
+    "website": "https://example.com",
+    "location": "city",
+    "rooms": 5,
+    "chairs": 50,
+    "description": "desc",
+    "businessHours": {
+        "monday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            },
+            {
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
             }
-        }
-    ]
+        ],
+        "tuesday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            },
+            {
+                "start_time": "06:00 pm",
+                "end_time": "10:00 pm"
+            }
+        ],
+        "wednesday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "thursday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "friday": [
+            {
+                "start_time": "09:00 am",
+                "end_time": "12:00 pm"
+            }
+        ],
+        "saturday": [],
+        "sunday": []
+    }
 }
 ```
 
@@ -791,41 +795,63 @@ none
 }
 ```
 
-### Response
+### Response Parameters
 
-#### Response Parameters
+**Data Structure:**
 
-| Parameter     | Type    | Description                   |
-| ------------- | ------- | ----------------------------- |
-| `id`          | string  | Service unique identifier     |
-| `name`        | string  | Service name                  |
-| `duration`    | number  | Service duration in minutes   |
-| `price`       | number  | Service price                 |
-| `currency`    | string  | Currency code (e.g., "USD")   |
-| `chairs`      | number  | Number of chairs required     |
-| `rooms`       | number  | Number of rooms required      |
-| `description` | string  | Service description           |
-| `isActive`    | boolean | Whether the service is active |
+| Parameter | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| `list`    | array  | List of services         |
+| `total`   | number | Total number of services |
+
+**Service Item Structure:**
+
+| Parameter       | Type    | Description                           |
+| --------------- | ------- | ------------------------------------- |
+| `id`            | string  | Service unique identifier             |
+| `businessId`    | string  | Business identifier                   |
+| `merchantId`    | string  | Merchant identifier                   |
+| `name`          | string  | Service name                          |
+| `serviceTypeId` | string  | Service type identifier               |
+| `duration`      | number  | Service duration in minutes           |
+| `price`         | number  | Service price                         |
+| `currency`      | string  | Currency code (e.g., "CNY")           |
+| `chairs`        | number  | Number of chairs required             |
+| `rooms`         | number  | Number of rooms required              |
+| `description`   | string  | Service description                   |
+| `isActive`      | boolean | Whether the service is active         |
+| `deleted`       | boolean | Whether the service is deleted        |
+| `createTime`    | number  | Creation timestamp in milliseconds    |
+| `updateTime`    | number  | Last update timestamp in milliseconds |
 
 #### Success Response
 
 ```json
 {
- "code": "0",
- "msg": "Success",
- "data": [
- {
- "id": "7398200308268142592",
- "name": "hair srvice",
- "duration": 30,
- "price": 50,
- "currency": "CNY",
- "chairs": 1,
- "rooms": 0,
- "description": "desc",
- "isActive": true
- }
- ]
+    "code": "0",
+    "msg": "Success",
+    "data": {
+        "list": [
+            {
+                "businessId": "1",
+                "name": "hair srvice",
+                "serviceTypeId": "haircut_001",
+                "duration": 30,
+                "price": 50,
+                "currency": "CNY",
+                "id": "7398200308268142592",
+                "chairs": 1,
+                "rooms": 0,
+                "isActive": true,
+                "deleted": false,
+                "updateTime": 1763868405406,
+                "createTime": 1763868405406,
+                "merchantId": "7397110941072101376",
+                "description": "desc"
+            }
+        ],
+        "total": 1
+    }
 }
 ```
 

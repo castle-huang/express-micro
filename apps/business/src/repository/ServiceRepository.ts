@@ -3,6 +3,7 @@ import {supabase} from "@/config/Supabase";
 import {BizService} from "@/types/entity/BizService";
 import {ServicePageReq, ServiceSearchItemResp, ServiceSearchReq} from "@/types/ServiceType";
 import {BusinessPageReq} from "@/types/BusinessType";
+import {BizBusiness} from "@/types/entity/BizBusiness";
 
 @Service()
 export class ServiceRepository {
@@ -22,6 +23,16 @@ export class ServiceRepository {
         const {error} = await supabase
             .from('biz_service')
             .insert(camelToSnake(bizService));
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+    }
+
+    async update(bizService: BizService): Promise<void> {
+        const {error} = await supabase
+            .from('biz_service')
+            .update(camelToSnake(bizService))
+            .eq('id', bizService.id);
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

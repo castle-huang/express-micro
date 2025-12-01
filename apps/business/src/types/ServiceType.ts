@@ -24,6 +24,22 @@ export interface ServiceAddReq {
 }
 
 /**
+ * Update Service request model
+ */
+export interface ServiceUpdateReq {
+    id: string;
+    businessId: string;
+    name: string;
+    serviceTypeId: string;
+    duration: number;
+    price: number;
+    currency: string;
+    chairs: number;
+    rooms: number;
+    description: string;
+}
+
+/**
  * Service List request model
  */
 export interface ServiceSearchReq {

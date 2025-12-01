@@ -1,4 +1,5 @@
 import {
+    AuthenticatedRequest,
     BaseResponse,
     Body,
     Controller,
@@ -20,13 +21,13 @@ export class CustomerUserController {
     }
 
     @GET()
-    async getCustomerUser(@Req() authReq: CustomerAuthenticatedRequest): Promise<BaseResponse<ProfilesResp>>  {
+    async getCustomerUser(@Req() authReq: AuthenticatedRequest): Promise<BaseResponse<ProfilesResp>>  {
         const result = await this.customerUserService.getCustomerUser(authReq.user.id);
         return ResponseUtil.success(result);
     }
 
     @PUT()
-    async updateCustomerUser(@Req() authReq: CustomerAuthenticatedRequest, @Body() req: UpdateCustomerUserReq): Promise<BaseResponse<GetCustomerResp>>  {
+    async updateCustomerUser(@Req() authReq: AuthenticatedRequest, @Body() req: UpdateCustomerUserReq): Promise<BaseResponse<GetCustomerResp>>  {
         req.id = authReq.user.id;
         await this.customerUserService.updateCustomerUser(req);
         return ResponseUtil.success();

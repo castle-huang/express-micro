@@ -1,4 +1,4 @@
-import {camelToSnake, CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
+import {CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
 import {AppointmentService} from "@/service/AppointmentService";
 import {AppointmentItemResp, AppointmentReq, AppointmentSearchReq} from "@/types/AppointmentType";
 import {AppointmentRepository} from "@/repository/AppointmentRepository";
@@ -8,6 +8,8 @@ import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {StaffRepository} from "@/repository/StaffRepository";
 import {BusinessRepository} from "@/repository/BusinessRepository";
 import {ServiceRepository} from "@/repository/ServiceRepository";
+import {OrderRepository} from "@/repository/OrderRepository";
+import {BizOrder} from "@/types/entity/BizOrder";
 
 @Service()
 export class AppointmentServiceImpl implements AppointmentService {
@@ -15,7 +17,8 @@ export class AppointmentServiceImpl implements AppointmentService {
                 @Inject(MERCHANT_USER_API) private merchantUserRpcService: MerchantUserRpcService,
                 @Inject() private staffRepository: StaffRepository,
                 @Inject() private businessRepository: BusinessRepository,
-                @Inject() private serviceRepository: ServiceRepository
+                @Inject() private serviceRepository: ServiceRepository,
+                @Inject() private orderRepository: OrderRepository
     ) {
     }
 
@@ -64,6 +67,22 @@ export class AppointmentServiceImpl implements AppointmentService {
         bizAppointment.createTime = now;
         bizAppointment.updateTime = now;
         await this.appointmentRepository.insert(bizAppointment);
+        const bizOrder: BizOrder = {
+            id: SnowflakeUtil.generateId(),
+            merchantId: merchantId,
+            businessId: businessId,
+            serviceId: serviceId,
+            serviceName: service.name,
+            staffId: staffId,
+            staffName: staff.name,
+            customerName: customerName,
+            appointmentId: bizAppointment.id,
+            amount: service.price,
+            snapshot: JSON.stringify(bizAppointment),
+            createTime: now,
+            updateTime: now
+        }
+        await this.orderRepository.insert(bizOrder);
     }
 
     async searchAppointment(req: AppointmentSearchReq, userId: string): Promise<AppointmentItemResp[]> {

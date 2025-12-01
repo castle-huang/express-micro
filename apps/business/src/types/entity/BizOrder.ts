@@ -10,8 +10,9 @@ export interface BizOrder {
     staffId?: string;
     staffName?: string;
     customerName?: string;
+    appointmentId?: string;
     amount?: number;
     snapshot?: string;
-    updateTime?: string;
-    createTime?: string;
+    updateTime?: number;
+    createTime?: number;
 }

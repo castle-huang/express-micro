@@ -8,7 +8,7 @@ import {
     ResponseUtil
 } from "@sojo-micro/rpc";
 import {ServiceService} from "@/service/ServiceService";
-import {ServiceAddReq, ServiceSearchReq} from "@/types/ServiceType";
+import {ServiceAddReq, ServiceSearchReq, ServiceUpdateReq} from "@/types/ServiceType";
 
 @Controller({basePath: '/api/biz/service'})
 export class ServiceController {
@@ -26,6 +26,13 @@ export class ServiceController {
         await this.serviceService.addService(req, auth.user.id);
         return ResponseUtil.success();
     }
+
+    @POST("/update")
+    async updateService(@Body() req: ServiceUpdateReq, @Req() auth: AuthenticatedRequest) {
+        await this.serviceService.updateService(req, auth.user.id);
+        return ResponseUtil.success();
+    }
+
 
     @POST("/search")
     async getList(@Body() req: ServiceSearchReq, @Req() auth: AuthenticatedRequest) {

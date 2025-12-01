@@ -38,6 +38,7 @@ export class MerchantUserServiceImpl implements MerchantUserService {
         })
         // create new merchant user
         const userId = SnowflakeUtil.generateBigString();
+        const now = new Date().getTime();
         await this.merchantUserRepository.insert({
             id: userId,
             fullName: req.fullName,
@@ -45,8 +46,8 @@ export class MerchantUserServiceImpl implements MerchantUserService {
             password: req.password,
             type: MerchantUserType.OWNER,
             merchantId: merchantId,
-            updateTime: new Date().getTime(),
-            createTime: new Date().getTime()
+            updateTime: now,
+            createTime: now
         });
 
         const payload: AuthenticatedRequest = {

@@ -5,13 +5,14 @@ import {
     ServiceAddReq,
     ServiceSearchReq,
     ServiceSearchItemResp,
-    ServiceTypeItemResp, ServicePageReq, ServicePageResp
+    ServiceTypeItemResp, ServicePageReq, ServicePageResp, ServiceUpdateReq
 } from "@/types/ServiceType";
 import {ServiceRepository} from "@/repository/ServiceRepository";
 import {BizService} from "@/types/entity/BizService";
 import {MERCHANT_USER_API} from "@/config/RpcRegistry";
 import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {BusinessRepository} from "@/repository/BusinessRepository";
+import {BizBusiness} from "@/types/entity/BizBusiness";
 
 @Service()
 export class ServiceServiceImpl implements ServiceService {
@@ -55,6 +56,21 @@ export class ServiceServiceImpl implements ServiceService {
             createTime: now
         } as BizService;
         await this.serviceRepository.insert(bizService);
+    }
+
+    async updateService(req: ServiceUpdateReq, userId: string): Promise<void> {
+        const merchantId = await this.merchantUserRpcService.getMerchantIdByUserId(userId);
+        if (!merchantId) {
+            throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
+        }
+        let record = await this.serviceRepository.getOneById(req.id);
+        const now = new Date().getTime();
+        const updateData: BizService = {
+            ...record,
+            ...req,
+            updateTime: now,
+        };
+        await this.serviceRepository.update(updateData);
     }
 
     async getList(req: ServiceSearchReq, userId: string): Promise<ServicePageResp> {

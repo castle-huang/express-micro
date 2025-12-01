@@ -30,15 +30,15 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (customerUser) {
             throw new CommonError(AuthErrorEnum.EMAIL_ALREADY_USED);
         }
-        // create new customer user (only name, email, password added tentatively)
+        const now = new Date().getTime();
         const userId = SnowflakeUtil.generateBigString();
         await this.customerUserRepository.insert({
             id: userId,
             fullName: req.fullName,
             email: req.email,
             password: req.password,
-            updateTime: new Date().getTime(),
-            createTime: new Date().getTime()
+            updateTime: now,
+            createTime: now
         });
 
         // define jwt payload

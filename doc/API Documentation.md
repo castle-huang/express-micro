@@ -218,12 +218,10 @@ JSON
 
 | Parameter   | Type   | Required | Description                                   |
 | ----------- | ------ | -------- | --------------------------------------------- |
-| `id`        | string | YES      | The unique identifier of the user             |
 | `avatarUrl` | string | NO       | URL or identifier for the user's avatar image |
 | `fullName`  | string | NO       | The user's full name                          |
 | `phoneCode` | string | NO       | Country/region phone code (e.g., "+1", "+44") |
 | `phone`     | string | NO       | Phone number without country code             |
-| `email`     | string | YES      | User's email address                          |
 
 **Example Request Body:**
 
@@ -231,12 +229,10 @@ JSON
 
 ```json
 {  
-  "id": "string",  
   "avatarUrl": "avatar",  
   "fullName": "John Doe",  
   "phoneCode": "+1",  
-  "phone": "1234567890", 
-  "email": "john.doe@example.com"
+  "phone": "1234567890"
 }
 ```
 

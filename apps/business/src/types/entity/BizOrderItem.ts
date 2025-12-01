@@ -1,20 +1,21 @@
 /**
  * BizOrder
  */
-export interface BizOrder {
+export interface BizOrderItem {
     id?: string;
     merchantId?: string;
     businessId?: string;
+    appointmentId?: string;
     serviceId?: string;
     serviceName?: string;
+    price: number;
+    count: number;
+    amount: number;
+    orderId?: string;
     staffId?: string;
     staffName?: string;
     customerName?: string;
     userId?: string;
-    email?: string;
-    phone?: string;
-    totalAmount?: number;
-    snapshot?: string;
     updateTime?: number;
     createTime?: number;
 }

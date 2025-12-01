@@ -17,8 +17,7 @@ export class AppointmentServiceImpl implements AppointmentService {
                 @Inject(MERCHANT_USER_API) private merchantUserRpcService: MerchantUserRpcService,
                 @Inject() private staffRepository: StaffRepository,
                 @Inject() private businessRepository: BusinessRepository,
-                @Inject() private serviceRepository: ServiceRepository,
-                @Inject() private orderRepository: OrderRepository
+                @Inject() private serviceRepository: ServiceRepository
     ) {
     }
 
@@ -67,22 +66,6 @@ export class AppointmentServiceImpl implements AppointmentService {
         bizAppointment.createTime = now;
         bizAppointment.updateTime = now;
         await this.appointmentRepository.insert(bizAppointment);
-        const bizOrder: BizOrder = {
-            id: SnowflakeUtil.generateId(),
-            merchantId: merchantId,
-            businessId: businessId,
-            serviceId: serviceId,
-            serviceName: service.name,
-            staffId: staffId,
-            staffName: staff.name,
-            customerName: customerName,
-            appointmentId: bizAppointment.id,
-            amount: service.price,
-            snapshot: JSON.stringify(bizAppointment),
-            createTime: now,
-            updateTime: now
-        }
-        await this.orderRepository.insert(bizOrder);
     }
 
     async searchAppointment(req: AppointmentSearchReq, userId: string): Promise<AppointmentItemResp[]> {

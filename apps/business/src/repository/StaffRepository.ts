@@ -56,4 +56,15 @@ export class StaffRepository {
         }
         return data.map(item => snakeToCamel(item));
     }
+
+    async getStaffListByServiceId(businessId: string) {
+        const {data, error} = await supabase
+            .from('biz_staff')
+            .select('*')
+            .eq('business_id', businessId)
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data.map(item => snakeToCamel(item));
+    }
 }

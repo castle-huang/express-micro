@@ -24,3 +24,22 @@ export interface OrderItemResp {
     updateTime?: string;
     createTime?: string;
 }
+
+export interface OrderReq {
+    businessId?: string;
+    appointmentTime?: number;
+    timeSlot?: string;
+    fullName?: string;
+    phone?: string;
+    email?: string;
+    services?: OrderItem[];
+}
+
+export interface OrderItem {
+    serviceId?: string;
+    count?: number;
+}
+
+export interface OrderResp {
+    orderId?: string;
+}

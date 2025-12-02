@@ -3,11 +3,17 @@
 
 <!-- TOC start -->
 
+<!-- TOC start -->
+
 ### [General Information](#general-information)
 
 - [Base url for request](#base-url-for-request)
 - [Authentication](#authentication)
 - [Response Format](#response-format)
+
+### [Common APIs](#common-apis)
+
+- [1 Upload file](#1-upload-file)
 
 ### [1 Authentication APIs](#1-authentication-apis)
 
@@ -15,35 +21,12 @@
 - [1.2 Login](#12-login)
 - [1.3 Edit Profile](#13-edit-profile)
 - [1.4 Query user profile](#14-query-user-profile)
+- [1.5 Update password](#15-update-password)
 
 ### [2 Business-Related APIs](#2-business-related-apis)
 
-- [2.1 Add new business](#21-add-new-business)
-- [2.2 Update business](#22-update-business)
-- [2.3 Query business list](#23-query-business-list)
-- [2.4 Delete business](#24-delete-business)
-
-### [3 Service-Related APIs](#3-service-related-apis)
-
-- [3.1 Query service type list](#31-query-service-type-list)
-- [3.2 Add new service](#32-add-new-service)
-- [3.3 Update service](#33-update-service)
-- [3.4 Search service](#34-search-service)
-
-### [4 Staff-Related APIs](#4-staff-related-apis)
-
-- [4.1 Add new staff](#41-add-new-staff)
-- [4.2 Update staff](#42-update-staff)
-- [4.3 Query staff list](#43-query-staff-list)
-
-### [5 Calendar-Related APIs](#5-calendar-related-apis)
-
-- [5.1 Add new appointment](#51-add-new-appointment)
-- [5.2 Search Appointment](#52-search-appointment)
-
-### [6 Dashboard-Related APIs](#6-dashboard-related-apis)
-
-- [6.1 Query dashboard data](#61-query-dashboard-data)
+- [2.1 Get business](#21-get-business)
+- [2.2 Page query business](#22-page-query-business)
   
   <!-- TOC end -->
 
@@ -290,6 +273,40 @@ Response Parameters
 } 
 ```
 
+# 1.5 Update passoword
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/auth/customer/user`
+
+### Request Body
+
+| Parameter     | Type   | Required | Description      |
+| ------------- | ------ | -------- | ---------------- |
+| `oldPassword` | string | Yes      | Current password |
+| `newPassword` | string | Yes      | New password     |
+
+#### Example Request Body
+
+```json
+{
+ "oldPassword": "123457",
+ "newPassword": "123456"
+}
+```
+
+### Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
+}
+```
+
 # 2 Business-Related APIs
 
 ---
@@ -534,4 +551,72 @@ The `businessHours` object contains properties for each day of the week (monda
         "total": 4
     }
 }
+```
+
+# 3 Service-Related APIs
+
+---
+
+## 3.1 Page query service
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/customer/service/page`
+
+### Request Body
+
+| Parameter    | Type   | Required | Description                  |
+| ------------ | ------ | -------- | ---------------------------- |
+| `businessId` | string | Yes      | Business identifier          |
+| `pageNo`     | number | No       | Page number, starting from 1 |
+| `pageSize`   | number | No       | Number of items per page     |
+
+#### Example Request Body
+
+```json
+{
+ "businessId": "1",
+ "pageNo": 1,
+ "pageSize": 2
+}
+```
+
+### Response
+
+#### Response Parameters
+
+**Data Structure:**
+
+| Parameter | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| `list`    | array  | List of services         |
+| `total`   | number | Total number of services |
+
+**Service Item Structure:**
+
+| Parameter       | Type    | Description                           |
+| --------------- | ------- | ------------------------------------- |
+| `id`            | string  | Service unique identifier             |
+| `businessId`    | string  | Business identifier                   |
+| `merchantId`    | string  | Merchant identifier                   |
+| `name`          | string  | Service name                          |
+| `serviceTypeId` | string  | Service type identifier               |
+| `duration`      | number  | Service duration in minutes           |
+| `price`         | number  | Service price                         |
+| `currency`      | string  | Currency code (e.g., "CNY")           |
+| `chairs`        | number  | Number of chairs required             |
+| `rooms`         | number  | Number of rooms required              |
+| `description`   | string  | Service description                   |
+| `imgUrl`        | string  | Service image URL                     |
+| `isActive`      | boolean | Whether the service is active         |
+| `deleted`       | boolean | Whether the service is deleted        |
+| `createTime`    | number  | Creation timestamp in milliseconds    |
+| `updateTime`    | number  | Last update timestamp in milliseconds |
+
+#### Success Response
+
+```json
+
 ```

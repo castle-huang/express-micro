@@ -1,5 +1,8 @@
 <h1 align="center">API Documentation</h1>
+
 <h1>Merchant Backend API Documentation</h1>
+
+<!-- TOC start -->
 
 <!-- TOC start -->
 
@@ -9,12 +12,17 @@
 - [Authentication](#authentication)
 - [Response Format](#response-format)
 
+### [Common APIs](#common-apis)
+
+- [Upload file](#upload-file)
+
 ### [1 Authentication APIs](#1-authentication-apis)
 
 - [1.1 Register](#11-register)
 - [1.2 Login](#12-login)
 - [1.3 Edit Profile](#13-edit-profile)
 - [1.4 Query user profile](#14-query-user-profile)
+- [1.5 Update password](#15-update-password)
 
 ### [2 Business-Related APIs](#2-business-related-apis)
 
@@ -22,6 +30,7 @@
 - [2.2 Update business](#22-update-business)
 - [2.3 Query business list](#23-query-business-list)
 - [2.4 Delete business](#24-delete-business)
+- [2.5 Query Business dropdown list](#25-query-business-dropdown-list)
 
 ### [3 Service-Related APIs](#3-service-related-apis)
 
@@ -29,12 +38,14 @@
 - [3.2 Add new service](#32-add-new-service)
 - [3.3 Update service](#33-update-service)
 - [3.4 Search service](#34-search-service)
+- [3.5 Query Service dropdown list](#35-query-service-dropdown-list)
 
 ### [4 Staff-Related APIs](#4-staff-related-apis)
 
 - [4.1 Add new staff](#41-add-new-staff)
 - [4.2 Update staff](#42-update-staff)
 - [4.3 Query staff list](#43-query-staff-list)
+- [4.4 Query Staff dropdown list](#44-query-staff-dropdown-list)
 
 ### [5 Calendar-Related APIs](#5-calendar-related-apis)
 
@@ -212,7 +223,7 @@ JSON
 
 - **Method:** `PUT`
 
-- **Endpoint:** `{{baseUrl}}/api/auth/merchant/update`
+- **Endpoint:** `{{baseUrl}}/api/auth/merchant/user`
 
 ## Request Body Parameters
 
@@ -288,6 +299,40 @@ Response Parameters
  "email": "aa1@qq.com"
  }
 } 
+```
+
+## 1.5 Update passoword
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/auth/merchant/user/update-pwd`
+
+### Request Body
+
+| Parameter     | Type   | Required | Description      |
+| ------------- | ------ | -------- | ---------------- |
+| `oldPassword` | string | Yes      | Current password |
+| `newPassword` | string | Yes      | New password     |
+
+#### Example Request Body
+
+```json
+{
+ "oldPassword": "123457",
+ "newPassword": "123456"
+}
+```
+
+### Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
+}
 ```
 
 # 2 Business-Related APIs
@@ -623,6 +668,46 @@ The `businessHours` object contains properties for each day of the week (monda
 }
 ```
 
+# 2.5 Query Business dropdown list
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/business/dropdown`
+
+### Request Body
+
+None
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type   | Description                |
+| --------- | ------ | -------------------------- |
+| `id`      | string | Business unique identifier |
+| `name`    | string | Business name              |
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": [
+ {
+ "id": "7399369444537012224",
+ "name": "test merchant"
+ },
+ {
+ "id": "1",
+ "name": "test"
+ }
+ ]
+}
+```
+
 # 3 Service-Related APIs
 
 ---
@@ -851,6 +936,52 @@ none
 }
 ```
 
+## 3.4 Query Service dropdown list
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/service/dropdown`
+
+### Request Body
+
+| Parameter    | Type   | Required | Description         |
+| ------------ | ------ | -------- | ------------------- |
+| `businessId` | string | Yes      | Business identifier |
+
+#### Example Request Body
+
+```json
+{
+ "businessId": "1"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type   | Description               |
+| --------- | ------ | ------------------------- |
+| `id`      | string | Service unique identifier |
+| `name`    | string | Service name              |
+
+#### Success Response
+
+```json
+{
+    "code": "0",
+    "msg": "Success",
+    "data": [
+        {
+            "id": "7398200308268142592",
+            "name": "hair srvice2"
+        }
+    ]
+}
+```
+
 # 4 Staff-Related APIs
 
 ---
@@ -997,6 +1128,56 @@ none
       "merchantId": "test"
     }
   ]
+}
+```
+
+## 4.4 Query Staff dropdown list
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/staff/dropdown`
+
+### Request Body
+
+| Parameter    | Type   | Required | Description         |
+| ------------ | ------ | -------- | ------------------- |
+| `businessId` | string | Yes      | Business identifier |
+
+#### Example Request Body
+
+```json
+{
+ "businessId": "test"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type   | Description             |
+| --------- | ------ | ----------------------- |
+| `id`      | string | Staff unique identifier |
+| `name`    | string | Staff name              |
+
+#### Success Response
+
+```json
+{
+    "code": "0",
+    "msg": "Success",
+    "data": [
+        {
+            "id": "7397997197859622912",
+            "name": "tet"
+        },
+        {
+            "id": "1",
+            "name": "tet2"
+        }
+    ]
 }
 ```
 

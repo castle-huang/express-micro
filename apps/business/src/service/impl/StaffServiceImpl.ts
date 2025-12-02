@@ -4,11 +4,20 @@ import {BusinessAddReq, BusinessUpdateReq} from "@/types/BusinessType";
 import {supabase} from "@/config/Supabase";
 import {v4 as uuidv4} from 'uuid';
 import {StaffService} from "@/service/StaffService";
-import {StaffAddReq, StaffListItemResp, StaffListReq, StaffUpdateReq} from "@/types/StaffType";
+import {
+    StaffAddReq,
+    StaffDeleteReq,
+    StaffDropdownReq, StaffDropdownResp,
+    StaffListItemResp,
+    StaffListReq,
+    StaffUpdateReq
+} from "@/types/StaffType";
 import {StaffRepository} from "@/repository/StaffRepository";
 import {BizStaff} from "@/types/entity/BizStaff";
 import {it} from "node:test";
 import {BusinessRepository} from "@/repository/BusinessRepository";
+import {ServiceDropdownReq, ServiceDropdownResp} from "@/types/ServiceType";
+import {BizService} from "@/types/entity/BizService";
 
 @Service()
 export class StaffServiceImpl implements StaffService {
@@ -56,5 +65,23 @@ export class StaffServiceImpl implements StaffService {
             });
         }
         return list;
+    }
+
+    async deleteStaff(req: StaffDeleteReq): Promise<void> {
+        let record = await this.staffRepository.getOneById(req.id);
+        if (!record) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        await this.staffRepository.deleteById(req.id);
+    }
+
+    async getDropdownList(req: StaffDropdownReq): Promise<StaffDropdownResp[]> {
+        const data: BizStaff[] = await this.staffRepository.getDropdownList(req);
+        return data.map(service => {
+            return {
+                id: service.id,
+                name: service.name
+            }
+        })
     }
 }

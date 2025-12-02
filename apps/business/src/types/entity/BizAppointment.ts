@@ -7,7 +7,8 @@ export class BizAppointment {
     customerName?: string;
     email?: string;
     phone?: string;
-    orderId?: string;
+    customerUserId?: string;
+    orderItemId?: string;
     appointmentTime?: number;
     timeSlot?: string;
     updateTime?: number;

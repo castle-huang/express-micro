@@ -3,16 +3,19 @@ import {
     BaseResponse,
     Body,
     Controller,
-    CustomerAuthenticatedRequest,
     GET,
-    Inject,
+    Inject, POST,
     PUT,
     Req,
     ResponseUtil
 } from "@sojo-micro/rpc";
 import {ProfilesResp} from "../types/AuthType";
 import {CustomerUserService} from "@/service/CustomerUserService";
-import {GetCustomerResp, UpdateCustomerUserReq} from "@/types/AuthCustomerType";
+import {
+    CustomerUpdatePasswordReq,
+    GetCustomerResp,
+    UpdateCustomerUserReq
+} from "@/types/AuthCustomerType";
 
 
 @Controller({basePath: '/api/auth/customer/user'})
@@ -30,6 +33,13 @@ export class CustomerUserController {
     async updateCustomerUser(@Req() authReq: AuthenticatedRequest, @Body() req: UpdateCustomerUserReq): Promise<BaseResponse<GetCustomerResp>>  {
         req.id = authReq.user.id;
         await this.customerUserService.updateCustomerUser(req);
+        return ResponseUtil.success();
+    }
+
+    @POST('/update-pwd')
+    async updatePassword(@Req() authReq: AuthenticatedRequest, @Body() req: CustomerUpdatePasswordReq)  {
+        req.id = authReq.user.id;
+        await this.customerUserService.updatePassword(req);
         return ResponseUtil.success();
     }
 }

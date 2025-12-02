@@ -8,7 +8,13 @@ import {
     ResponseUtil
 } from "@sojo-micro/rpc";
 import {ServiceService} from "@/service/ServiceService";
-import {ServiceAddReq, ServiceSearchReq, ServiceUpdateReq} from "@/types/ServiceType";
+import {
+    ServiceAddReq,
+    ServiceDeleteReq,
+    ServiceDropdownReq,
+    ServiceSearchReq,
+    ServiceUpdateReq
+} from "@/types/ServiceType";
 
 @Controller({basePath: '/api/biz/service'})
 export class ServiceController {
@@ -37,6 +43,18 @@ export class ServiceController {
     @POST("/search")
     async getList(@Body() req: ServiceSearchReq, @Req() auth: AuthenticatedRequest) {
         const data = await this.serviceService.getList(req, auth.user.id)
+        return ResponseUtil.success(data);
+    }
+
+    @POST("/delete")
+    async delete(@Body() req: ServiceDeleteReq, @Req() auth: AuthenticatedRequest) {
+        await this.serviceService.delete(req);
+        return ResponseUtil.success();
+    }
+
+    @POST("/dropdown")
+    async getDropdownList(@Body() req: ServiceDropdownReq, @Req() auth: AuthenticatedRequest) {
+        const data = await this.serviceService.getDropdownList(req)
         return ResponseUtil.success(data);
     }
 }

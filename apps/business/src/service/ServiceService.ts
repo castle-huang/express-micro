@@ -1,5 +1,5 @@
 import {
-    ServiceAddReq,
+    ServiceAddReq, ServiceDeleteReq, ServiceDropdownReq, ServiceDropdownResp,
     ServicePageReq, ServicePageResp,
     ServiceSearchItemResp,
     ServiceSearchReq,
@@ -16,4 +16,8 @@ export abstract class ServiceService {
     abstract getList(req: ServiceSearchReq, userId: string): Promise<ServicePageResp>;
 
     abstract page(req: ServicePageReq): Promise<ServicePageResp>
+
+    abstract delete(req: ServiceDeleteReq): Promise<void>
+
+    abstract getDropdownList(req: ServiceDropdownReq): Promise<ServiceDropdownResp[]>;
 }

@@ -11,11 +11,14 @@ export interface BizOrderItem {
     price: number;
     count: number;
     amount: number;
+    timeSlot?: string;
     orderId?: string;
     staffId?: string;
     staffName?: string;
     customerName?: string;
-    userId?: string;
+    customerUserId?: string;
+    appointmentTime?: number;
+    snapshot?: string;
     updateTime?: number;
     createTime?: number;
 }

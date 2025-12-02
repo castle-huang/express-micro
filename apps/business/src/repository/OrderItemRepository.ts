@@ -34,4 +34,15 @@ export class OrderItemRepository {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
     }
+
+    async getOrderItemListByOrderId(orderId: string): Promise<BizOrderItem[]> {
+        const {data, error} = await supabase
+            .from('biz_order_item')
+            .select('*')
+            .eq('order_id', orderId)
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data.map(item => snakeToCamel(item));
+    }
 }

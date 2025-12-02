@@ -37,3 +37,15 @@ export interface AppointmentItemResp {
     updateTime?: number;
     createTime?: number;
 }
+
+
+export interface AppointmentUserItemResp {
+    id?: string;
+    staffId?: string;
+    staffName?: string;
+    serviceId?: string;
+    serverName?: string;
+    customerName?: string;
+    appointmentTime?: number;
+    timeSlot?: string;
+}

@@ -1,9 +1,10 @@
 import {
     AuthenticatedRequest, CommonError, CommonErrorEnum,
-    CustomerAuthenticatedRequest, Inject, JWTUtils, Service, SnowflakeUtil
+    Inject, JWTUtils, Service, SnowflakeUtil
 } from "@sojo-micro/rpc";
 import {CustomerUserService} from "@/service/CustomerUserService";
 import {
+    CustomerUpdatePasswordReq,
     GetCustomerResp,
     LoginCustomerReq,
     LoginCustomerResp,
@@ -49,9 +50,9 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         } as AuthenticatedRequest;
 
         // generate jwt payload
-        const token = JWTUtils.generateToken(payload);
+        const {accessToken, refreshToken} = JWTUtils.generateToken(payload);
 
-        return {token: token};
+        return {token: accessToken, refreshToken};
     }
 
     /**
@@ -73,8 +74,8 @@ export class CustomerUserServiceImpl implements CustomerUserService {
             }
         } as AuthenticatedRequest;
 
-        const token = JWTUtils.generateToken(payload);
-        return { token };
+        const {accessToken, refreshToken} = JWTUtils.generateToken(payload);
+        return {token: accessToken, refreshToken};
     }
 
     async getCustomerUser(userId: string): Promise<GetCustomerResp> {
@@ -104,6 +105,24 @@ export class CustomerUserServiceImpl implements CustomerUserService {
             phoneCode: req.phoneCode,
             phone: req.phone,
             fullPhone: req.phoneCode && req.phone,
+            updateTime: new Date().getTime()
+        });
+    }
+
+    async updatePassword(req: CustomerUpdatePasswordReq): Promise<void> {
+        if (!req.oldPassword || !req.newPassword) {
+            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
+        }
+        const customerUser = await this.customerUserRepository.findById(req.id);
+        if (!customerUser) {
+            throw new CommonError(AuthErrorEnum.USER_NOT_EXISTS);
+        }
+        if (req.oldPassword !== customerUser.password) {
+            throw new CommonError(AuthErrorEnum.WRONG_OLD_PASSWORD);
+        }
+        await this.customerUserRepository.updateById({
+            id: req.id,
+            password: req.newPassword,
             updateTime: new Date().getTime()
         });
     }

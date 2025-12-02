@@ -2,6 +2,7 @@ import {camelToSnake, CommonError, CommonErrorEnum, Service, snakeToCamel} from 
 import {supabase} from "@/config/Supabase";
 import {BizStaff} from "@/types/entity/BizStaff";
 import {StaffListReq} from "@/types/StaffType";
+import {ServiceDropdownReq} from "@/types/ServiceType";
 
 @Service()
 export class StaffRepository {
@@ -66,5 +67,28 @@ export class StaffRepository {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
         return data.map(item => snakeToCamel(item));
+    }
+
+    async deleteById(id: string): Promise<void> {
+        const {error} = await supabase
+            .from('biz_staff')
+            .delete()
+            .eq('id', id);
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+    }
+
+    async getDropdownList(req: ServiceDropdownReq) {
+        let query = supabase
+            .from('biz_staff')
+            .select('*')
+            .eq('business_id', req.businessId)
+            .eq('deleted', false);
+        const {data, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data?.map(item => snakeToCamel(item));
     }
 }

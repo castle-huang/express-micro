@@ -1,7 +1,7 @@
 import {camelToSnake, CommonError, CommonErrorEnum, Service, snakeToCamel} from "@sojo-micro/rpc";
 import {supabase} from "@/config/Supabase";
 import {BizService} from "@/types/entity/BizService";
-import {ServicePageReq, ServiceSearchItemResp, ServiceSearchReq} from "@/types/ServiceType";
+import {ServiceDropdownReq, ServicePageReq, ServiceSearchItemResp, ServiceSearchReq} from "@/types/ServiceType";
 import {BusinessPageReq} from "@/types/BusinessType";
 import {BizBusiness} from "@/types/entity/BizBusiness";
 
@@ -33,6 +33,16 @@ export class ServiceRepository {
             .from('biz_service')
             .update(camelToSnake(bizService))
             .eq('id', bizService.id);
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+    }
+
+    async deleteById(id: string): Promise<void> {
+        const {error} = await supabase
+            .from('biz_service')
+            .delete()
+            .eq('id', id);
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
@@ -98,5 +108,18 @@ export class ServiceRepository {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
         return data?.map(record => snakeToCamel(record))
+    }
+
+    async getDropdownList(req: ServiceDropdownReq) {
+        let query = supabase
+            .from('biz_service')
+            .select('*')
+            .eq('business_id', req.businessId)
+            .eq('deleted', false);
+        const {data, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data?.map(item => snakeToCamel(item));
     }
 }

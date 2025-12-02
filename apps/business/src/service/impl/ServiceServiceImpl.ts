@@ -5,7 +5,8 @@ import {
     ServiceAddReq,
     ServiceSearchReq,
     ServiceSearchItemResp,
-    ServiceTypeItemResp, ServicePageReq, ServicePageResp, ServiceUpdateReq
+    ServiceTypeItemResp, ServicePageReq, ServicePageResp, ServiceUpdateReq, ServiceDeleteReq, ServiceDropdownReq,
+    ServiceDropdownResp
 } from "@/types/ServiceType";
 import {ServiceRepository} from "@/repository/ServiceRepository";
 import {BizService} from "@/types/entity/BizService";
@@ -108,5 +109,23 @@ export class ServiceServiceImpl implements ServiceService {
             }),
             total: total
         }
+    }
+
+    async delete(req: ServiceDeleteReq) {
+        let record = await this.serviceRepository.getOneById(req.id);
+        if (!record) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        await this.serviceRepository.deleteById(req.id);
+    }
+
+    async getDropdownList(req: ServiceDropdownReq): Promise<ServiceDropdownResp[]> {
+        const data: BizService[] = await this.serviceRepository.getDropdownList(req);
+        return data.map(service => {
+            return {
+                id: service.id,
+                name: service.name
+            }
+        })
     }
 }

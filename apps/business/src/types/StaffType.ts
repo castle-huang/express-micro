@@ -44,3 +44,25 @@ export interface StaffListItemResp {
     fullPhone?: string;
 }
 
+/**
+ * Delete Staff request model
+ */
+export interface StaffDeleteReq {
+    id: string
+}
+
+/**
+ * Service dropdown request model
+ */
+export interface StaffDropdownReq {
+    businessId?: string;
+}
+
+/**
+ * Service dropdown request model
+ */
+export interface StaffDropdownResp {
+    id?: string;
+    name?: string;
+}
+

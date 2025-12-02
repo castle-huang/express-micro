@@ -95,3 +95,25 @@ export interface ServicePageResp {
     list: ServiceResp[];
     total: number;
 }
+
+/**
+ * Delete Service request model
+ */
+export interface ServiceDeleteReq {
+    id: string
+}
+
+/**
+ * Service dropdown request model
+ */
+export interface ServiceDropdownReq {
+    businessId?: string;
+}
+
+/**
+ * Service dropdown request model
+ */
+export interface ServiceDropdownResp {
+    id?: string;
+    name?: string;
+}

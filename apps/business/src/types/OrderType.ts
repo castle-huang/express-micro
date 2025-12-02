@@ -7,25 +7,41 @@ export interface OrderSearchReq {
     pageSize?: number;
 }
 
+export interface OrderSearchResp {
+    id: string;
+    merchantId?: string;
+    businessId?: string;
+    totalAmount?: number;
+    customerName?: string;
+    phone?: string;
+    email?: string;
+    serviceFee?: number;
+    orderTime?: number;
+    paymentTime?: number;
+    status?: number;
+    orderItems?: OrderItemResp[]
+}
+
 /**
  * Appointment List response model
  */
 export interface OrderItemResp {
     id?: string;
-    merchantId?: string;
-    businessId?: string;
+    appointmentTime?: number;
     serviceId?: string;
     serviceName?: string;
     staffId?: string;
     staffName?: string;
     customerName?: string;
     amount?: number;
-    snapshot?: string;
-    updateTime?: string;
-    createTime?: string;
+    count?: number;
+    price?: number;
+    timeSlot?: string;
+    updateTime?: number;
+    createTime?: number;
 }
 
-export interface OrderReq {
+export interface OrderAddReq {
     businessId?: string;
     appointmentTime?: number;
     timeSlot?: string;

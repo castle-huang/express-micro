@@ -4,6 +4,7 @@ import {supabase} from "@/config/Supabase";
 import {OrderSearchReq} from "@/types/OrderType";
 import {BizOrder} from "@/types/entity/BizOrder";
 import {BusinessPageReq} from "@/types/BusinessType";
+import {ServiceDropdownReq} from "@/types/ServiceType";
 
 @Service()
 export class BusinessRepository {
@@ -93,4 +94,19 @@ export class BusinessRepository {
         }
         return data?.map(record => snakeToCamel(record))
     }
+
+    async getDropdownList(merchantId: string) {
+        let query = supabase
+            .from('biz_business')
+            .select('*')
+            .eq('merchant_id', merchantId)
+            .eq('deleted', false);
+        const {data, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return data?.map(item => snakeToCamel(item));
+    }
+
+
 }

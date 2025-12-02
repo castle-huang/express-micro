@@ -1,4 +1,4 @@
-import {CommonError, snakeToCamel, Service, CommonErrorEnum} from "@sojo-micro/rpc";
+import {CommonError, snakeToCamel, Service, CommonErrorEnum, camelToSnake} from "@sojo-micro/rpc";
 import {supabase} from "@/config/Supabase";
 import {BizAppointment} from "@/types/entity/BizAppointment";
 import {AppointmentSearchReq} from "@/types/AppointmentType";
@@ -19,10 +19,10 @@ export class AppointmentRepository {
         return this.mapToList(data);
     }
 
-    async insert(business: Partial<BizAppointment>): Promise<void> {
+    async insert(appointment: Partial<BizAppointment>): Promise<void> {
         const {error} = await supabase
             .from('biz_appointment')
-            .insert(business)
+            .insert(camelToSnake(appointment))
             .single();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
@@ -65,6 +65,20 @@ export class AppointmentRepository {
         const {data, error} = await query;
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return this.mapToList(data);
+    }
+
+    async getAppointmentListByCustomerUserId(customerUserId: string): Promise<BizAppointment[]> {
+        let {data, error} = await supabase
+            .from('biz_appointment')
+            .select('*')
+            .eq('customer_user_id', customerUserId);
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        if (!data || data.length === 0) {
+            return [];
         }
         return this.mapToList(data);
     }

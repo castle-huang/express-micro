@@ -1,25 +1,6 @@
-import {
-    AuthenticatedRequest,
-    Body,
-    Controller,
-    DELETE, GET,
-    Inject,
-    JWTUtils,
-    PermitAll,
-    POST,
-    PUT,
-    Req,
-    ResponseUtil
-} from "@sojo-micro/rpc";
-import {supabase} from "@/config/Supabase";
+import {AuthenticatedRequest, Body, Controller, GET, Inject, POST, Req, ResponseUtil} from "@sojo-micro/rpc";
 import {BusinessService} from "@/service/BusinessService";
-import {
-    BusinessAddReq,
-    BusinessDeleteReq,
-    BusinessListReq,
-    BusinessResp, BusinessPageReq,
-    BusinessUpdateReq
-} from "@/types/BusinessType";
+import {BusinessAddReq, BusinessDeleteReq, BusinessListReq, BusinessUpdateReq,} from "@/types/BusinessType";
 
 @Controller({basePath: '/api/biz/business'})
 export class BusinessController {
@@ -75,5 +56,11 @@ export class BusinessController {
         };
         await this.businessService.deleteBusiness(bizReq, auth.user.id);
         return ResponseUtil.success();
+    }
+
+    @POST("/dropdown")
+    async getDropdownList(@Req() auth: AuthenticatedRequest) {
+        const data = await this.businessService.getDropdownList(auth.user.merchantId)
+        return ResponseUtil.success(data);
     }
 }

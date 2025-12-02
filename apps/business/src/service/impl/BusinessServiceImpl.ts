@@ -4,12 +4,14 @@ import {
     BusinessAddReq, BusinessDeleteReq, BusinessListReq, BusinessResp,
     BusinessPageReq,
     BusinessPageResp,
-    BusinessUpdateReq
+    BusinessUpdateReq, BusinessDropdownResp
 } from "@/types/BusinessType";
 import {BusinessRepository} from "@/repository/BusinessRepository";
 import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {MERCHANT_USER_API} from "@/config/RpcRegistry";
 import {BizBusiness} from "@/types/entity/BizBusiness";
+import {ServiceDropdownReq, ServiceDropdownResp} from "@/types/ServiceType";
+import {BizService} from "@/types/entity/BizService";
 
 @Service()
 export class BusinessServiceImpl implements BusinessService {
@@ -109,5 +111,15 @@ export class BusinessServiceImpl implements BusinessService {
             throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
         }
         return snakeToCamel( record);
+    }
+
+    async getDropdownList(merchantId: string): Promise<BusinessDropdownResp[]> {
+        const data: BizBusiness[] = await this.businessRepository.getDropdownList(merchantId);
+        return data.map(business => {
+            return {
+                id: business.id,
+                name: business.name
+            }
+        })
     }
 }

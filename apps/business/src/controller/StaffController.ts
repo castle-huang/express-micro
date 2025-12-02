@@ -7,8 +7,16 @@ import {
     Req,
     ResponseUtil
 } from "@sojo-micro/rpc";
-import {StaffAddReq, StaffListItemResp, StaffListReq, StaffUpdateReq} from "@/types/StaffType";
+import {
+    StaffAddReq,
+    StaffDeleteReq,
+    StaffDropdownReq,
+    StaffListItemResp,
+    StaffListReq,
+    StaffUpdateReq
+} from "@/types/StaffType";
 import {StaffService} from "@/service/StaffService";
+import {ServiceDeleteReq, ServiceDropdownReq} from "@/types/ServiceType";
 
 @Controller({basePath: '/api/biz/staff'})
 export class StaffController {
@@ -51,5 +59,17 @@ export class StaffController {
         };
         let staffListItemList: StaffListItemResp[] = await this.staffService.getStaffList(newReq);
         return ResponseUtil.success(staffListItemList);
+    }
+
+    @POST("/delete")
+    async delete(@Req() auth: AuthenticatedRequest, @Body() req: StaffDeleteReq) {
+        await this.staffService.deleteStaff(req);
+        return ResponseUtil.success();
+    }
+
+    @POST("/dropdown")
+    async getDropdownList(@Body() req: StaffDropdownReq, @Req() auth: AuthenticatedRequest) {
+        const data = await this.staffService.getDropdownList(req)
+        return ResponseUtil.success(data);
     }
 }

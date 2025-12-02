@@ -1,6 +1,6 @@
-import {camelToSnake, CommonError, CommonErrorEnum, Inject, JWTUtils, Service, SnowflakeUtil} from "@sojo-micro/rpc";
+import {camelToSnake, CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
 import {OrderService} from "@/service/OrderService";
-import {OrderSearchReq, OrderItemResp, OrderReq, OrderResp} from "@/types/OrderType";
+import {OrderSearchReq, OrderItemResp, OrderAddReq, OrderResp, OrderSearchResp} from "@/types/OrderType";
 import {OrderRepository} from "@/repository/OrderRepository";
 import {MERCHANT_USER_API} from "@/config/RpcRegistry";
 import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
@@ -25,20 +25,55 @@ export class OrderServiceImpl implements OrderService {
     ) {
     }
 
-    async searchList(req: OrderSearchReq, userId: string): Promise<OrderItemResp[]> {
+    async searchList(req: OrderSearchReq, userId: string): Promise<OrderSearchResp[]> {
         //check merchantId
         const merchantId = await this.merchantUserRpcService.getMerchantIdByUserId(userId);
         if (!merchantId) {
             throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
         }
-        const list = await this.orderRepository.searchList(req, merchantId);
-        // return list.map(item => {
-        //     return item;
-        // });
-        return []
+        const orderList = await this.orderRepository.searchList(req, merchantId);
+        let resOrderList = []
+        for (let bizOrder of orderList) {
+            let resOrderItems: OrderItemResp[] = [];
+            const orderSearchResp: OrderSearchResp = {
+                id: bizOrder.id,
+                merchantId: bizOrder.merchantId,
+                businessId: bizOrder.businessId,
+                totalAmount: bizOrder.totalAmount,
+                customerName: bizOrder.customerName,
+                phone: bizOrder.phone,
+                email: bizOrder.email,
+                serviceFee: bizOrder.serviceFee,
+                orderTime: bizOrder.orderTime,
+                paymentTime: bizOrder.paymentTime,
+                status: bizOrder.status,
+                orderItems: resOrderItems
+            };
+            const orderItemList = await this.orderItemRepository.getOrderItemListByOrderId(bizOrder.id);
+            for (let orderItem of orderItemList) {
+                let orderItemResp: OrderItemResp = {
+                    id: orderItem.id,
+                    appointmentTime: orderItem.appointmentTime,
+                    serviceId: orderItem.serviceId,
+                    serviceName: orderItem.serviceName,
+                    staffId: orderItem.staffId,
+                    staffName: orderItem.staffName,
+                    customerName: orderItem.customerName,
+                    amount: orderItem.amount,
+                    count: orderItem.count,
+                    price: orderItem.price,
+                    timeSlot: orderItem.timeSlot,
+                    createTime: orderItem.createTime,
+                    updateTime: orderItem.updateTime,
+                };
+                resOrderItems.push(orderItemResp);
+            }
+            resOrderList.push(orderSearchResp);
+        }
+        return resOrderList;
     }
 
-    async addOrder(req: OrderReq, userId: string): Promise<OrderResp> {
+    async placeOrder(req: OrderAddReq, customerUserId: string): Promise<OrderResp> {
         const {businessId, appointmentTime, services, email, phone, fullName, timeSlot} = req;
         if (!businessId || !appointmentTime || !services || services.length === 0 || !fullName || !email || !phone || !timeSlot) {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
@@ -72,6 +107,8 @@ export class OrderServiceImpl implements OrderService {
             const bizOrderItem: BizOrderItem = {
                 id: SnowflakeUtil.generateId(),
                 merchantId: staff.merchantId,
+                appointmentTime: appointmentTime,
+                timeSlot: timeSlot,
                 businessId: service.businessId,
                 serviceId: service.id,
                 serviceName: service.name,
@@ -82,7 +119,8 @@ export class OrderServiceImpl implements OrderService {
                 count: serviceInfo.count,
                 amount: parseFloat((service.price * serviceInfo.count).toFixed(2)),
                 customerName: fullName,
-                userId: userId,
+                customerUserId: customerUserId,
+                snapshot: JSON.stringify(service),
                 updateTime: now,
                 createTime: now
             };
@@ -99,7 +137,8 @@ export class OrderServiceImpl implements OrderService {
                 customerName: fullName,
                 email: email,
                 phone: phone,
-                orderId: bizOrderItem.orderId,
+                customerUserId: customerUserId,
+                orderItemId: bizOrderItem.orderId,
                 appointmentTime: appointmentTime,
                 timeSlot: timeSlot,
                 createTime: now,
@@ -117,8 +156,12 @@ export class OrderServiceImpl implements OrderService {
             email: email,
             phone: phone,
             customerName: fullName,
-            userId: userId,
+            customerUserId: customerUserId,
             totalAmount: totalAmount,
+            serviceFee: parseFloat((totalAmount * 0.05).toFixed(2)),
+            status: 1,
+            orderTime: now,
+            paymentTime: now,
             createTime: now,
             updateTime: now
         }

@@ -3,8 +3,9 @@ import {
     BusinessDeleteReq,
     BusinessListReq,
     BusinessResp, BusinessPageReq, BusinessPageResp,
-    BusinessUpdateReq
+    BusinessUpdateReq, BusinessDropdownResp
 } from "@/types/BusinessType";
+import {ServiceDropdownReq, ServiceDropdownResp} from "@/types/ServiceType";
 
 export abstract class BusinessService {
     abstract addBusiness(req: BusinessAddReq, userId: string): Promise<any>;
@@ -17,4 +18,6 @@ export abstract class BusinessService {
     abstract getPage(req: BusinessPageReq): Promise<BusinessPageResp>;
 
     abstract getById(id: string): Promise<BusinessResp>;
+
+    abstract getDropdownList(merchantId: string): Promise<BusinessDropdownResp[]>;
 }

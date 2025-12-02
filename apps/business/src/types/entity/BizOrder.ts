@@ -2,19 +2,19 @@
  * BizOrder
  */
 export interface BizOrder {
-    id?: string;
+    id: string;
     merchantId?: string;
     businessId?: string;
-    serviceId?: string;
-    serviceName?: string;
-    staffId?: string;
-    staffName?: string;
     customerName?: string;
-    userId?: string;
-    email?: string;
+    customerUserId?: string;
     phone?: string;
+    email?: string;
     totalAmount?: number;
-    snapshot?: string;
+    serviceFee?: number;
+    status?: number;
+    orderTime?: number;
+    paymentTime?: number;
+    completeTime?: number;
     updateTime?: number;
     createTime?: number;
 }

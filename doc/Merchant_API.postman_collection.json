@@ -58,6 +58,51 @@
 					"response": []
 				},
 				{
+					"name": "test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"ff\",\n    \"email\": \"aa2@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/test",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"test"
+							]
+						},
+						"description": "# Merchant Registration\n\n## Purpose\n\nThis endpoint allows new merchants to register an account in the system. It creates a new merchant profile with the provided contact information and credentials.\n\n## Request Details\n\n- **Method:** `POST`\n    \n- **Endpoint:** `{{baseUrl}}/api/auth/merchant/register`\n    \n\n## Request Body\n\nThe request requires a JSON payload with the following fields:\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `contactName` | string | Yes | The name of the merchant contact person |\n| `email` | string | Yes | The merchant's email address (used for login) |\n| `password` | string | Yes | The merchant's password for account access |\n\n### Example Request Body\n\n``` json\n{\n  \"contactName\": \"John Doe\",\n  \"email\": \"merchant@example.com\",\n  \"password\": \"securePassword123\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON response with the following structure:\n\n``` json\n{\n  \"code\": \"string\",\n  \"msg\": \"string\",\n  \"data\": {}\n}\n\n ```\n\n## Response Codes\n\n### Success Responses\n\n- **200 OK** - Registration request processed successfully\n    \n- **201 Created** - Merchant account created successfully\n    \n\n### Error Responses\n\n- **400 Bad Request** - Invalid request payload or missing required fields\n    \n- **409 Conflict** - Email already registered in the system\n    \n- **500 Internal Server Error** - Server-side error during registration\n    \n\n## Response Messages\n\n- `\"User not exists\"` (code: 1000100) - Indicates the user was not found in the system (may occur during validation)\n    \n\n## Notes\n\n- Ensure the email format is valid before submitting\n    \n- Password should meet any security requirements enforced by the system\n    \n- The `data` object in the response may contain additional merchant information upon successful registration"
+					},
+					"response": []
+				},
+				{
 					"name": "Login",
 					"request": {
 						"method": "POST",
@@ -100,7 +145,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"avatarUrl\": \"avatar\",\r\n  \"fullName\": \"bb\",\r\n  \"phoneCode\": \"+11\",\r\n  \"phone\": \"1234\",\r\n  \"email\": \"bb@gmail.com\"\r\n}",
+							"raw": "{\r\n  \"avatarUrl\": \"avatar\",\r\n  \"fullName\": \"bb\",\r\n  \"phoneCode\": \"+11\",\r\n  \"phone\": \"1234\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -167,13 +212,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY1OTE0MSwiZXhwIjoxNzY1MjYzOTQxLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.2gpqmQjy-1X5Zy4yKMoUIeUWLhbFtDyUqUq5_M1fxDg",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"test11\",\r\n  \"staffId\": \"staff_67890\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
+									"raw": "{\r\n  \"businessId\": \"1\",\r\n  \"staffId\": \"1\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

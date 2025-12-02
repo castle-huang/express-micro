@@ -13,6 +13,7 @@ import {MerchantRepository} from "../../repository/MerchantRepository";
 import {LoginReq, LoginResp, ProfilesResp, RegisterReq, SignUpResp, UpdateMerchantUserReq} from "../../types/AuthType";
 import {AuthErrorEnum} from "../../types/AuthErrorEnum";
 import {MerchantUserType} from "../../types/MerchantUserType";
+import {CustomerUpdatePasswordReq} from "@/types/AuthCustomerType";
 
 @Service()
 export class MerchantUserServiceImpl implements MerchantUserService {
@@ -56,9 +57,10 @@ export class MerchantUserServiceImpl implements MerchantUserService {
                 merchantId: merchantId,
             }
         } as AuthenticatedRequest;
-        const token = JWTUtils.generateToken(payload);
+        const {accessToken, refreshToken} = JWTUtils.generateToken(payload);
         return {
-            token: token
+            token: accessToken,
+            refreshToken
         };
     }
 
@@ -77,9 +79,10 @@ export class MerchantUserServiceImpl implements MerchantUserService {
                 merchantId: merchantUser.merchantId
             }
         } as AuthenticatedRequest;
-        const token = JWTUtils.generateToken(payload);
+        const {accessToken, refreshToken} = JWTUtils.generateToken(payload);
         return {
-            token: token,
+            token: accessToken,
+            refreshToken
         }
     }
 
@@ -110,6 +113,24 @@ export class MerchantUserServiceImpl implements MerchantUserService {
             phoneCode: req.phoneCode,
             phone: req.phone,
             fullPhone: req.phoneCode && req.phone,
+            updateTime: new Date().getTime()
+        });
+    }
+
+    async updatePassword(req: CustomerUpdatePasswordReq): Promise<void> {
+        if (!req.oldPassword || !req.newPassword) {
+            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
+        }
+        const merchantUser = await this.merchantUserRepository.findById(req.id);
+        if (!merchantUser) {
+            throw new CommonError(AuthErrorEnum.USER_NOT_EXISTS);
+        }
+        if (req.oldPassword !== merchantUser.password) {
+            throw new CommonError(AuthErrorEnum.WRONG_OLD_PASSWORD);
+        }
+        await this.merchantUserRepository.updateById({
+            id: req.id,
+            password: req.newPassword,
             updateTime: new Date().getTime()
         });
     }

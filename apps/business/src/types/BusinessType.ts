@@ -103,3 +103,11 @@ export interface BusinessPageResp {
 export interface BusinessGetReq {
     id: string;
 }
+
+/**
+ * Business dropdown request model
+ */
+export interface BusinessDropdownResp {
+    id?: string;
+    name?: string;
+}

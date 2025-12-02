@@ -5,13 +5,14 @@ import {
     Form,
     GET,
     Inject,
-    Param, PUT,
+    Param, POST, PUT,
     Query,
     Req,
     ResponseUtil
 } from "@sojo-micro/rpc";
 import {MerchantUserService} from "../service/MerchantUserService";
-import {ProfilesResp, RegisterReq, UpdateMerchantUserReq} from "../types/AuthType";
+import {ProfilesResp, RegisterReq, UpdateMerchantUserReq, UpdatePasswordReq} from "../types/AuthType";
+import {CustomerUpdatePasswordReq} from "@/types/AuthCustomerType";
 
 
 @Controller({basePath: '/api/auth/merchant/user'})
@@ -29,6 +30,13 @@ export class MerchantUserController {
     async updateMerchantUser(@Req() authReq: AuthenticatedRequest, @Body() req: UpdateMerchantUserReq): Promise<BaseResponse<ProfilesResp>>  {
         req.id = authReq.user.id;
         await this.adminUserService.updateMerchantUser(req);
+        return ResponseUtil.success();
+    }
+
+    @POST('/update-pwd')
+    async updatePassword(@Req() authReq: AuthenticatedRequest, @Body() req: UpdatePasswordReq)  {
+        req.id = authReq.user.id;
+        await this.adminUserService.updatePassword(req);
         return ResponseUtil.success();
     }
 }

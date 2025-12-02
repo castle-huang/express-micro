@@ -12,6 +12,7 @@ export interface RegisterCustomerReq {
  */
 export interface RegisterCustomerResp {
     token: string;
+    refreshToken: string;
     // expiresIn: number;
     // expiresAt: number;
 }
@@ -29,6 +30,7 @@ export interface LoginCustomerReq {
  */
 export interface LoginCustomerResp {
     token: string;
+    refreshToken: string;
     // expiresIn: number;
     // expiresAt: number;
 }
@@ -43,7 +45,7 @@ export interface GetCustomerResp {
 }
 
 /**
- * Update merchant user request model
+ * Update customer user request model
  */
 export interface UpdateCustomerUserReq {
     id: string,
@@ -52,4 +54,13 @@ export interface UpdateCustomerUserReq {
     phoneCode: string;
     phone: string;
     email: string;
+}
+
+/**
+ * Update customer user password request model
+ */
+export interface CustomerUpdatePasswordReq {
+    id: string,
+    oldPassword: string;
+    newPassword: string;
 }

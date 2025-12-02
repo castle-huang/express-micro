@@ -1,4 +1,5 @@
 import {
+    CustomerUpdatePasswordReq,
     GetCustomerResp,
     LoginCustomerReq,
     LoginCustomerResp,
@@ -14,4 +15,6 @@ export abstract class CustomerUserService {
     abstract getCustomerUser(userId: string): Promise<GetCustomerResp>
 
     abstract updateCustomerUser(req: UpdateCustomerUserReq): Promise<void>
+
+    abstract updatePassword(req: CustomerUpdatePasswordReq): Promise<void>
 }

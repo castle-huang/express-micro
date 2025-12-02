@@ -1,6 +1,11 @@
 import {CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
 import {AppointmentService} from "@/service/AppointmentService";
-import {AppointmentItemResp, AppointmentReq, AppointmentSearchReq} from "@/types/AppointmentType";
+import {
+    AppointmentItemResp,
+    AppointmentReq,
+    AppointmentSearchReq,
+    AppointmentUserItemResp
+} from "@/types/AppointmentType";
 import {AppointmentRepository} from "@/repository/AppointmentRepository";
 import {BizAppointment} from "@/types/entity/BizAppointment";
 import {MERCHANT_USER_API} from "@/config/RpcRegistry";
@@ -8,8 +13,6 @@ import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {StaffRepository} from "@/repository/StaffRepository";
 import {BusinessRepository} from "@/repository/BusinessRepository";
 import {ServiceRepository} from "@/repository/ServiceRepository";
-import {OrderRepository} from "@/repository/OrderRepository";
-import {BizOrder} from "@/types/entity/BizOrder";
 
 @Service()
 export class AppointmentServiceImpl implements AppointmentService {
@@ -82,5 +85,26 @@ export class AppointmentServiceImpl implements AppointmentService {
         return list.map(item => {
             return item;
         });
+    }
+
+    async getUserAppointmentList(customerUserId: string): Promise<AppointmentUserItemResp[]> {
+        const list = await this.appointmentRepository.getAppointmentListByCustomerUserId(customerUserId);
+        let resList = [];
+        for (let bizAppointment of list) {
+            const staff = await this.staffRepository.getOneById(bizAppointment.staffId ?? "");
+            const service = await this.serviceRepository.getOneById(bizAppointment.serviceId ?? "");
+            let app: AppointmentUserItemResp = {
+                id: bizAppointment.id,
+                staffId: bizAppointment.staffId,
+                staffName: staff?.name,
+                serviceId: bizAppointment.serviceId,
+                serverName: service?.name,
+                customerName: bizAppointment.customerName,
+                appointmentTime: bizAppointment.appointmentTime,
+                timeSlot: bizAppointment.timeSlot
+            }
+            resList.push(app);
+        }
+        return resList;
     }
 }

@@ -26,9 +26,10 @@ export class UserController {
                 id: "1",
             }
         } as AuthenticatedRequest;
-        const token = JWTUtils.generateToken(payload);
+        const {accessToken, refreshToken} = JWTUtils.generateToken(payload);
         return {
-            token: token
+            token: accessToken,
+            refreshToken
         };
     }
 

@@ -59,3 +59,11 @@ export interface OrderItem {
 export interface OrderResp {
     orderId?: string;
 }
+
+/**
+ * Service response model
+ */
+export interface OrderPageResp {
+    list: OrderSearchResp[];
+    total: number;
+}

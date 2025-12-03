@@ -3,7 +3,7 @@ import {AppointmentService} from "@/service/AppointmentService";
 import {
     AppointmentItemResp,
     AppointmentReq,
-    AppointmentSearchReq,
+    AppointmentSearchReq, AppointmentUpdateReq,
     AppointmentUserItemResp
 } from "@/types/AppointmentType";
 import {AppointmentRepository} from "@/repository/AppointmentRepository";
@@ -13,6 +13,7 @@ import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {StaffRepository} from "@/repository/StaffRepository";
 import {BusinessRepository} from "@/repository/BusinessRepository";
 import {ServiceRepository} from "@/repository/ServiceRepository";
+import {StaffDeleteReq} from "@/types/StaffType";
 
 @Service()
 export class AppointmentServiceImpl implements AppointmentService {
@@ -71,6 +72,18 @@ export class AppointmentServiceImpl implements AppointmentService {
         await this.appointmentRepository.insert(bizAppointment);
     }
 
+    async updateAppointment(req: AppointmentUpdateReq): Promise<void> {
+        const appointment = await this.appointmentRepository.getOneById(req.id);
+        if (!appointment) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND)
+        }
+        await this.appointmentRepository.update({
+            ...appointment,
+            ...req,
+            updateTime: new Date().getTime(),
+        });
+    }
+
     async searchAppointment(req: AppointmentSearchReq, userId: string): Promise<AppointmentItemResp[]> {
         //check merchantId
         const merchantId = await this.merchantUserRpcService.getMerchantIdByUserId(userId);
@@ -91,6 +104,7 @@ export class AppointmentServiceImpl implements AppointmentService {
         const list = await this.appointmentRepository.getAppointmentListByCustomerUserId(customerUserId);
         let resList = [];
         for (let bizAppointment of list) {
+            const business = await this.businessRepository.getOneById(bizAppointment.businessId?? "");
             const staff = await this.staffRepository.getOneById(bizAppointment.staffId ?? "");
             const service = await this.serviceRepository.getOneById(bizAppointment.serviceId ?? "");
             let app: AppointmentUserItemResp = {
@@ -101,10 +115,19 @@ export class AppointmentServiceImpl implements AppointmentService {
                 serverName: service?.name,
                 customerName: bizAppointment.customerName,
                 appointmentTime: bizAppointment.appointmentTime,
-                timeSlot: bizAppointment.timeSlot
+                timeSlot: bizAppointment.timeSlot,
+                imgUrl: business?.logoUrl,
             }
             resList.push(app);
         }
         return resList;
+    }
+
+    async deleteAppointment(id: string): Promise<void> {
+        let record = await this.appointmentRepository.getOneById(id);
+        if (!record) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        await this.appointmentRepository.deleteById(id);
     }
 }

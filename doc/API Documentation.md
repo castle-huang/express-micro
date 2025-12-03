@@ -4,59 +4,54 @@
 
 <!-- TOC start -->
 
+<!-- TOC -->
+
 <!-- TOC start -->
 
-### [General Information](#general-information)
+<!-- TOC -->
 
-- [Base url for request](#base-url-for-request)
-- [Authentication](#authentication)
-- [Response Format](#response-format)
+- [General Information](#general-information)
+  - [Base url for request](#base-url-for-request)
+  - [Authentication](#authentication)
+  - [Response Format](#response-format)
+- [Common APIs](#common-apis)
+  - [Upload file](#upload-file)
+- [1 Authentication APIs](#1-authentication-apis)
+  - [1.1 Register](#11-register)
+  - [1.2 Login](#12-login)
+  - [1.3 Edit Profile](#13-edit-profile)
+  - [1.4 Query user profile](#14-query-user-profile)
+  - [1.5 Update password](#15-update-password)
+- [2 Business-Related APIs](#2-business-related-apis)
+  - [2.1 Add new business](#21-add-new-business)
+  - [2.2 Update business](#22-update-business)
+  - [2.3 Query business list](#23-query-business-list)
+  - [2.4 Delete business](#24-delete-business)
+  - [2.5 Query Business dropdown list](#25-query-business-dropdown-list)
+- [3 Service-Related APIs](#3-service-related-apis)
+  - [3.1 Query service type list](#31-query-service-type-list)
+  - [3.2 Add new service](#32-add-new-service)
+  - [3.3 Update service](#33-update-service)
+  - [3.4 Search service](#34-search-service)
+  - [3.5 Query Service dropdown list](#35-query-service-dropdown-list)
+  - [3.6 Delete service](#36-delete-service)
+- [4 Staff-Related APIs](#4-staff-related-apis)
+  - [4.1 Add new staff](#41-add-new-staff)
+  - [4.2 Update staff](#42-update-staff)
+  - [4.3 Query staff list](#43-query-staff-list)
+  - [4.4 Query Staff dropdown list](#44-query-staff-dropdown-list)
+  - [4.5 Delete staff](#45-delete-staff)
+- [5 Calendar-Related APIs](#5-calendar-related-apis)
+  - [5.1 Add new appointment](#51-add-new-appointment)
+  - [5.2 Search Appointment](#52-search-appointment)
+- [6 Dashboard-Related APIs](#6-dashboard-related-apis)
+  - [6.1 Query dashboard data](#61-query-dashboard-data)
+- [7 Order-Related APIs](#7-order-related-apis)
+  - [7.1 Search order](#71-search-order)
 
-### [Common APIs](#common-apis)
+<!-- TOC end -->
 
-- [Upload file](#upload-file)
-
-### [1 Authentication APIs](#1-authentication-apis)
-
-- [1.1 Register](#11-register)
-- [1.2 Login](#12-login)
-- [1.3 Edit Profile](#13-edit-profile)
-- [1.4 Query user profile](#14-query-user-profile)
-- [1.5 Update password](#15-update-password)
-
-### [2 Business-Related APIs](#2-business-related-apis)
-
-- [2.1 Add new business](#21-add-new-business)
-- [2.2 Update business](#22-update-business)
-- [2.3 Query business list](#23-query-business-list)
-- [2.4 Delete business](#24-delete-business)
-- [2.5 Query Business dropdown list](#25-query-business-dropdown-list)
-
-### [3 Service-Related APIs](#3-service-related-apis)
-
-- [3.1 Query service type list](#31-query-service-type-list)
-- [3.2 Add new service](#32-add-new-service)
-- [3.3 Update service](#33-update-service)
-- [3.4 Search service](#34-search-service)
-- [3.5 Query Service dropdown list](#35-query-service-dropdown-list)
-
-### [4 Staff-Related APIs](#4-staff-related-apis)
-
-- [4.1 Add new staff](#41-add-new-staff)
-- [4.2 Update staff](#42-update-staff)
-- [4.3 Query staff list](#43-query-staff-list)
-- [4.4 Query Staff dropdown list](#44-query-staff-dropdown-list)
-
-### [5 Calendar-Related APIs](#5-calendar-related-apis)
-
-- [5.1 Add new appointment](#51-add-new-appointment)
-- [5.2 Search Appointment](#52-search-appointment)
-
-### [6 Dashboard-Related APIs](#6-dashboard-related-apis)
-
-- [6.1 Query dashboard data](#61-query-dashboard-data)
-  
-  <!-- TOC end -->
+## 
 
 ## General Information
 
@@ -982,6 +977,40 @@ none
 }
 ```
 
+## 3.5 Delete service
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/service/delete`
+
+### Request Body
+
+| Parameter | Type   | Required | Description               |
+| --------- | ------ | -------- | ------------------------- |
+| `id`      | string | Yes      | Service unique identifier |
+
+#### Example Request Body
+
+```json
+{
+ "id": "7398186777426661376"
+}
+```
+
+### Response
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
+}
+```
+
 # 4 Staff-Related APIs
 
 ---
@@ -1178,6 +1207,40 @@ none
             "name": "tet2"
         }
     ]
+}
+```
+
+## 4.5 Delete staff
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/staff/delete
+
+### Request Body
+
+| Parameter | Type   | Required | Description             |
+| --------- | ------ | -------- | ----------------------- |
+| `id`      | string | Yes      | Staff unique identifier |
+
+#### Example Request Body
+
+```json
+{
+ "id": "7398186777426661376"
+}
+```
+
+### Response
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
 }
 ```
 
@@ -1450,6 +1513,126 @@ none
                 "bookings": 22
             }
         ]
+    }
+}
+```
+
+# 7 Order-Related APIs
+
+---
+
+## 7.1 Search order
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/order/search`
+
+### Request Body
+
+| Parameter      | Type   | Required | Description                  |
+| -------------- | ------ | -------- | ---------------------------- |
+| `customerName` | string | No       | Customer name (fuzzy search) |
+| `pageNo`       | number | No       | Page number, starting from 1 |
+| `pageSize`     | number | No       | Number of items per page     |
+
+#### Example Request Body
+
+```json
+{
+ "customerName": "Tom",
+ "pageNo": 1,
+ "pageSize": 10
+}
+```
+
+### Response
+
+#### Response Parameters
+
+**Data Structure:**
+
+| Parameter | Type   | Description            |
+| --------- | ------ | ---------------------- |
+| `list`    | array  | List of orders         |
+| `total`   | number | Total number of orders |
+
+**Order Structure:**
+
+| Parameter      | Type   | Description                                                         |
+| -------------- | ------ | ------------------------------------------------------------------- |
+| `id`           | string | Order unique identifier                                             |
+| `merchantId`   | string | Merchant identifier                                                 |
+| `businessId`   | string | Business identifier                                                 |
+| `totalAmount`  | number | Total order amount                                                  |
+| `customerName` | string | Customer's name                                                     |
+| `phone`        | string | Customer's phone number                                             |
+| `email`        | string | Customer's email address                                            |
+| `serviceFee`   | number | Service fee                                                         |
+| `orderTime`    | number | Order creation timestamp in milliseconds                            |
+| `paymentTime`  | number | Payment timestamp in milliseconds                                   |
+| `status`       | number | Order status (1: pending, 2: confirmed, 3: completed, 4: cancelled) |
+| `orderItems`   | array  | List of order items                                                 |
+
+**Order Item Structure:**
+
+| Parameter         | Type   | Description                           |
+| ----------------- | ------ | ------------------------------------- |
+| `id`              | number | Order item unique identifier          |
+| `appointmentTime` | number | Appointment timestamp in milliseconds |
+| `serviceId`       | string | Service identifier                    |
+| `serviceName`     | string | Service name                          |
+| `staffId`         | string | Staff member identifier               |
+| `staffName`       | string | Staff member's name                   |
+| `customerName`    | string | Customer's name                       |
+| `amount`          | number | Item total amount                     |
+| `count`           | number | Number of bookings                    |
+| `price`           | number | Unit price                            |
+| `timeSlot`        | string | Time slot for appointment             |
+| `createTime`      | number | Creation timestamp in milliseconds    |
+| `updateTime`      | number | Last update timestamp in milliseconds |
+
+#### Success Response
+
+```json
+{
+    "code": "0",
+    "msg": "Success",
+    "data": {
+        "list": [
+            {
+                "id": "7401600101803757568",
+                "merchantId": "7397110941072101376",
+                "businessId": "7399369444537012224",
+                "totalAmount": 50,
+                "customerName": "Tom",
+                "phone": "13800138000",
+                "email": "zhangsan@example.com",
+                "serviceFee": 2.5,
+                "orderTime": 1764678979350,
+                "paymentTime": 1764678979350,
+                "status": 1,
+                "orderItems": [
+                    {
+                        "id": 7401600106862088000,
+                        "appointmentTime": 1764762926000,
+                        "serviceId": "7401588151787065344",
+                        "serviceName": "hair srvice",
+                        "staffId": "7401588378145263616",
+                        "staffName": "staff_test",
+                        "customerName": "Tom",
+                        "amount": 50,
+                        "count": 1,
+                        "price": 50,
+                        "timeSlot": "14:00-15:00",
+                        "createTime": 1764678979350,
+                        "updateTime": 1764678979350
+                    }
+                ]
+            }
+        ],
+        "total": 1
     }
 }
 ```

@@ -8,11 +8,11 @@ import {
 import {AppointmentService} from "@/service/AppointmentService";
 
 @Controller({basePath: '/api/biz/customer/appointment'})
-export class CustomerOrderController {
+export class CustomerAppointmentController {
     constructor(@Inject() private appointmentService: AppointmentService) {
     }
 
-    @GET()
+    @GET('')
     async getAppointmentList(@Req() auth: AuthenticatedRequest) {
         const result = await this.appointmentService.getUserAppointmentList(auth.user.id);
         return ResponseUtil.success(result);

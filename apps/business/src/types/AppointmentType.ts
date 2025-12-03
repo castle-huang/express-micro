@@ -12,6 +12,20 @@ export interface AppointmentReq {
 }
 
 /**
+ * Update Appointment request model
+ */
+export interface AppointmentUpdateReq {
+    id: string;
+    businessId: string;
+    staffId: string;
+    serviceId: string;
+    customerName: string;
+    timeSlot: string;
+    appointmentTime: number;
+    merchantId: string;
+}
+
+/**
  * Appointment Search request model
  */
 export interface AppointmentSearchReq {
@@ -48,4 +62,12 @@ export interface AppointmentUserItemResp {
     customerName?: string;
     appointmentTime?: number;
     timeSlot?: string;
+    imgUrl?: string;
+}
+
+/**
+ * Delete request model
+ */
+export interface AppointmentDeleteReq {
+    id: string
 }

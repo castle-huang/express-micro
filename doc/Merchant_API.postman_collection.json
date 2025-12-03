@@ -88,13 +88,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/auth/test",
+							"raw": "{{baseUrl}}/api/auth/test/test",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"auth",
+								"test",
 								"test"
 							]
 						},
@@ -139,7 +140,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY1NTY5NiwiZXhwIjoxNzY3MjQ3Njk2LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.5Lg52UwdrnNnKiVCDc8DiFS9lZ-X2YeWd2_1nmihAIc",
 								"type": "text"
 							}
 						],
@@ -169,6 +170,43 @@
 					"response": []
 				},
 				{
+					"name": "Update passoword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY2NjExNywiZXhwIjoxNzY1MjcwOTE3LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.dFN11nMqoOXe5XXZGnU-Rc2xMSlvYKrv9ZofSvTZQac",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"oldPassword\": \"123457\",\r\n  \"newPassword\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user/update-pwd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user",
+								"update-pwd"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
 					"name": "Query merchant user",
 					"request": {
 						"auth": {
@@ -178,7 +216,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY2MTMzNCwiZXhwIjoxNzY1MjY2MTM0LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.-BRaHTYBhUTuwhCHSMxnakXMtg06DTeW8XFSt3dyLs8",
 								"type": "text"
 							}
 						],
@@ -212,13 +250,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY1OTE0MSwiZXhwIjoxNzY1MjYzOTQxLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.2gpqmQjy-1X5Zy4yKMoUIeUWLhbFtDyUqUq5_M1fxDg",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY3NjQwNSwiZXhwIjoxNzY1MjgxMjA1LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.gPR8okGcgpiTqPSJ0w_H1NwgVPhaTIAG_fUvTllt0Yw",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"1\",\r\n  \"staffId\": \"1\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"staffId\": \"7401588378145263616\",\r\n  \"serviceId\": \"7401588151787065344\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -252,7 +290,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"bus_12345\",\r\n  \"staffId\": \"staff_67890\",\r\n  \"serviceId\": \"serv_54321\",\r\n  \"appointmentStartTime\": 1719820800000,\r\n  \"appointmentEndTime\": 1719824400000\r\n}",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"staffId\": \"7401588378145263616\",\r\n  \"serviceId\": \"7401588151787065344\",\r\n  \"appointmentStartTime\": 1764590126000,\r\n  \"appointmentEndTime\": 1764762926000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -292,7 +330,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"test\",\r\n  \"name\": \"tet\",\r\n  \"email\": \"bb@gmail.com\",\r\n  \"phoneCode\": \"11\",\r\n  \"phone\": \"1234\"\r\n}",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"name\": \"staff_test\",\r\n  \"email\": \"bb@gmail.com\",\r\n  \"phoneCode\": \"11\",\r\n  \"phone\": \"1234\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -379,6 +417,41 @@
 										"biz",
 										"staff",
 										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Staff dropdown list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/staff/dropdown",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"staff",
+										"dropdown"
 									]
 								}
 							},
@@ -519,6 +592,32 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Business dropdown list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/business/dropdown",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"business",
+										"dropdown"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -538,7 +637,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"1\",\r\n  \"name\": \"hair srvice\",\r\n  \"serviceTypeId\": \"haircut_001\",\r\n  \"duration\": 30,\r\n  \"price\": 50,\r\n  \"currency\": \"CNY\",\r\n  \"chairs\": 1,\r\n  \"rooms\": 0,\r\n  \"description\": \"desc\"\r\n}",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"name\": \"hair srvice\",\r\n  \"serviceTypeId\": \"haircut_001\",\r\n  \"duration\": 30,\r\n  \"price\": 50,\r\n  \"currency\": \"CNY\",\r\n  \"chairs\": 1,\r\n  \"rooms\": 0,\r\n  \"description\": \"desc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -567,7 +666,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDU4MjQ2NywiZXhwIjoxNzY3MTc0NDY3LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.UgiCS16Ori10EIKLnatlO2Kyq26MJTQRFiidTVQjpA4",
 										"type": "text"
 									}
 								],
@@ -631,6 +730,41 @@
 							"response": []
 						},
 						{
+							"name": "Service dropdown list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/dropdown",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"dropdown"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Query service type list",
 							"request": {
 								"method": "GET",
@@ -669,7 +803,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY2NjExNywiZXhwIjoxNzY1MjcwOTE3LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.dFN11nMqoOXe5XXZGnU-Rc2xMSlvYKrv9ZofSvTZQac",
 										"type": "text"
 									}
 								],
@@ -677,9 +811,9 @@
 									"mode": "formdata",
 									"formdata": [
 										{
-											"key": "file2",
+											"key": "file",
 											"type": "file",
-											"src": "/C:/Users/26633/Pictures/Saved Pictures/1.jpeg"
+											"src": "/C:/Users/lenovo/Pictures/aa.jpg"
 										}
 									]
 								},
@@ -698,36 +832,101 @@
 							"response": []
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Report",
-			"item": [
+				},
 				{
-					"name": "Query dashboard data",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/report/dashboard",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"report",
-								"dashboard"
-							]
+					"name": "Report",
+					"item": [
+						{
+							"name": "Query dashboard data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/report/dashboard",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"report",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query dashboard data Copy",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/report/dashboard",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"report",
+										"dashboard"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "Search order",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"customerName\": \"Tom\",\r\n  \"pageNo\": 1,\r\n  \"pageSize\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/order/search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"order",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}

@@ -8,7 +8,13 @@ import {
     ResponseUtil
 } from "@sojo-micro/rpc";
 import {AppointmentService} from "@/service/AppointmentService";
-import {AppointmentReq, AppointmentSearchReq} from "@/types/AppointmentType";
+import {
+    AppointmentDeleteReq,
+    AppointmentReq,
+    AppointmentSearchReq,
+    AppointmentUpdateReq
+} from "@/types/AppointmentType";
+import {StaffDeleteReq} from "@/types/StaffType";
 
 @Controller({basePath: '/api/biz/appointment'})
 export class AppointmentController {
@@ -25,5 +31,25 @@ export class AppointmentController {
     async searchAppointment(@Body() req: AppointmentSearchReq, @Req() auth: AuthenticatedRequest) {
         const list = await this.appointmentService.searchAppointment(req, auth.user.id);
         return ResponseUtil.success(list);
+    }
+
+    /**
+     * Update appointment
+     */
+    @POST('/update')
+    async update(@Req() auth: AuthenticatedRequest, @Body() req: AppointmentUpdateReq) {
+        const appointmentReq = {
+            ...req,
+            merchantId: auth.user.merchantId,
+        };
+        await this.appointmentService.updateAppointment(appointmentReq);
+
+        return ResponseUtil.success("Staff updated successfully");
+    }
+
+    @POST("/delete")
+    async delete(@Req() auth: AuthenticatedRequest, @Body() req: AppointmentDeleteReq) {
+        await this.appointmentService.deleteAppointment(req.id);
+        return ResponseUtil.success();
     }
 }

@@ -1,10 +1,10 @@
-import {OrderAddReq, OrderItemResp, OrderResp, OrderSearchReq, OrderSearchResp} from "@/types/OrderType";
+import {OrderAddReq, OrderItemResp, OrderPageResp, OrderResp, OrderSearchReq, OrderSearchResp} from "@/types/OrderType";
 
 /**
  * Order Service
  */
 export abstract class OrderService {
-    abstract searchList(req: OrderSearchReq, userId: string): Promise<OrderSearchResp[]>;
+    abstract searchList(req: OrderSearchReq, userId: string): Promise<OrderPageResp>;
 
     abstract placeOrder(req: OrderAddReq, customerUserId: string): Promise<OrderResp>;
 }

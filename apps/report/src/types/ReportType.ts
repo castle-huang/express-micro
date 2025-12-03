@@ -1,11 +1,11 @@
 export interface DashBoardDetailResp {
-    changeRevenue: number;
-    totalAppointment: number;
-    customerRetention: number;
-    newCustomers: number;
-    recentBookedAppointments: AppointmentItemResp[];
-    revenueTrends: RevenueTrendsItemResp[];
-    bookingsService: BookingsServiceItemResp[];
+    changeRevenue?: number;
+    totalAppointment?: number;
+    customerRetention?: number;
+    newCustomers?: number;
+    recentBookedAppointments?: AppointmentItemResp[];
+    revenueTrends?: RevenueTrendsItemResp[];
+    bookingsService?: BookingsServiceItemResp[];
 }
 
 export interface AppointmentItemResp {

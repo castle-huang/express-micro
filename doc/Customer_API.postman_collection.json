@@ -96,7 +96,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQyOTU3MTYsImV4cCI6MTc2Njg4NzcxNiwiaXNzIjoiZXhwcmVzcy1taWNybyJ9.68TH-eAFhnqZqZeb3yi2qeHxeI87XVEDbgkvdmzD1lw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
 								"type": "text"
 							}
 						],
@@ -158,13 +158,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY1OTE0MSwiZXhwIjoxNzY1MjYzOTQxLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.2gpqmQjy-1X5Zy4yKMoUIeUWLhbFtDyUqUq5_M1fxDg",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"oldPassword\": \"123457\",\r\n  \"newPassword\": \"123456\"\r\n}",
+							"raw": "{\r\n  \"oldPassword\": \"123456\",\r\n  \"newPassword\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -194,114 +194,191 @@
 			"name": "Biz",
 			"item": [
 				{
-					"name": "Get business",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/biz/customer/business/get?id=1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"biz",
-								"customer",
-								"business",
-								"get"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
+					"name": "Business",
+					"item": [
+						{
+							"name": "Get business",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/customer/business/get?id=1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"customer",
+										"business",
+										"get"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
 								}
-							]
+							},
+							"response": []
+						},
+						{
+							"name": "Page query business",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": null,\r\n    \"pageNo\": 1,\r\n    \"pageSize\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/customer/business/page",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"customer",
+										"business",
+										"page"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Page query business",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": null,\r\n    \"pageNo\": 1,\r\n    \"pageSize\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "Service",
+					"item": [
+						{
+							"name": "Page query service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"businessId\": \"1\",\r\n    \"pageNo\": 1,\r\n    \"pageSize\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/customer/service/page",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"customer",
+										"service",
+										"page"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/biz/customer/business/page",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"biz",
-								"customer",
-								"business",
-								"page"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Service",
-			"item": [
+					]
+				},
 				{
-					"name": "Page query service",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"businessId\": \"1\",\r\n    \"pageNo\": 1,\r\n    \"pageSize\": 2\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "Order",
+					"item": [
+						{
+							"name": "Place order",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"appointmentTime\": 1764762926000,\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"fullName\": \"Tom\",\r\n  \"phone\": \"13800138000\",\r\n  \"email\": \"zhangsan@example.com\",\r\n  \"services\": [\r\n    {\r\n      \"serviceId\": \"7401588151787065344\",\r\n      \"count\": 1\r\n    }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/customer/order/place-order",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"customer",
+										"order",
+										"place-order"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/biz/customer/service/page",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"biz",
-								"customer",
-								"service",
-								"page"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
+				},
+				{
+					"name": "Appointment",
+					"item": [
+						{
+							"name": "Query appointment records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/customer/appointment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"customer",
+										"appointment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}

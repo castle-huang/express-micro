@@ -2,9 +2,22 @@ import {CommonError, snakeToCamel, Service, CommonErrorEnum, camelToSnake} from 
 import {supabase} from "@/config/Supabase";
 import {BizAppointment} from "@/types/entity/BizAppointment";
 import {AppointmentSearchReq} from "@/types/AppointmentType";
+import {BizStaff} from "@/types/entity/BizStaff";
 
 @Service()
 export class AppointmentRepository {
+
+    async getOneById(id: string): Promise<BizAppointment> {
+        const {data, error} = await supabase
+            .from('biz_appointment')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return snakeToCamel(data);
+    }
     async getList(userId: string): Promise<BizAppointment[] | null> {
         const {data, error} = await supabase
             .from('biz_appointment')
@@ -24,6 +37,16 @@ export class AppointmentRepository {
             .from('biz_appointment')
             .insert(camelToSnake(appointment))
             .single();
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+    }
+
+    async update(appointment: BizAppointment) {
+        const {error} = await supabase
+            .from('biz_appointment')
+            .update(camelToSnake(appointment))
+            .eq('id', appointment.id);
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
@@ -81,5 +104,15 @@ export class AppointmentRepository {
             return [];
         }
         return this.mapToList(data);
+    }
+
+    async deleteById(id: string): Promise<void> {
+        const {error} = await supabase
+            .from('biz_appointment')
+            .delete()
+            .eq('id', id);
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
     }
 }

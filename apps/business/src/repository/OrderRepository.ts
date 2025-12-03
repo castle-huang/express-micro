@@ -2,6 +2,7 @@ import {camelToSnake, CommonError, CommonErrorEnum, Service, snakeToCamel} from 
 import {supabase} from "@/config/Supabase";
 import {BizOrder} from "@/types/entity/BizOrder";
 import {OrderSearchReq} from "@/types/OrderType";
+import {ServicePageReq} from "@/types/ServiceType";
 
 @Service()
 export class OrderRepository {
@@ -51,5 +52,20 @@ export class OrderRepository {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
         return data?.map(record => snakeToCamel(record))
+    }
+
+    async count(req: OrderSearchReq, merchantId: string): Promise<number> {
+        let query = supabase
+            .from('biz_order')
+            .select('*', {count: 'exact'})
+            .eq('merchant_id', merchantId);
+        if (req.customerName) {
+            query = query.ilike('customer_name', req.customerName);
+        }
+        const {count, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return count?? 0;
     }
 }

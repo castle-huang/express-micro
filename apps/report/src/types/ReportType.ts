@@ -14,7 +14,7 @@ export interface AppointmentItemResp {
     serviceName?: string;
     staffName?: string;
     appointmentTime?: number;
-    bookedAt?: number;
+    bookedAt?: string;
 }
 
 export interface RevenueTrendsItemResp {

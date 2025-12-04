@@ -4,11 +4,13 @@ import {BizAppointment} from "@/types/entity/BizAppointment";
 import {AppointmentItemResp, BookingsServiceItemResp} from "@/types/ReportType";
 import {StaffRepository} from "@/repository/StaffRepository";
 import {ServiceRepository} from "@/repository/ServiceRepository";
+import {BusinessRepository} from "@/repository/BusinessRepository";
 
 @Service()
 export class AppointmentRepository {
     constructor(@Inject() private staffRepository: StaffRepository,
-                @Inject() private serviceRepository: ServiceRepository,) {
+                @Inject() private serviceRepository: ServiceRepository,
+                @Inject() private businessRepository: BusinessRepository,) {
     }
 
     async getList(userId: string): Promise<BizAppointment[] | null> {
@@ -80,24 +82,28 @@ export class AppointmentRepository {
         for (const item of data) {
             let serviceName: string | undefined;
             let staffName: string | undefined;
+            let businessName: string | undefined;
             if (item.service_id) {
                 const service = await this.serviceRepository.getOneById(item.service_id);
                 serviceName = service?.name;
+                const business = await this.businessRepository.getOneById(item.business_id);
+                businessName = business?.name;
             }
             if (item.staff_id) {
                 const staff = await this.staffRepository.getOneById(item.staff_id);
                 staffName = staff?.name;
             }
+
+            if (item)
             results.push({
                 id: item.id,
                 customerName: item.customer_name,
                 serviceName: serviceName,
                 staffName: staffName,
                 appointmentTime: item.appointment_time,
-                bookedAt: item.create_time
+                bookedAt: businessName
             });
         }
-
         return results;
     }
 

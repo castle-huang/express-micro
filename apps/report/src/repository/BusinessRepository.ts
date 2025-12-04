@@ -17,4 +17,15 @@ export class BusinessRepository {
         }
         return data.map(item => snakeToCamel(item));
     }
+
+    async getOneById(id: string): Promise<BizBusiness> {
+        const {data, error} = await supabase
+            .from('biz_business')
+            .select('*')
+            .eq('id', id).single();
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return snakeToCamel(data);
+    }
 }

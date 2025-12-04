@@ -90,10 +90,10 @@ export class AppointmentServiceImpl implements AppointmentService {
         if (!merchantId) {
             throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
         }
-        const {appointmentStartTime, appointmentEndTime} = req;
-        if (!appointmentStartTime || !appointmentEndTime) {
-            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR, "parameter is error")
-        }
+        // const {appointmentStartTime, appointmentEndTime} = req;
+        // if (!appointmentStartTime || !appointmentEndTime) {
+        //     throw new CommonError(CommonErrorEnum.PARAMETER_ERROR, "parameter is error")
+        // }
         const list = await this.appointmentRepository.searchList(req, merchantId);
         return list.map(item => {
             return item;

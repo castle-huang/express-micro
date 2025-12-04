@@ -278,6 +278,41 @@
 							"response": []
 						},
 						{
+							"name": "Update appointment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY3NjQwNSwiZXhwIjoxNzY1MjgxMjA1LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.gPR8okGcgpiTqPSJ0w_H1NwgVPhaTIAG_fUvTllt0Yw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"id\": \"7401589441942392832\",\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"staffId\": \"7401588378145263616\",\r\n  \"serviceId\": \"7401588151787065344\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/appointment/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"appointment",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Query Appointment",
 							"request": {
 								"method": "POST",
@@ -307,6 +342,41 @@
 										"biz",
 										"appointment",
 										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete appointment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/appointment/delete",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"appointment",
+										"delete"
 									]
 								}
 							},
@@ -452,6 +522,41 @@
 										"biz",
 										"staff",
 										"dropdown"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete staff",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/staff/delete",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"staff",
+										"delete"
 									]
 								}
 							},
@@ -786,6 +891,41 @@
 										"service",
 										"type",
 										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/biz/service/delete",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"biz",
+										"service",
+										"delete"
 									]
 								}
 							},

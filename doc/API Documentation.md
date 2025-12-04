@@ -6,10 +6,6 @@
 
 <!-- TOC -->
 
-<!-- TOC start -->
-
-<!-- TOC -->
-
 - [General Information](#general-information)
   - [Base url for request](#base-url-for-request)
   - [Authentication](#authentication)
@@ -44,14 +40,14 @@
 - [5 Calendar-Related APIs](#5-calendar-related-apis)
   - [5.1 Add new appointment](#51-add-new-appointment)
   - [5.2 Search Appointment](#52-search-appointment)
+  - [5.3 Update appointment](#53-update-appointment)
+  - [5.4 Delete appointment](#54-delete-appointment)
 - [6 Dashboard-Related APIs](#6-dashboard-related-apis)
   - [6.1 Query dashboard data](#61-query-dashboard-data)
 - [7 Order-Related APIs](#7-order-related-apis)
   - [7.1 Search order](#71-search-order)
 
 <!-- TOC end -->
-
-## 
 
 ## General Information
 
@@ -1360,6 +1356,86 @@ Response Parameters
  "createTime": 1719648000000
  }
  ]
+}
+```
+
+# 5.3 Update appointment
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/appointment/update`
+
+### Request Body
+
+| Parameter         | Type   | Required | Description                                     |
+| ----------------- | ------ | -------- | ----------------------------------------------- |
+| `id`              | string | Yes      | Appointment unique identifier                   |
+| `businessId`      | string | Yes      | Business identifier                             |
+| `staffId`         | string | Yes      | Staff member identifier                         |
+| `serviceId`       | string | Yes      | Service identifier                              |
+| `customerName`    | string | Yes      | Customer's name                                 |
+| `timeSlot`        | string | Yes      | Time slot for appointment (e.g., "14:00-15:00") |
+| `appointmentTime` | number | Yes      | Appointment timestamp in milliseconds           |
+
+#### Example Request Body
+
+```json
+{
+ "id": "7401589441942392832",
+ "businessId": "7399369444537012224",
+ "staffId": "7401588378145263616",
+ "serviceId": "7401588151787065344",
+ "customerName": "张三",
+ "timeSlot": "14:00-15:00",
+ "appointmentTime": 1719820800000
+}
+```
+
+### Response
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
+}
+```
+
+## 5.4 Delete appointment
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/biz/appointment/delete`
+
+### Request Body
+
+| Parameter | Type   | Required | Description                   |
+| --------- | ------ | -------- | ----------------------------- |
+| `id`      | string | Yes      | Appointment unique identifier |
+
+#### Example Request Body
+
+```json
+{
+ "id": "1"
+}
+```
+
+### Response
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": null
 }
 ```
 

@@ -4,6 +4,7 @@ import {HttpTransport} from "@sojo-micro/rpc";
 import path from "path";
 import fs from "fs";
 import {register} from "tsconfig-paths";
+import {RpcRegistry} from "@/config/RpcRegistry";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ async function importAllServices() {
 
 async function startServer() {
     await importAllServices()
+    server.discoverRpcService(RpcRegistry);
     await server.scanServices(["src", "apps/payments/src"])
     const port = parseInt(process.env.PORT || '3000');
     await server.start(port);

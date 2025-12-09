@@ -2,12 +2,17 @@ import {
     LoginReq,
     LoginResp,
     ProfilesResp,
-    RegisterReq,
+    RegisterReq, ResetPasswordReq,
     SignUpResp,
     UpdateMerchantUserReq,
-    UpdatePasswordReq
+    UpdatePasswordReq, VerifyCodeReq, VerifyResetPwdCodeResp
 } from "@/types/AuthType";
-import {CustomerUpdatePasswordReq} from "@/types/AuthCustomerType";
+import {
+    CustomerResetPasswordReq,
+    CustomerUpdatePasswordReq,
+    CustomerVerifyCodeReq,
+    CustomerVerifyResetPwdCodeResp
+} from "@/types/AuthCustomerType";
 
 export abstract class MerchantUserService {
     abstract register(request: RegisterReq): Promise<SignUpResp>;
@@ -19,4 +24,8 @@ export abstract class MerchantUserService {
     abstract updateMerchantUser(req: UpdateMerchantUserReq): Promise<void>
 
     abstract updatePassword(req: UpdatePasswordReq): Promise<void>
+
+    abstract sendResetPwdEmail(userId: string): Promise<Boolean>
+    abstract verifyResetPwdCode(req: VerifyCodeReq): Promise<VerifyResetPwdCodeResp>
+    abstract resetPwd(req: ResetPasswordReq): Promise<void>
 }

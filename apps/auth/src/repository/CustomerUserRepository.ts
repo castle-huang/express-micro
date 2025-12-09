@@ -22,7 +22,7 @@ export class CustomerUserRepository {
             .select('*')
             .eq('id', userId)
             .eq('deleted', false)
-            .single();
+            .maybeSingle();
         return snakeToCamel(data);
     }
 

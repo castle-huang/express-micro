@@ -64,3 +64,18 @@ export interface CustomerUpdatePasswordReq {
     oldPassword: string;
     newPassword: string;
 }
+
+export interface CustomerVerifyCodeReq {
+    code: string,
+    userId: string
+}
+
+export interface CustomerVerifyResetPwdCodeResp {
+    resetPwdToken: string,
+}
+
+export interface CustomerResetPasswordReq {
+    resetToken: string,
+    password: string,
+    userId: string
+}

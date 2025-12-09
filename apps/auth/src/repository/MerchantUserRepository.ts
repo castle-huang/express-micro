@@ -7,7 +7,7 @@ import {Service, camelToSnake, snakeToCamel} from "@sojo-micro/rpc";
 export class MerchantUserRepository {
 
     async findByEmail(email: string): Promise<AuthMerchantUser | null> {
-        const { data } = await supabase
+        const {data} = await supabase
             .from('auth_merchant_user')
             .select('*')
             .eq('email', email)
@@ -16,8 +16,8 @@ export class MerchantUserRepository {
         return this.mapToMerchantUser(data);
     }
 
-    async findById(userId: string) : Promise<AuthMerchantUser | null> {
-        const { data } = await supabase
+    async findById(userId: string): Promise<AuthMerchantUser | null> {
+        const {data} = await supabase
             .from('auth_merchant_user')
             .select('*')
             .eq('id', userId)
@@ -27,7 +27,7 @@ export class MerchantUserRepository {
     }
 
     async insert(user: Partial<AuthMerchantUser>): Promise<AuthMerchantUser | null> {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('auth_merchant_user')
             .insert([camelToSnake(user)])
             .select()
@@ -40,7 +40,7 @@ export class MerchantUserRepository {
     }
 
     async updateById(user: Partial<AuthMerchantUser>): Promise<AuthMerchantUser | null> {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('auth_merchant_user')
             .update(camelToSnake(user))
             .eq('id', user.id);
@@ -65,5 +65,15 @@ export class MerchantUserRepository {
             createTime: record.create_time,
             password: record.password
         };
+    }
+
+    async findByMerchantId(merchantId: string) {
+        const {data} = await supabase
+            .from('auth_merchant_user')
+            .select('*')
+            .eq('merchant_id', merchantId)
+            .eq('deleted', false)
+            .single();
+        return this.mapToMerchantUser(data);
     }
 }

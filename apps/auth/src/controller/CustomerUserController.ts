@@ -12,7 +12,8 @@ import {
 import {ProfilesResp} from "../types/AuthType";
 import {CustomerUserService} from "@/service/CustomerUserService";
 import {
-    CustomerUpdatePasswordReq,
+    CustomerResetPasswordReq,
+    CustomerUpdatePasswordReq, CustomerVerifyCodeReq,
     GetCustomerResp,
     UpdateCustomerUserReq
 } from "@/types/AuthCustomerType";
@@ -41,5 +42,31 @@ export class CustomerUserController {
         req.id = authReq.user.id;
         await this.customerUserService.updatePassword(req);
         return ResponseUtil.success();
+    }
+
+    @POST('/send-reset-pwd-email')
+    async sendResetPwdEmail(@Req() authReq: AuthenticatedRequest)  {
+        const success = await this.customerUserService.sendResetPwdEmail(authReq.user.id);
+        return ResponseUtil.success(success);
+    }
+
+    @POST('/verify-reset-pwd-code')
+    async verifyResetPwdCode(@Req() authReq: AuthenticatedRequest, @Body() req: CustomerVerifyCodeReq)  {
+        req = {
+            ...req,
+            userId: authReq.user.id,
+        }
+        const success = await this.customerUserService.verifyResetPwdCode(req);
+        return ResponseUtil.success(success);
+    }
+
+    @POST('/reset-pwd')
+    async resetPwd(@Req() authReq: AuthenticatedRequest, @Body() req: CustomerResetPasswordReq)  {
+        req = {
+            ...req,
+            userId: authReq.user.id,
+        }
+        const success = await this.customerUserService.resetPwd(req);
+        return ResponseUtil.success(success);
     }
 }

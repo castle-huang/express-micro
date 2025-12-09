@@ -32,4 +32,12 @@ export class CommonErrorEnum {
         code: '1007',
         msg: 'upload failed'
     };
+    static BIZ_ERROR: IErrorItem = {
+        code: '1008',
+        msg: 'biz failed'
+    };
+    static VERIFY_CODE_ERROR: IErrorItem = {
+        code: '1009',
+        msg: 'Verification code error'
+    };
 }

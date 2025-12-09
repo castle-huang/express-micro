@@ -1,16 +1,14 @@
 import {
-    camelToSnake,
     CommonError,
     CommonErrorEnum,
     Inject,
     Service,
-    snakeToCamel,
     SnowflakeUtil
 } from "@sojo-micro/rpc";
 import {OrderService} from "@/service/OrderService";
 import {OrderSearchReq, OrderItemResp, OrderAddReq, OrderResp, OrderSearchResp, OrderPageResp} from "@/types/OrderType";
 import {OrderRepository} from "@/repository/OrderRepository";
-import {MERCHANT_USER_API} from "@/config/RpcRegistry";
+import {EMAIL_API, MERCHANT_USER_API} from "@/config/RpcRegistry";
 import {MerchantUserRpcService} from "@/rpc/MerchantUserRpcService";
 import {ServiceRepository} from "@/repository/ServiceRepository";
 import {AppointmentRepository} from "@/repository/AppointmentRepository";
@@ -20,16 +18,18 @@ import {BizOrder} from "@/types/entity/BizOrder";
 import {BusinessRepository} from "@/repository/BusinessRepository";
 import {OrderItemRepository} from "@/repository/OrderItemRepository";
 import {BizOrderItem} from "@/types/entity/BizOrderItem";
+import {EmailRpcApiService} from "@/rpc/EmailRpcApiService";
 
 @Service()
-export class OrderServiceImpl implements OrderService {
+class OrderServiceImpl implements OrderService {
     constructor(@Inject(MERCHANT_USER_API) private merchantUserRpcService: MerchantUserRpcService,
                 @Inject() private orderRepository: OrderRepository,
                 @Inject() private serviceRepository: ServiceRepository,
                 @Inject() private appointmentRepository: AppointmentRepository,
                 @Inject() private staffRepository: StaffRepository,
                 @Inject() private businessRepository: BusinessRepository,
-                @Inject() private orderItemRepository: OrderItemRepository
+                @Inject() private orderItemRepository: OrderItemRepository,
+                @Inject(EMAIL_API) private emailRpcApiService: EmailRpcApiService
     ) {
     }
 
@@ -97,6 +97,7 @@ export class OrderServiceImpl implements OrderService {
         const now = new Date().getTime();
         const orderId = SnowflakeUtil.generateId();
         let bizOrderItemList: BizOrderItem[] = []
+        let currency
         for (let serviceInfo of services) {
             if (!serviceInfo.serviceId || !serviceInfo.count) {
                 throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
@@ -105,6 +106,7 @@ export class OrderServiceImpl implements OrderService {
             if (!service) {
                 throw new CommonError(CommonErrorEnum.PARAMETER_ERROR, "service is not found");
             }
+            currency = service.currency
             if (!service.businessId || service.businessId != businessId) {
                 throw new CommonError(CommonErrorEnum.PARAMETER_ERROR, "businessId is error");
             }
@@ -151,10 +153,10 @@ export class OrderServiceImpl implements OrderService {
                 phone: phone,
                 customerUserId: customerUserId,
                 orderItemId: bizOrderItem.orderId,
-                appointmentTime: appointmentTime,
-                timeSlot: timeSlot,
-                createTime: now,
-                updateTime: now
+                appointmentTime: bizOrderItem.appointmentTime,
+                timeSlot: bizOrderItem.timeSlot,
+                createTime: new Date().getTime(),
+                updateTime: new Date().getTime(),
             };
             await this.appointmentRepository.insert(bizAppointment);
             bizOrderItem.appointmentId = bizAppointment.id;
@@ -167,6 +169,7 @@ export class OrderServiceImpl implements OrderService {
             businessId: business.id,
             email: email,
             phone: phone,
+            currency: currency,
             customerName: fullName,
             customerUserId: customerUserId,
             totalAmount: totalAmount,
@@ -178,9 +181,82 @@ export class OrderServiceImpl implements OrderService {
             updateTime: now
         }
         await this.orderRepository.insert(bizOrder);
+        let bizOrderItems = await this.orderItemRepository.getOrderItemListByOrderId(orderId);
+        for (let bizOrderItem of bizOrderItems) {
+            await this.emailRpcApiService.sendTextEmail(bizOrder.email ?? "", "Appointment Confirmation", `Dear ${bizOrder.customerName},
+                Your appointment has been confirmed.
+                OrderId:${bizOrder.id}
+                Appointment Time: ${bizOrderItem.appointmentTime}
+                Service: ${bizOrderItem.serviceName}
+                Staff: ${bizOrderItem.staffName}
+                Please show up 15 minutes before your appointment.
+                Thank you for choosing our salon.
+                Best regards,
+                The Salon Team`);
+        }
+        const merchantEmail = await this.merchantUserRpcService.getEmailByMerchantId(bizOrder.merchantId ?? "")
+        await this.emailRpcApiService.sendTextEmail(merchantEmail, "New Appointment", `A new appointment has been made.
+                Customer Name: ${bizOrder.customerName}
+                OrderId:${bizOrder.id}
+                Email: ${bizOrder.email}
+                Phone: ${bizOrder.phone}
+                Total Amount: ${bizOrder.totalAmount}
+                Service Fee: ${bizOrder.serviceFee}
+                Status: ${bizOrder.status}
+                Order Time: ${bizOrder.orderTime}`)
         return {
             orderId: orderId
         }
+    }
+
+    async handleOrderPaymentSuccess(orderId: string): Promise<void> {
+        let bizOrder = await this.orderRepository.getOneById(orderId);
+        bizOrder.status = 1;
+        bizOrder.paymentTime = new Date().getTime();
+        await this.orderRepository.updateById(bizOrder);
+        let bizOrderItems = await this.orderItemRepository.getOrderItemListByOrderId(orderId);
+        for (let bizOrderItem of bizOrderItems) {
+            const bizAppointment: BizAppointment = {
+                id: SnowflakeUtil.generateId(),
+                merchantId: bizOrderItem.merchantId,
+                businessId: bizOrderItem.businessId,
+                staffId: bizOrderItem.staffId,
+                serviceId: bizOrderItem.serviceId,
+                customerName: bizOrder.customerName,
+                email: bizOrder.email,
+                phone: bizOrder.phone,
+                customerUserId: bizOrder.customerUserId,
+                orderItemId: bizOrderItem.orderId,
+                appointmentTime: bizOrderItem.appointmentTime,
+                timeSlot: bizOrderItem.timeSlot,
+                createTime: new Date().getTime(),
+                updateTime: new Date().getTime(),
+            };
+            await this.appointmentRepository.insert(bizAppointment);
+            bizOrderItem.appointmentId = bizAppointment.id;
+            await this.orderItemRepository.updateById(bizOrderItem);
+            await this.emailRpcApiService.sendTextEmail(bizOrder.email ?? "", "Appointment Confirmation", `Dear ${bizOrder.customerName},
+                Your appointment has been confirmed.
+                OrderId:${bizOrder.id}
+                Appointment Time: ${bizOrderItem.appointmentTime}
+                Service: ${bizOrderItem.serviceName}
+                Staff: ${bizOrderItem.staffName}
+                Please show up 15 minutes before your appointment.
+                Thank you for choosing our salon.
+                Best regards,
+                The Salon Team`);
+        }
+        const merchantEmail = await this.merchantUserRpcService.getEmailByMerchantId(bizOrder.merchantId ?? "")
+        await this.emailRpcApiService.sendTextEmail(merchantEmail, "New Appointment", `A new appointment has been made.
+                Customer Name: ${bizOrder.customerName}
+                OrderId:${bizOrder.id}
+                Email: ${bizOrder.email}
+                Phone: ${bizOrder.phone}
+                Total Amount: ${bizOrder.totalAmount}
+                Service Fee: ${bizOrder.serviceFee}
+                Status: ${bizOrder.status}
+                Order Time: ${bizOrder.orderTime}`
+        )
     }
 
 }

@@ -1,10 +1,16 @@
 import {
-    AuthenticatedRequest, CommonError, CommonErrorEnum,
-    Inject, JWTUtils, Service, SnowflakeUtil
+    AuthenticatedRequest,
+    CommonError,
+    CommonErrorEnum,
+    Inject,
+    JWTUtils,
+    Service,
+    SnowflakeUtil
 } from "@sojo-micro/rpc";
 import {CustomerUserService} from "@/service/CustomerUserService";
 import {
-    CustomerUpdatePasswordReq,
+    CustomerResetPasswordReq,
+    CustomerUpdatePasswordReq, CustomerVerifyCodeReq, CustomerVerifyResetPwdCodeResp,
     GetCustomerResp,
     LoginCustomerReq,
     LoginCustomerResp,
@@ -14,12 +20,17 @@ import {
 } from "@/types/AuthCustomerType";
 import {CustomerUserRepository} from "@/repository/CustomerUserRepository";
 import {AuthErrorEnum} from "@/types/AuthErrorEnum";
+import {EmailService} from "@/service/EmailService";
+import {CacheDataRepository} from "@/repository/CacheDataRepository";
+import {SysCacheData} from "@/types/entity/SysCacheData";
 
 
 @Service()
 export class CustomerUserServiceImpl implements CustomerUserService {
 
-    constructor(@Inject() private customerUserRepository: CustomerUserRepository) {
+    constructor(@Inject() private customerUserRepository: CustomerUserRepository,
+                @Inject() private emailService: EmailService,
+                @Inject() private cacheDataRepository: CacheDataRepository) {
     }
 
     /**
@@ -127,6 +138,60 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         });
     }
 
+    async sendResetPwdEmail(userId: string): Promise<Boolean> {
+        const customerUser = await this.customerUserRepository.findById(userId);
+        if (!customerUser) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
+        const code = this.generateRandomNumber(6);
+        const cacheKey = 'customer_reset_password_code' + ":" + userId;
+        await this.saveCacheData(cacheKey, code);
+        if (customerUser.email) {
+            const sendResult = await this.emailService.sendTextEmail(customerUser.email, 'Reset password', code);
+            return  sendResult.success;
+        }
+        return false;
+    }
+
+    async verifyResetPwdCode(req: CustomerVerifyCodeReq): Promise<CustomerVerifyResetPwdCodeResp> {
+        if (!req.code) {
+            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
+        }
+        const cacheKey = 'customer_reset_password_code' + ":" + req.userId;
+        const cacheData = await this.cacheDataRepository.findByKey(cacheKey);
+        if (!cacheData || cacheData.cacheValue != req.code) {
+            throw new CommonError(CommonErrorEnum.VERIFY_CODE_ERROR);
+        }
+        const resetToken = this.generateRandoString(8);
+        const key = 'customer_reset_pwd_token' + ":" + req.userId;
+        this.saveCacheData(key, resetToken);
+        if (cacheData.id) {
+            await this.cacheDataRepository.deleteById(cacheData.id);
+        }
+        return {
+            resetPwdToken: resetToken
+        };
+    }
+
+    async resetPwd(req: CustomerResetPasswordReq): Promise<void> {
+        if (!req.resetToken || !req.password) {
+            throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
+        }
+        const cacheKey = 'customer_reset_pwd_token' + ":" + req.userId;
+        const cacheData = await this.cacheDataRepository.findByKey(cacheKey);
+        if (!cacheData || cacheData.cacheValue != req.resetToken) {
+            throw new CommonError(AuthErrorEnum.RESET_PASSWORD_ERROR);
+        }
+        if (cacheData.id) {
+            await this.cacheDataRepository.deleteById(cacheData.id);
+        }
+        await this.customerUserRepository.updateById({
+            id: req.userId,
+            password: req.password,
+            updateTime: new Date().getTime()
+        });
+    }
+
     private validateLoginRequest(email: string, password: string) {
         if (!email || !password) {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
@@ -145,5 +210,37 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (!emailRegex.test(email)) {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
         }
+    }
+
+    private generateRandomNumber(length: number) {
+        let result = '';
+        for (let i = 0; i < 6; i++) {
+            result += Math.floor(Math.random() * 10);
+        }
+        return result;
+    }
+
+    private async saveCacheData(key: string, value: string) {
+        const cacheData: Partial<SysCacheData> = {
+            id: SnowflakeUtil.generateBigString(),
+            cacheKey: key,
+            cacheValue: value,
+            createTime: new Date().getTime()
+        };
+        await this.cacheDataRepository.insert(cacheData);
+    }
+
+    private generateRandoString(length = 8) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const bytes = new Uint8Array(length);
+        if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            crypto.getRandomValues(bytes);
+        }
+
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars[bytes[i] % chars.length];
+        }
+        return result;
     }
 }

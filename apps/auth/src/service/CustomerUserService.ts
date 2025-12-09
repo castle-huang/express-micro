@@ -1,5 +1,6 @@
 import {
-    CustomerUpdatePasswordReq,
+    CustomerResetPasswordReq,
+    CustomerUpdatePasswordReq, CustomerVerifyCodeReq, CustomerVerifyResetPwdCodeResp,
     GetCustomerResp,
     LoginCustomerReq,
     LoginCustomerResp,
@@ -17,4 +18,8 @@ export abstract class CustomerUserService {
     abstract updateCustomerUser(req: UpdateCustomerUserReq): Promise<void>
 
     abstract updatePassword(req: CustomerUpdatePasswordReq): Promise<void>
+    abstract sendResetPwdEmail(userId: string): Promise<Boolean>
+    abstract verifyResetPwdCode(req: CustomerVerifyCodeReq): Promise<CustomerVerifyResetPwdCodeResp>
+    abstract resetPwd(req: CustomerResetPasswordReq): Promise<void>
+
 }

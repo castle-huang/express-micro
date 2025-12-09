@@ -12,6 +12,8 @@ export class CacheDataRepository {
             .from('sys_cache_data')
             .select('*')
             .eq('cache_key', cacheKey)
+            .order('create_time', { ascending: false }) // 按 create_time 降序排列
+            .limit(1)
             .maybeSingle();
         return snakeToCamel(data);
     }
@@ -31,6 +33,16 @@ export class CacheDataRepository {
             .from('sys_cache_data')
             .delete()
             .eq('id', id);
+        if (error) {
+            throw error;
+        }
+    }
+
+    async deleteByCacheKey(cacheKey: string): Promise<void> {
+        const { data, error } = await supabase
+            .from('sys_cache_data')
+            .delete()
+            .eq('cache_key', cacheKey);
         if (error) {
             throw error;
         }

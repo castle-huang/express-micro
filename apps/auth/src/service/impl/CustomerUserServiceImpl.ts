@@ -166,7 +166,7 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         const key = 'customer_reset_pwd_token' + ":" + req.email;
         this.saveCacheData(key, resetToken);
         if (cacheData.id) {
-            await this.cacheDataRepository.deleteById(cacheData.id);
+            await this.cacheDataRepository.deleteByCacheKey(cacheKey);
         }
         return {
             resetPwdToken: resetToken
@@ -182,9 +182,6 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (!cacheData || cacheData.cacheValue != req.resetToken) {
             throw new CommonError(AuthErrorEnum.RESET_PASSWORD_ERROR);
         }
-        if (cacheData.id) {
-            await this.cacheDataRepository.deleteById(cacheData.id);
-        }
         const customerUser = await this.customerUserRepository.findByEmail(req.email);
         if (!customerUser) {
             throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
@@ -194,6 +191,9 @@ export class CustomerUserServiceImpl implements CustomerUserService {
             password: req.password,
             updateTime: new Date().getTime()
         });
+        if (cacheData.id) {
+            await this.cacheDataRepository.deleteByCacheKey(cacheKey);
+        }
     }
 
     private validateLoginRequest(email: string, password: string) {

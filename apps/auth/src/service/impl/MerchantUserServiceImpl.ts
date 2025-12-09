@@ -173,7 +173,7 @@ export class MerchantUserServiceImpl implements MerchantUserService {
         const key = 'merchant_reset_pwd_token' + ":" + req.email;
         this.saveCacheData(key, resetToken);
         if (cacheData.id) {
-            await this.cacheDataRepository.deleteById(cacheData.id);
+            await this.cacheDataRepository.deleteByCacheKey(cacheKey);
         }
         return {
             resetPwdToken: resetToken
@@ -193,15 +193,14 @@ export class MerchantUserServiceImpl implements MerchantUserService {
         if (!cacheData || cacheData.cacheValue != req.resetToken) {
             throw new CommonError(AuthErrorEnum.RESET_PASSWORD_ERROR);
         }
-        if (cacheData.id) {
-            await this.cacheDataRepository.deleteById(cacheData.id);
-        }
-
         await this.merchantUserRepository.updateById({
             id: merchantUser.id,
             password: req.password,
             updateTime: new Date().getTime()
         });
+        if (cacheData.id) {
+            await this.cacheDataRepository.deleteByCacheKey(cacheKey);
+        }
     }
 
     private validateLoginRequest(email: string, password: string) {

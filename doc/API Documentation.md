@@ -343,7 +343,17 @@ Response Parameters
 
 ### Request Body
 
-none
+| Parameter | Type   | Required | Description              |
+| --------- | ------ | -------- | ------------------------ |
+| `email`   | string | Yes      | Customer's email address |
+
+### Example Request Body
+
+```json
+{
+    "email": "aa@163.com"
+}
+```
 
 ### Response
 
@@ -370,12 +380,14 @@ none
 | Parameter | Type   | Required | Description                          |
 | --------- | ------ | -------- | ------------------------------------ |
 | `code`    | string | Yes      | Verification code received via email |
+| email     | string | Yes      | Email address                        |
 
 #### Example Request Body
 
 ```json
 {
- "code": "924230"
+  "code": "136140",
+  "email": "aa@163.com"
 }
 ```
 
@@ -419,6 +431,7 @@ none
 | ------------ | ------ | -------- | ----------------------------------------------- |
 | `resetToken` | string | Yes      | Reset password token obtained from verification |
 | `password`   | string | Yes      | New password to set                             |
+| email        | string | Yes      | Email address                                   |
 
 #### Example Request Body
 

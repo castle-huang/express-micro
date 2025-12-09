@@ -12,7 +12,7 @@ export class CustomerUserRepository {
             .select('*')
             .eq('email', email)
             .eq('deleted', false)
-            .single();
+            .maybeSingle();
         return snakeToCamel(data);
     }
 

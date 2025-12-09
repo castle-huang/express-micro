@@ -65,9 +65,13 @@ export interface UpdatePasswordReq {
     newPassword: string;
 }
 
+export interface SendResetPwdEmailReq {
+    email: string
+}
+
 export interface VerifyCodeReq {
     code: string,
-    userId: string
+    email: string
 }
 
 export interface VerifyResetPwdCodeResp {
@@ -77,5 +81,5 @@ export interface VerifyResetPwdCodeResp {
 export interface ResetPasswordReq {
     resetToken: string,
     password: string,
-    userId: string
+    email: string
 }

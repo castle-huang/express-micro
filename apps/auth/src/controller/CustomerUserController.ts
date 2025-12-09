@@ -4,7 +4,7 @@ import {
     Body,
     Controller,
     GET,
-    Inject, POST,
+    Inject, PermitAll, POST,
     PUT,
     Req,
     ResponseUtil
@@ -12,7 +12,7 @@ import {
 import {ProfilesResp} from "../types/AuthType";
 import {CustomerUserService} from "@/service/CustomerUserService";
 import {
-    CustomerResetPasswordReq,
+    CustomerResetPasswordReq, CustomerSendResetPwdEmailReq,
     CustomerUpdatePasswordReq, CustomerVerifyCodeReq,
     GetCustomerResp,
     UpdateCustomerUserReq
@@ -45,27 +45,22 @@ export class CustomerUserController {
     }
 
     @POST('/send-reset-pwd-email')
-    async sendResetPwdEmail(@Req() authReq: AuthenticatedRequest)  {
-        const success = await this.customerUserService.sendResetPwdEmail(authReq.user.id);
+    @PermitAll()
+    async sendResetPwdEmail(@Body() req: CustomerSendResetPwdEmailReq)  {
+        const success = await this.customerUserService.sendResetPwdEmail(req.email);
         return ResponseUtil.success(success);
     }
 
     @POST('/verify-reset-pwd-code')
-    async verifyResetPwdCode(@Req() authReq: AuthenticatedRequest, @Body() req: CustomerVerifyCodeReq)  {
-        req = {
-            ...req,
-            userId: authReq.user.id,
-        }
+    @PermitAll()
+    async verifyResetPwdCode(@Body() req: CustomerVerifyCodeReq)  {
         const success = await this.customerUserService.verifyResetPwdCode(req);
         return ResponseUtil.success(success);
     }
 
     @POST('/reset-pwd')
-    async resetPwd(@Req() authReq: AuthenticatedRequest, @Body() req: CustomerResetPasswordReq)  {
-        req = {
-            ...req,
-            userId: authReq.user.id,
-        }
+    @PermitAll()
+    async resetPwd(@Body() req: CustomerResetPasswordReq)  {
         const success = await this.customerUserService.resetPwd(req);
         return ResponseUtil.success(success);
     }

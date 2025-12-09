@@ -14,7 +14,7 @@ import {MerchantUserService} from "../service/MerchantUserService";
 import {
     ProfilesResp,
     RegisterReq,
-    ResetPasswordReq,
+    ResetPasswordReq, SendResetPwdEmailReq,
     UpdateMerchantUserReq,
     UpdatePasswordReq,
     VerifyCodeReq
@@ -48,27 +48,19 @@ export class MerchantUserController {
     }
 
     @POST('/send-reset-pwd-email')
-    async sendResetPwdEmail(@Req() authReq: AuthenticatedRequest)  {
-        const success = await this.adminUserService.sendResetPwdEmail(authReq.user.id);
+    async sendResetPwdEmail(@Body() req: SendResetPwdEmailReq)  {
+        const success = await this.adminUserService.sendResetPwdEmail(req.email);
         return ResponseUtil.success(success);
     }
 
     @POST('/verify-reset-pwd-code')
-    async verifyResetPwdCode(@Req() authReq: AuthenticatedRequest, @Body() req: VerifyCodeReq)  {
-        req = {
-            ...req,
-            userId: authReq.user.id,
-        }
+    async verifyResetPwdCode(@Body() req: VerifyCodeReq)  {
         const success = await this.adminUserService.verifyResetPwdCode(req);
         return ResponseUtil.success(success);
     }
 
     @POST('/reset-pwd')
-    async resetPwd(@Req() authReq: AuthenticatedRequest, @Body() req: ResetPasswordReq)  {
-        req = {
-            ...req,
-            userId: authReq.user.id,
-        }
+    async resetPwd(@Body() req: ResetPasswordReq)  {
         const success = await this.adminUserService.resetPwd(req);
         return ResponseUtil.success(success);
     }

@@ -138,13 +138,13 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         });
     }
 
-    async sendResetPwdEmail(userId: string): Promise<Boolean> {
-        const customerUser = await this.customerUserRepository.findById(userId);
+    async sendResetPwdEmail(email: string): Promise<Boolean> {
+        const customerUser = await this.customerUserRepository.findByEmail(email);
         if (!customerUser) {
             throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
         }
         const code = this.generateRandomNumber(6);
-        const cacheKey = 'customer_reset_password_code' + ":" + userId;
+        const cacheKey = 'customer_reset_password_code' + ":" + email;
         await this.saveCacheData(cacheKey, code);
         if (customerUser.email) {
             const sendResult = await this.emailService.sendTextEmail(customerUser.email, 'Reset password', code);
@@ -157,13 +157,13 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (!req.code) {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
         }
-        const cacheKey = 'customer_reset_password_code' + ":" + req.userId;
+        const cacheKey = 'customer_reset_password_code' + ":" + req.email;
         const cacheData = await this.cacheDataRepository.findByKey(cacheKey);
         if (!cacheData || cacheData.cacheValue != req.code) {
             throw new CommonError(CommonErrorEnum.VERIFY_CODE_ERROR);
         }
         const resetToken = this.generateRandoString(8);
-        const key = 'customer_reset_pwd_token' + ":" + req.userId;
+        const key = 'customer_reset_pwd_token' + ":" + req.email;
         this.saveCacheData(key, resetToken);
         if (cacheData.id) {
             await this.cacheDataRepository.deleteById(cacheData.id);
@@ -177,7 +177,7 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (!req.resetToken || !req.password) {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR);
         }
-        const cacheKey = 'customer_reset_pwd_token' + ":" + req.userId;
+        const cacheKey = 'customer_reset_pwd_token' + ":" + req.email;
         const cacheData = await this.cacheDataRepository.findByKey(cacheKey);
         if (!cacheData || cacheData.cacheValue != req.resetToken) {
             throw new CommonError(AuthErrorEnum.RESET_PASSWORD_ERROR);
@@ -185,8 +185,12 @@ export class CustomerUserServiceImpl implements CustomerUserService {
         if (cacheData.id) {
             await this.cacheDataRepository.deleteById(cacheData.id);
         }
+        const customerUser = await this.customerUserRepository.findByEmail(req.email);
+        if (!customerUser) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
+        }
         await this.customerUserRepository.updateById({
-            id: req.userId,
+            id: customerUser.id,
             password: req.password,
             updateTime: new Date().getTime()
         });

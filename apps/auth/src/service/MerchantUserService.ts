@@ -25,7 +25,7 @@ export abstract class MerchantUserService {
 
     abstract updatePassword(req: UpdatePasswordReq): Promise<void>
 
-    abstract sendResetPwdEmail(userId: string): Promise<Boolean>
+    abstract sendResetPwdEmail(email: string): Promise<Boolean>
     abstract verifyResetPwdCode(req: VerifyCodeReq): Promise<VerifyResetPwdCodeResp>
     abstract resetPwd(req: ResetPasswordReq): Promise<void>
 }

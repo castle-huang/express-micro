@@ -51,10 +51,13 @@
   - [6.1 Query dashboard data](#61-query-dashboard-data)
 - [7 Order-Related APIs](#7-order-related-apis)
   - [7.1 Search order](#71-search-order)
+- [8 Payment-Related APIs](#8-payment-related-apis)
+  - [8.1 Create stripe account](#81-create-stripe-account)
+  - [8.2 Create stripe account link](#82-create-stripe-account-link)
+  - [8.3 Get stripe account status](#83-get-stripe-account-status)
+  - [8.4 Create login link](#84-create-login-link)
 
 <!-- TOC end -->
-
-## 
 
 ## General Information
 
@@ -339,21 +342,11 @@ Response Parameters
 
 - **Method:** `POST`
 
-- **Endpoint:** `{{baseUrl}}/api/auth/customer/user/send-reset-pwd-email`
+- **Endpoint:** `{{baseUrl}}/api/auth/merchant/user/send-reset-pwd-email`
 
 ### Request Body
 
-| Parameter | Type   | Required | Description              |
-| --------- | ------ | -------- | ------------------------ |
-| `email`   | string | Yes      | Customer's email address |
-
-### Example Request Body
-
-```json
-{
-    "email": "aa@163.com"
-}
-```
+none
 
 ### Response
 
@@ -373,21 +366,19 @@ Response Parameters
 
 - **Method:** `POST`
 
-- **Endpoint:** `{{baseUrl}}/api/auth/customer/user/verify-reset-pwd-code`
+- **Endpoint:** `{{baseUrl}}/api/auth/merchant/user/verify-reset-pwd-code`
 
 ### Request Body
 
 | Parameter | Type   | Required | Description                          |
 | --------- | ------ | -------- | ------------------------------------ |
 | `code`    | string | Yes      | Verification code received via email |
-| email     | string | Yes      | Email address                        |
 
 #### Example Request Body
 
 ```json
 {
-  "code": "136140",
-  "email": "aa@163.com"
+ "code": "924230"
 }
 ```
 
@@ -423,7 +414,7 @@ Response Parameters
 
 - **Method:** `POST`
 
-- **Endpoint:** `{{baseUrl}}/api/auth/customer/user/reset-pwd`
+- **Endpoint:** `{{baseUrl}}/api/auth/merchant/user/reset-pwd`
 
 ### Request Body
 
@@ -431,7 +422,6 @@ Response Parameters
 | ------------ | ------ | -------- | ----------------------------------------------- |
 | `resetToken` | string | Yes      | Reset password token obtained from verification |
 | `password`   | string | Yes      | New password to set                             |
-| email        | string | Yes      | Email address                                   |
 
 #### Example Request Body
 
@@ -1850,5 +1840,179 @@ none
         ],
         "total": 1
     }
+}
+```
+
+# 8 Payment-Related APIs
+
+---
+
+## 8.1 Create stripe account
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/pay/create-stripe-account`
+
+### Request Body
+
+| Parameter      | Type   | Required | Description                              |
+| -------------- | ------ | -------- | ---------------------------------------- |
+| `country`      | string | Yes      | Country code (e.g., "US", "GB", "AU")    |
+| `email`        | string | Yes      | Business email address                   |
+| `businessType` | string | Yes      | Business type: "individual" or "company" |
+
+#### Example Request Body
+
+```json
+{
+ "country": "test",
+ "email": "test@gmail.com",
+ "businessType": "individual"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type    | Description             |
+| --------- | ------- | ----------------------- |
+| `id`      | string  | Stripe account ID       |
+| `status`  | boolean | Account creation status |
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": {
+   "id": "1998631288050810880",
+   "status": true
+ }
+}
+```
+
+## 8.2 Create stripe account link
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/pay/create-account-link`
+
+### Request Body
+
+| Parameter    | Type   | Required | Description                                    |
+| ------------ | ------ | -------- | ---------------------------------------------- |
+| `id`         | string | Yes      | Stripe account ID                              |
+| `refreshUrl` | string | Yes      | URL to redirect if the link expires            |
+| `returnUrl`  | string | Yes      | URL to redirect after account setup completion |
+
+#### Example Request Body
+
+```json
+{
+   "id": "1998631291045543936",
+   "refreshUrl": "https://business.metryai.com",
+   "returnUrl": "https://business.metryai.com"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| `url`     | string | Stripe account setup URL |
+
+#### Success Response
+
+```json
+{
+    "code": "0",
+    "msg": "Success",
+    "data": {
+        "url": "https://connect.stripe.com/setup/c/acct_1ScgHkQpJSEawOd5/CQ9IWlaU7rNf"
+    }
+}
+```
+
+## 8.3 Get stripe account status
+
+### Request Details
+
+- **Method:** `GET`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/pay/get-stripe-account-status`
+
+### Request Body
+
+none
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type    | Description                                                  |
+| --------- | ------- | ------------------------------------------------------------ |
+| `id`      | string  | Stripe account ID                                            |
+| `status`  | boolean | Account status (true: active, false: inactive or not set up) |
+
+#### Success Response
+
+```json
+{
+    "code": "0",
+    "msg": "Success",
+    "data": {
+        "status": false,
+        "id": 1998631291045544000
+    }
+}
+```
+
+## 8.4 Create login link
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/pay/create-login-link`
+
+### Request Body
+
+| Parameter | Type   | Required | Description       |
+| --------- | ------ | -------- | ----------------- |
+| `id`      | string | Yes      | Stripe account ID |
+
+#### Example Request Body
+
+```json
+{
+ "id": "test"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter | Type   | Description                |
+| --------- | ------ | -------------------------- |
+| `url`     | string | Stripe dashboard login URL |
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": {
+   "url": "url"
+ }
 }
 ```

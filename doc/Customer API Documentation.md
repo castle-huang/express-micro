@@ -5,6 +5,8 @@
 
 <!-- TOC start -->
 
+<!-- TOC start -->
+
 ### [General Information](#general-information)
 
 - [Base url for request](#base-url-for-request)
@@ -42,6 +44,13 @@
 ### [5 Appointment-Related APIs](#5-appointment-related-apis)
 
 - [5.1 Query appointment records](#51-query-appointment-records)
+
+### [6 Payment-Related APIs](#6-payment-related-apis)
+
+- [6.1 Create payment intent](#61-create-payment-intent)
+- [6.2 Verify stripe webhook](#62-verify-stripe-webhook)
+
+<!-- TOC end -->
 
 <!-- TOC end -->
 
@@ -210,7 +219,7 @@ JSON
 
 - **Method:** `PUT`
 
-- **Endpoint:** `{{baseUrl}}/api/auth/customer/update`
+- **Endpoint:** `{{baseUrl}}/api/auth/customer/user`
 
 ## Request Body Parameters
 
@@ -332,19 +341,9 @@ Response Parameters
 
 ### Request Body
 
-| Parameter | Type   | Required | Description              |
-| --------- | ------ | -------- | ------------------------ |
-| `email`   | string | Yes      | Customer's email address |
+none
 
-### Example Request Body
-
-```json
-{
-    "email": "aa@163.com"
-}
-```
-
-### Respaaonse
+### Response
 
 #### Success Response
 
@@ -369,14 +368,12 @@ Response Parameters
 | Parameter | Type   | Required | Description                          |
 | --------- | ------ | -------- | ------------------------------------ |
 | `code`    | string | Yes      | Verification code received via email |
-| email     | string | Yes      | Customer's email address             |
 
 #### Example Request Body
 
 ```json
 {
-  "code": "136140",
-  "email": "aa@163.com"
+ "code": "924230"
 }
 ```
 
@@ -420,15 +417,13 @@ Response Parameters
 | ------------ | ------ | -------- | ----------------------------------------------- |
 | `resetToken` | string | Yes      | Reset password token obtained from verification |
 | `password`   | string | Yes      | New password to set                             |
-| email        | string | Yes      |                                                 |
 
 #### Example Request Body
 
 ```json
 {
  "resetToken": "ffLKRYie",
- "password": "654321",
- "email": "aa@163.com"
+ "password": "654321"
 }
 ```
 
@@ -917,5 +912,90 @@ The `businessHours` object contains properties for each day of the week (monda
             "imgUrl": "https://example.com/logo.png"
         }
     ]
+}
+```
+
+# 6 Payment-Related APIs
+
+---
+
+## 6.1 Create payment intent
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/customer/pay/create-payment-intent`
+
+### Request Body
+
+| Parameter | Type   | Required | Description             |
+| --------- | ------ | -------- | ----------------------- |
+| `orderId` | string | Yes      | Order unique identifier |
+
+#### Example Request Body
+
+```json
+{
+ "orderId": "test"
+}
+```
+
+### Response
+
+#### Response Parameters
+
+| Parameter         | Type   | Description                      |
+| ----------------- | ------ | -------------------------------- |
+| `clientSecret`    | string | Client secret for Stripe payment |
+| `paymentIntentId` | string | Payment intent ID                |
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": {
+   "clientSecret": "secret",
+   "paymentIntentId": "testId"
+ }
+}
+```
+
+## 6.2 Verify stripe webhook
+
+### Request Details
+
+- **Method:** `POST`
+
+- **Endpoint:** `{{baseUrl}}/api/payments/customer/pay/verify-stripe-webhook`
+
+### Request Body
+
+| Parameter   | Type   | Required | Description             |
+| ----------- | ------ | -------- | ----------------------- |
+| `payload`   | string | Yes      | Raw webhook payload     |
+| `signature` | string | Yes      | Stripe signature header |
+
+#### Example Request Body
+
+```json
+{
+ "payload": "xxxx",
+ "signature": "fds123213"
+}
+```
+
+### Response
+
+#### Success Response
+
+```json
+{
+ "code": "0",
+ "msg": "Success",
+ "data": {
+ }
 }
 ```

@@ -17,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"aa1@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n    \"email\": \"huangmingnet@163.com\",\r\n    \"password\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -63,7 +63,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"fullName\": \"ff\",\n    \"email\": \"aa1@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"raw": "{\n    \"fullName\": \"aaa\",\n    \"email\": \"huangmingnet@163.com\",\n    \"password\": \"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -96,7 +96,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQ2NjEwODMsImV4cCI6MTc2NTI2NTg4MywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.5AegatT6lsBBcYZgkv-KEhYlLKYyEqzXCvf45ir8KHw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMjAwNjU2NDk1MDkwNDgzMiJ9LCJpYXQiOjE3NjQ3NzYzMjksImV4cCI6MTc2NTM4MTEyOSwiaXNzIjoiZXhwcmVzcy1taWNybyJ9.OeRdDOpur9qdeaJNpAM6r5qr4buL2wI0Ulz_SpgJUno",
 								"type": "text"
 							}
 						],
@@ -122,7 +122,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5OTcwODUzNTU1NjI4MDMyMCJ9LCJpYXQiOjE3NjQyOTU3MTYsImV4cCI6MTc2Njg4NzcxNiwiaXNzIjoiZXhwcmVzcy1taWNybyJ9.68TH-eAFhnqZqZeb3yi2qeHxeI87XVEDbgkvdmzD1lw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMjAwMzc0NjgxMDYzMDE0NCJ9LCJpYXQiOjE3NjQ3NzUyMTYsImV4cCI6MTc2NTM4MDAxNiwiaXNzIjoiZXhwcmVzcy1taWNybyJ9.mCFnGs3lnWReSb5x0Olyyc_uAoTU1gBcW5CH148acBo",
 								"type": "text"
 							}
 						],
@@ -182,6 +182,119 @@
 								"customer",
 								"user",
 								"update-pwd"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Send reset password email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"huangmingnet@163.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/customer/user/send-reset-pwd-email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"customer",
+								"user",
+								"send-reset-pwd-email"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify reset password code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"021214\",\r\n  \"email\": \"huangmingnet@163.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/customer/user/verify-reset-pwd-code",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"customer",
+								"user",
+								"verify-reset-pwd-code"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"resetToken\": \"ffLKRYie\",\r\n  \"password\": \"654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/customer/user/reset-pwd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"customer",
+								"user",
+								"reset-pwd"
 							]
 						},
 						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
@@ -379,6 +492,83 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create payment intent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"orderId\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/customer/pay/create-payment-intent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"customer",
+								"pay",
+								"create-payment-intent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify stripe webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"payload\": \"xxxx\",\r\n    \"signature\": \"fds123213\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/customer/pay/verify-stripe-webhook",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"customer",
+								"pay",
+								"verify-stripe-webhook"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

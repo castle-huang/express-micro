@@ -216,7 +216,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY2MTMzNCwiZXhwIjoxNzY1MjY2MTM0LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.-BRaHTYBhUTuwhCHSMxnakXMtg06DTeW8XFSt3dyLs8",
+								"value": "Bearer {{token}}",
 								"type": "text"
 							}
 						],
@@ -232,6 +232,119 @@
 								"user"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send reset password email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"huangmingnet@163.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user/send-reset-pwd-email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user",
+								"send-reset-pwd-email"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify reset password code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"021214\",\r\n  \"email\": \"huangmingnet@163.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user/verify-reset-pwd-code",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user",
+								"verify-reset-pwd-code"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzQwMzMwNDkxMTIxMzAzOTYxNiJ9LCJpYXQiOjE3NjUwODU0MzcsImV4cCI6MTc2NTY5MDIzNywiaXNzIjoiZXhwcmVzcy1taWNybyJ9.d3GQbWxorpmFYpD0_DZyPl2xWh7lH2Ux56KT9nQe4e0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"resetToken\": \"ffLKRYie\",\r\n  \"password\": \"654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/merchant/user/reset-pwd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"merchant",
+								"user",
+								"reset-pwd"
+							]
+						},
+						"description": "## Purpose\n\nThis endpoint updates the authenticated merchant user's profile information. Use this to modify user details such as name, contact information, and avatar.\n\n## Authentication\n\nRequires a valid Bearer token in the `Authorization` header. The token identifies the merchant user whose profile will be updated.\n\n**Header:**\n\n```\nAuthorization: Bearer <your_jwt_token>\n\n ```\n\n## Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| `id` | string | The unique identifier of the user |\n| `avatarUrl` | string | URL or identifier for the user's avatar image |\n| `fullName` | string | The user's full name |\n| `phoneCode` | string | Country/region phone code (e.g., \"+1\", \"+44\") |\n| `phone` | string | Phone number without country code |\n| `fullPhone` | string | Complete phone number including country code |\n| `email` | string | User's email address |\n\n**Example Request Body:**\n\n``` json\n{\n  \"id\": \"string\",\n  \"avatarUrl\": \"avatar\",\n  \"fullName\": \"John Doe\",\n  \"phoneCode\": \"+1\",\n  \"phone\": \"1234567890\",\n  \"fullPhone\": \"+11234567890\",\n  \"email\": \"john.doe@example.com\"\n}\n\n ```\n\n## Response Format\n\nThe API returns a JSON object with the following structure:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `code` | string | Response code (\"0\" indicates success) |\n| `msg` | string | Response message |\n| `data` | boolean | Indicates whether the update was successful |\n\n## Success Response\n\n**Status Code:** `200 OK`\n\n**Response Body:**\n\n``` json\n{\n  \"code\": \"0\",\n  \"msg\": \"Success\",\n  \"data\": true\n}\n\n ```\n\nWhen `data` is `true`, the user profile has been successfully updated."
 					},
 					"response": []
 				}
@@ -250,13 +363,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2NDY3NjQwNSwiZXhwIjoxNzY1MjgxMjA1LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.gPR8okGcgpiTqPSJ0w_H1NwgVPhaTIAG_fUvTllt0Yw",
+										"value": "Bearer {{token}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"businessId\": \"7399369444537012224\",\r\n  \"staffId\": \"7401588378145263616\",\r\n  \"serviceId\": \"7401588151787065344\",\r\n  \"customerName\": \"张三\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
+									"raw": "{\r\n  \"businessId\": \"7402218556068335616\",\r\n  \"staffId\": \"7402223628793810944\",\r\n  \"serviceId\": \"7402304150240890880\",\r\n  \"customerName\": \"Viraj\",\r\n  \"timeSlot\": \"14:00-15:00\",\r\n  \"appointmentTime\": 1719820800000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -429,13 +542,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2MzY0NTQyOSwiZXhwIjoxNzY2MjM3NDI5LCJpc3MiOiJleHByZXNzLW1pY3JvIn0.EwLB1ahcTjnGlXeoyqSLrQtip5Nd_dPOxy2WgjWsKNs",
+										"value": "Bearer {{token}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"id\": \"1\",\r\n  \"businessId\": \"test\",\r\n  \"name\": \"tet2\",\r\n  \"email\": \"bb@gmail.com\",\r\n  \"phoneCode\": \"11\",\r\n  \"phone\": \"1234\"\r\n}",
+									"raw": "{\r\n  \"id\": \"7402225374232449024\",\r\n  \"businessId\": \"7402218556068335616\",\r\n  \"name\": \"tet3\",\r\n  \"email\": \"bb@gmail.com\",\r\n    \"fullPhone\":\"740221855606\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -705,7 +818,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"value": "Bearer {{token}}",
 										"type": "text"
 									}
 								],
@@ -806,13 +919,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+										"value": "Bearer {{token}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"name\": \"hair srvice\",\r\n  \"pageNo\": 1,\r\n  \"pageSize\": 10\r\n}",
+									"raw": "{\r\n  \"name\": \"\",\r\n  \"pageNo\": 1,\r\n  \"pageSize\": 10,\r\n  \"id\":\"7402304150240890880\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -867,7 +980,93 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Service dropdown list",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"businessId\": \"7402218556068335616\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/biz/service/dropdown",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"biz",
+												"service",
+												"dropdown"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "public, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Content-Length",
+											"value": "87"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 04 Dec 2025 11:07:33 GMT"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"57-nwopeKtVI0UjXpg+Wmm0Pvks8d0\""
+										},
+										{
+											"key": "Server",
+											"value": "Vercel"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=63072000; includeSubDomains; preload"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "X-Vercel-Cache",
+											"value": "MISS"
+										},
+										{
+											"key": "X-Vercel-Id",
+											"value": "bom1:bom1:iad1::iad1::iad1::h2zbs-1764846453106-ecefd11b0657"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"code\": \"0\",\n    \"msg\": \"Success\",\n    \"data\": [\n        {\n            \"id\": \"7402302228368855040\",\n            \"name\": \"hair srvice\"\n        }\n    ]\n}"
+								}
+							]
 						},
 						{
 							"name": "Query service type list",
@@ -894,7 +1093,85 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Query service type list",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/biz/service/type/list",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"biz",
+												"service",
+												"type",
+												"list"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "public, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Content-Length",
+											"value": "86"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 04 Dec 2025 11:06:43 GMT"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"56-Rqni+j/kUOj42Z9jq4aCzeD3tHg\""
+										},
+										{
+											"key": "Server",
+											"value": "Vercel"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=63072000; includeSubDomains; preload"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "X-Vercel-Cache",
+											"value": "BYPASS"
+										},
+										{
+											"key": "X-Vercel-Id",
+											"value": "bom1:bom1:iad1::iad1::iad1::gbchl-1764846403453-a4a7c496cf1e"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"code\": \"0\",\n    \"msg\": \"Success\",\n    \"data\": [\n        {\n            \"id\": \"1\",\n            \"name\": \"hair\"\n        },\n        {\n            \"id\": \"2\",\n            \"name\": \"Spa\"\n        }\n    ]\n}"
+								}
+							]
 						},
 						{
 							"name": "Delete service",
@@ -1025,6 +1302,14 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
 						}
 					]
 				},
@@ -1067,6 +1352,142 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create stripe account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"country\": \"test\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"businessType\": \"individual\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/pay/create-stripe-account",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"pay",
+								"create-stripe-account"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create stripe account link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"1998631291045543936\",\r\n    \"refreshUrl\": \"https://business.metryai.com\",\r\n    \"returnUrl\": \"https://business.metryai.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/pay/create-account-link",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"pay",
+								"create-account-link"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get stripe account status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/pay/get-stripe-account-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"pay",
+								"get-stripe-account-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create login link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNzM5NzExMDk0MTg0Mzg1MzMxMiIsIm1lcmNoYW50SWQiOiI3Mzk3MTEwOTQxMDcyMTAxMzc2In0sImlhdCI6MTc2Mzg2NTE2MCwiZXhwIjoxNzY2NDU3MTYwLCJpc3MiOiJleHByZXNzLW1pY3JvIn0.8YiF-4Ne5Vpqcm36fYIwbeCkS_ipTOD9al8SXSh0qiM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"1998631291045544000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/pay/create-login-link",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"pay",
+								"create-login-link"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

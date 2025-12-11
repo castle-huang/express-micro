@@ -9,7 +9,7 @@ export class PayStripeAccountRepository {
             .from('pay_stripe_account')
             .select('*')
             .eq('id', id)
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
@@ -21,7 +21,7 @@ export class PayStripeAccountRepository {
             .from('pay_stripe_account')
             .select('*')
             .eq('merchant_id', merchantId)
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

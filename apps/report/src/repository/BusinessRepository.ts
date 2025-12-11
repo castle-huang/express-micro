@@ -22,7 +22,7 @@ export class BusinessRepository {
         const {data, error} = await supabase
             .from('biz_business')
             .select('*')
-            .eq('id', id).single();
+            .eq('id', id).maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

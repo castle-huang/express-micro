@@ -9,7 +9,7 @@ export class ServiceRepository {
             .from('biz_service')
             .select('*')
             .eq('id', id)
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

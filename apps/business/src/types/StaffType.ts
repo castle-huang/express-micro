@@ -41,6 +41,8 @@ export interface StaffListItemResp {
     businessName?: string;
     name?: string;
     email?: string;
+    phoneCode?: string;
+    phone?: string;
     fullPhone?: string;
 }
 

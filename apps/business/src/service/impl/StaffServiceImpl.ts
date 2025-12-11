@@ -45,6 +45,7 @@ export class StaffServiceImpl implements StaffService {
         await this.staffRepository.update({
             ...staff,
             ...req,
+            fullPhone: `(${req.phoneCode})${req.phone}`,
             updateTime: new Date().getTime(),
         });
     }
@@ -60,6 +61,8 @@ export class StaffServiceImpl implements StaffService {
                 businessName: business?.name,
                 name: item.name,
                 email: item.email,
+                phoneCode: item.phoneCode,
+                phone: item.phone,
                 fullPhone: item.fullPhone,
                 merchantId: item.merchantId,
             });

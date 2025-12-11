@@ -11,7 +11,7 @@ export class OrderRepository {
             .from('biz_order')
             .select('*')
             .eq('id', id)
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

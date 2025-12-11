@@ -12,7 +12,7 @@ export class MerchantUserRepository {
             .select('*')
             .eq('email', email)
             .eq('deleted', false)
-            .single();
+            .maybeSingle();
         return this.mapToMerchantUser(data);
     }
 
@@ -22,7 +22,7 @@ export class MerchantUserRepository {
             .select('*')
             .eq('id', userId)
             .eq('deleted', false)
-            .single();
+            .maybeSingle();
         return this.mapToMerchantUser(data);
     }
 
@@ -31,7 +31,7 @@ export class MerchantUserRepository {
             .from('auth_merchant_user')
             .insert([camelToSnake(user)])
             .select()
-            .single();
+            .maybeSingle();
 
         if (error) {
             throw error;
@@ -73,7 +73,7 @@ export class MerchantUserRepository {
             .select('*')
             .eq('merchant_id', merchantId)
             .eq('deleted', false)
-            .single();
+            .maybeSingle();
         return this.mapToMerchantUser(data);
     }
 }

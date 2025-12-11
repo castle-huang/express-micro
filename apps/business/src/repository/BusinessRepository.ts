@@ -13,7 +13,7 @@ export class BusinessRepository {
             .from('biz_business')
             .insert(camelToSnake(business))
             .select('*')
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

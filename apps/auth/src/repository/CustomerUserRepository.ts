@@ -31,7 +31,7 @@ export class CustomerUserRepository {
             .from('auth_customer_user')
             .insert([camelToSnake(user)])
             .select()
-            .single();
+            .maybeSingle();
 
         if (error) {
             throw error;

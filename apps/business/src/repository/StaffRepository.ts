@@ -22,7 +22,7 @@ export class StaffRepository {
         const {error} = await supabase
             .from('biz_staff')
             .insert(camelToSnake(bizStaff))
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

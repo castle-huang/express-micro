@@ -66,7 +66,10 @@ export class PayServiceImpl implements PayService {
             throw new CommonError(CommonErrorEnum.PARAMETER_ERROR, "Missing required parameters: id");
         }
         const stripeAccount = await this.payStipeAccountRepository.getOneById(req.id);
-        if (stripeAccount.merchantId != merchantId) {
+        if (!stripeAccount) {
+            throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND, "stripe account is not exist");
+        }
+        if (stripeAccount && stripeAccount.merchantId != merchantId) {
             throw new CommonError(CommonErrorEnum.PERMISSION_DENIED);
         }
         const stripeAccountResp = await this.getStripeAccountStatus(merchantId);

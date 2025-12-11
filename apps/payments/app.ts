@@ -3,8 +3,8 @@ import express from 'express';
 import {HttpTransport} from "@sojo-micro/rpc";
 import path from "path";
 import fs from "fs";
-import {register} from "tsconfig-paths";
-import {RpcRegistry} from "@/config/RpcRegistry";
+import {register} from 'tsconfig-paths';
+import {RpcRegistry} from './src/config/RpcRegistry'
 
 dotenv.config();
 

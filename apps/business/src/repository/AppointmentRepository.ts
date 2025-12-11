@@ -12,7 +12,7 @@ export class AppointmentRepository {
             .from('biz_appointment')
             .select('*')
             .eq('id', id)
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
@@ -36,7 +36,7 @@ export class AppointmentRepository {
         const {error} = await supabase
             .from('biz_appointment')
             .insert(camelToSnake(appointment))
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }

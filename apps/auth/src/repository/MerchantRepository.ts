@@ -11,7 +11,7 @@ export class MerchantRepository {
             .from('auth_merchant')
             .insert(authMerchant)
             .select()
-            .single();
+            .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION)
         }
@@ -21,7 +21,7 @@ export class MerchantRepository {
             .from('auth_merchant')
             .select('*')
             .eq('id', merchantId)
-            .single();
+            .maybeSingle();
         return snakeToCamel(data);
     }
 }

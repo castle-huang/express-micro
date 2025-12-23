@@ -105,8 +105,8 @@ export class AppointmentServiceImpl implements AppointmentService {
         let resList = [];
         for (let bizAppointment of list) {
             const business = await this.businessRepository.getOneById(bizAppointment.businessId?? "");
-            const staff = await this.staffRepository.getOneById(bizAppointment.staffId ?? "");
-            const service = await this.serviceRepository.getOneById(bizAppointment.serviceId ?? "");
+            const staff = await this.staffRepository.getOneByIdIgnoreDeleted(bizAppointment.staffId ?? "");
+            const service = await this.serviceRepository.getOneByIdIgnoreDeleted(bizAppointment.serviceId ?? "");
             let app: AppointmentUserItemResp = {
                 id: bizAppointment.id,
                 staffId: bizAppointment.staffId,

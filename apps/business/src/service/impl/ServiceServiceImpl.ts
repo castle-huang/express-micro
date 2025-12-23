@@ -116,7 +116,12 @@ export class ServiceServiceImpl implements ServiceService {
         if (!record) {
             throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
         }
-        await this.serviceRepository.deleteById(req.id);
+        const updateData: BizService = {
+            ...record,
+            deleted: true,
+            updateTime: new Date().getTime(),
+        };
+        await this.serviceRepository.update(updateData);
     }
 
     async getDropdownList(req: ServiceDropdownReq): Promise<ServiceDropdownResp[]> {

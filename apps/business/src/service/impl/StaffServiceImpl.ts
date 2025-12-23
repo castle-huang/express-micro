@@ -75,7 +75,12 @@ export class StaffServiceImpl implements StaffService {
         if (!record) {
             throw new CommonError(CommonErrorEnum.DATA_NOT_FOUND);
         }
-        await this.staffRepository.deleteById(req.id);
+        const updateData: BizService = {
+            ...record,
+            deleted: true,
+            updateTime: new Date().getTime(),
+        };
+        await this.staffRepository.update(updateData);
     }
 
     async getDropdownList(req: StaffDropdownReq): Promise<StaffDropdownResp[]> {

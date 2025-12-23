@@ -12,6 +12,19 @@ export class ServiceRepository {
             .from('biz_service')
             .select('*')
             .eq('id', id)
+            .eq('deleted', false)
+            .maybeSingle();
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return snakeToCamel(data);
+    }
+
+    async getOneByIdIgnoreDeleted(id: string): Promise<BizService> {
+        const {data, error} = await supabase
+            .from('biz_service')
+            .select('*')
+            .eq('id', id)
             .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
@@ -39,6 +52,7 @@ export class ServiceRepository {
     }
 
     async deleteById(id: string): Promise<void> {
+
         const {error} = await supabase
             .from('biz_service')
             .delete()

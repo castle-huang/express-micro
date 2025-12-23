@@ -11,6 +11,20 @@ export class StaffRepository {
             .from('biz_staff')
             .select('*')
             .eq('id', id)
+            .eq('deleted', false)
+            .maybeSingle();
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return snakeToCamel(data);
+    }
+
+    async getOneByIdIgnoreDeleted(id: string): Promise<BizStaff> {
+        const {data, error} = await supabase
+            .from('biz_staff')
+            .select('*')
+            .eq('id', id)
+            .eq('deleted', false)
             .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
@@ -44,6 +58,7 @@ export class StaffRepository {
             .from('biz_staff')
             .select('*')
             .eq('merchant_id', merchantId)
+            .eq('deleted', false)
             .order('create_time', {ascending: false});
         if (name) {
             query = query.ilike('name', `%${name}%`);

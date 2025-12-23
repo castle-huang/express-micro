@@ -42,7 +42,7 @@ export class PayServiceImpl implements PayService {
             const account = await this.stripeConnectService.createAccount(accountParams);
             const id = SnowflakeUtil.generateId();
             await this.payStipeAccountRepository.insert({
-                id: SnowflakeUtil.generateId(),
+                id: id,
                 type: accountParams.type,
                 country: accountParams.country,
                 email: accountParams.email,

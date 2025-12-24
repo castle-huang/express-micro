@@ -1,8 +1,7 @@
-import {CommonError, snakeToCamel, Service, CommonErrorEnum, camelToSnake} from "@sojo-micro/rpc";
+import {camelToSnake, CommonError, CommonErrorEnum, Service, snakeToCamel} from "@sojo-micro/rpc";
 import {supabase} from "@/config/Supabase";
 import {BizAppointment} from "@/types/entity/BizAppointment";
-import {AppointmentSearchReq} from "@/types/AppointmentType";
-import {BizStaff} from "@/types/entity/BizStaff";
+import {AppointmentPageReq, AppointmentSearchReq} from "@/types/AppointmentType";
 
 @Service()
 export class AppointmentRepository {
@@ -92,11 +91,14 @@ export class AppointmentRepository {
         return this.mapToList(data);
     }
 
-    async getAppointmentListByCustomerUserId(customerUserId: string): Promise<BizAppointment[]> {
-        let {data, error} = await supabase
+    async getAppointmentListByCustomerUserId(req: AppointmentPageReq): Promise<BizAppointment[]> {
+        let {customerUserId, pageNo = 1, pageSize = 20} = req;
+        let query = supabase
             .from('biz_appointment')
             .select('*')
             .eq('customer_user_id', customerUserId);
+        query = query.range((pageNo - 1) * pageSize, pageNo * pageSize);
+        const {data, error} = await query;
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
@@ -114,5 +116,17 @@ export class AppointmentRepository {
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
         }
+    }
+
+    async count(req: AppointmentPageReq): Promise<number> {
+        let query = supabase
+            .from('biz_appointment')
+            .select('*', {count: 'exact'})
+            .eq('customer_user_id', req.customerUserId);
+        const {count, error} = await query;
+        if (error) {
+            throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);
+        }
+        return count?? 0;
     }
 }

@@ -71,3 +71,20 @@ export interface AppointmentUserItemResp {
 export interface AppointmentDeleteReq {
     id: string
 }
+
+/**
+ * page request model
+ */
+export interface AppointmentPageReq {
+    customerUserId?: string;
+    pageNo?: number;
+    pageSize?: number;
+}
+
+/**
+ * Service response model
+ */
+export interface AppointmentPageResp {
+    list: AppointmentUserItemResp[];
+    total: number;
+}

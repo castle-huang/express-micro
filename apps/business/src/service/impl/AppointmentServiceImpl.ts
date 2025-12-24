@@ -1,7 +1,7 @@
-import {CommonError, CommonErrorEnum, Inject, Service, SnowflakeUtil} from "@sojo-micro/rpc";
+import {CommonError, CommonErrorEnum, Inject, Service, snakeToCamel, SnowflakeUtil} from "@sojo-micro/rpc";
 import {AppointmentService} from "@/service/AppointmentService";
 import {
-    AppointmentItemResp,
+    AppointmentItemResp, AppointmentPageReq, AppointmentPageResp,
     AppointmentReq,
     AppointmentSearchReq, AppointmentUpdateReq,
     AppointmentUserItemResp
@@ -100,8 +100,9 @@ export class AppointmentServiceImpl implements AppointmentService {
         });
     }
 
-    async getUserAppointmentList(customerUserId: string): Promise<AppointmentUserItemResp[]> {
-        const list = await this.appointmentRepository.getAppointmentListByCustomerUserId(customerUserId);
+    async getUserAppointmentList(req: AppointmentPageReq): Promise<AppointmentPageResp> {
+        const total = await this.appointmentRepository.count(req);
+        const list = await this.appointmentRepository.getAppointmentListByCustomerUserId(req);
         let resList = [];
         for (let bizAppointment of list) {
             const business = await this.businessRepository.getOneById(bizAppointment.businessId?? "");
@@ -120,7 +121,10 @@ export class AppointmentServiceImpl implements AppointmentService {
             }
             resList.push(app);
         }
-        return resList;
+        return {
+            list: resList,
+            total: total
+        }
     }
 
     async deleteAppointment(id: string): Promise<void> {

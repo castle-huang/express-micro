@@ -24,7 +24,6 @@ export class StaffRepository {
             .from('biz_staff')
             .select('*')
             .eq('id', id)
-            .eq('deleted', false)
             .maybeSingle();
         if (error) {
             throw new CommonError(CommonErrorEnum.SYSTEM_EXCEPTION);

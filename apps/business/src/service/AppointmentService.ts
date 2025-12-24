@@ -1,5 +1,5 @@
 import {
-    AppointmentItemResp,
+    AppointmentItemResp, AppointmentPageReq, AppointmentPageResp,
     AppointmentReq,
     AppointmentSearchReq, AppointmentUpdateReq,
     AppointmentUserItemResp
@@ -11,7 +11,7 @@ export abstract class AppointmentService {
 
     abstract searchAppointment(req: AppointmentSearchReq, userId: string): Promise<AppointmentItemResp[]>;
 
-    abstract getUserAppointmentList(customerUserId: string): Promise<AppointmentUserItemResp[]>;
+    abstract getUserAppointmentList(appointmentPageReq: AppointmentPageReq): Promise<AppointmentPageResp>;
 
     abstract deleteAppointment(id: string): Promise<void>;
 }
